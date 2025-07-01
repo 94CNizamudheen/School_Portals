@@ -8,12 +8,8 @@ export enum Role{
 };
 
 export class RegisterDto{
-    @IsString()
-    name:string
     @IsEmail()
     email:string
-    @IsString()
-    mobileNumber:string
     @IsString()
     password:string
     @IsEnum(Role)
@@ -23,7 +19,7 @@ export class RegisterDto{
 export class SignInDto{
     @IsEmail()
     email:string
-    @IsEmail()
+    @IsString()
     password:string
 }
 export class ForgotPasswordDto{
@@ -44,3 +40,4 @@ export class VerifyOtpDto{
     @IsString()
     code:string
 }
+
