@@ -65,7 +65,7 @@ export class StudentService {
 
         if(updateStudentDto.email){
             const existingStudent= await this.studentModel.findOne({email:updateStudentDto.email});
-            if(existingStudent && existingStudent.id.toString()!== id){
+            if(existingStudent && (existingStudent._id as string).toString()!== id){
                 throw new ForbiddenException('Email already Exists')
             }
             const user= await this.userModel.findOne({profileId:id});
