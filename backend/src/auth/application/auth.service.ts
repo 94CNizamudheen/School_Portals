@@ -32,6 +32,7 @@ export class  AuthService{
 
 
     async signIn(dto:SignInDto): Promise<{access_token:string}>{
+        console.log(dto)
         const user= await this.userModel.findOne({email:dto.email})
         if(!user|| !(await bcrypt.compare(dto.password,user.password)) ){
              throw new UnauthorizedException("Invalid Credentials")

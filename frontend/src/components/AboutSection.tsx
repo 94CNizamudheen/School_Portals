@@ -43,7 +43,7 @@ const AboutSection = () => {
                     <BookOpen size={48} />
                   </div>
                   <h3 className="text-2xl font-bold mb-2">Excellence in Education</h3>
-                  <p className="text-lg opacity-90">Building tomorrow's leaders today</p>
+                  <p className="text-lg opacity-90">Building tomorrow&#39;s leaders today</p>
                 </div>
               </div>
             </div>

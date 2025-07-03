@@ -30,11 +30,6 @@ const PortalsPage = () => {
     }
   ];
 
-  const handleRoleSelect = (roleId: string) => {
-    console.log(`Selected role: ${roleId}`);
-    // Add your navigation logic here
-    // For Next.js you might use: router.push(`/${roleId}-dashboard`)
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple via-purple-700 to-purple relative overflow-hidden">
@@ -77,10 +72,8 @@ const PortalsPage = () => {
             <div key={role.id} className="flex flex-col items-center">
               {/* Card */}
               <button
-              
                 className="rounded-3xl shadow-2xl hover:scale-105 transform transition-all duration-300 hover:shadow-3xl w-full max-w-xs aspect-square relative overflow-hidden group"
               >
-                {/* Image */}
                 <Image
                   src={role.image}
                   alt={`${role.title} portal`}
@@ -93,7 +86,7 @@ const PortalsPage = () => {
               </button>
               {/* Label */}
               <div className="mt-4">
-                <Link href='/login' >
+                <Link href={`/${role.id}/login`} >
                  <button
                   className="bg-white text-purple-800 px-6 py-2 rounded-full font-semibold shadow-lg hover:bg-gray-100 hover:scale-105 transform transition-all duration-300"
                 >
