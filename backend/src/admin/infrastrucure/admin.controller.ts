@@ -74,7 +74,7 @@ export class AdminController{
     };
 
     @Roles(Role.ADMIN)
-    @Delete('id')
+    @Delete(':id')
     delete(@Param('id')id:string){
         return this.adminService.delete(id)
     }

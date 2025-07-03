@@ -23,13 +23,13 @@ export class StudentController{
     };
 
     @Roles(Role.ADMIN,Role.STUDENT,Role.PARENT)
-    @Get('id')
+    @Get(':id')
     findOne(@Param('id')id:string){
         return this.studentService.findOne(id)
     };
 
     @Roles(Role.ADMIN)
-    @Delete('id')
+    @Delete(':id')
     delete(@Param('id')id:string){
         return this.studentService.delete(id);
     }

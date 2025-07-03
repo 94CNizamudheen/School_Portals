@@ -1,5 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import {AppModule} from './app.module';
+import { AdminService } from "./admin/application/admin.service";
 
 async function bootstrap(){
     const app= await NestFactory.create(AppModule);
@@ -9,6 +10,8 @@ async function bootstrap(){
         alloweHeaders:['content-Type','Authorization'],
         credentials:true
     })
+    const adminService= app.get(AdminService);
+    await adminService.seedSuperAdmin()
     await app.listen(1994)
 }
 bootstrap()
