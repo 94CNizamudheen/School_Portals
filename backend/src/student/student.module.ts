@@ -6,6 +6,7 @@ import { StudentController } from "./infrastructure/student.controller";
 import { Student,StudentSchema } from "./domine/student.schema";
 import { AuthModule } from "src/auth/auth.module";
 import {User, UserSchema } from "src/auth/domine/user.schema";
+import { ParentModule } from "src/parent/parent.module";
 
 
 @Module({
@@ -14,7 +15,8 @@ import {User, UserSchema } from "src/auth/domine/user.schema";
             {name:Student.name,schema:StudentSchema},
             {name:User.name,schema:UserSchema}
         ]),
-        AuthModule
+        AuthModule,
+        ParentModule
     ],
     controllers:[StudentController],
     providers:[StudentService],

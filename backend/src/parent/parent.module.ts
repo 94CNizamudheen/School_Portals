@@ -20,6 +20,6 @@ import { ParentService } from "./application/parent.service";
     ],
     controllers:[ParentController],
     providers:[ParentService],
-    exports:[ParentService]
+    exports:[ParentService,MongooseModule]
 })
 export class ParentModule{}

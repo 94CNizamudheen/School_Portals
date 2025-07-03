@@ -1,8 +1,14 @@
 import { NestFactory } from "@nestjs/core";
 import {AppModule} from './app.module';
 
-async function schoolMgt(){
+async function bootstrap(){
     const app= await NestFactory.create(AppModule);
+    app.enableCors({
+        origin:['http://localhost:3000'],
+        methods:['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS','PATCH'],
+        alloweHeaders:['content-Type','Authorization'],
+        credentials:true
+    })
     await app.listen(1994)
 }
-schoolMgt()
+bootstrap()

@@ -1,6 +1,7 @@
 
-import { MongooseModuleOptions } from "@nestjs/mongoose";
+import { ConfigService } from "@nestjs/config" 
 
-export const databaseConfig:MongooseModuleOptions={
-    uri:process.env.MONGODB_URI
-}
+
+export const databaseConfig={
+    uri:new ConfigService().get<string>('MONGODB_URI')
+} 
