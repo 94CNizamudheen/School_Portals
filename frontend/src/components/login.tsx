@@ -3,7 +3,7 @@
 import axios from 'axios';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-
+const API= process.env.NEXT_PUBLIC_BACKEND_URL;
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -24,18 +24,22 @@ const Login = () => {
 
     const handleSubmit = async () => {
         console.log('Login attempt:', { email, password });
+
         if (!email || !password) {
             setError('Please Enter email and Password');
             return;
         }
         try {
-            const response = await axios.post('http://localhost:1994/auth/signin', {
+            const response = await axios.post(`${API}/auth/signin`, {
                 email, password, role
             }, {
                 withCredentials: true,
             })
+           
             const { token } = response.data;
-            localStorage.setItem('token', token);
+            console.log(token)
+            localStorage.setItem(`${role}token`, token);
+            
             switch (role) {
                 case 'ADMIN': router.push('/admin/dashboard'); break;
                 case 'STUDENT': router.push('/student/dashboard'); break;

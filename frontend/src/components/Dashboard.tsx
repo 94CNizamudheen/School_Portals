@@ -101,6 +101,7 @@ const Dashboard = () => {
         <Header 
           onMenuClick={() => setSidebarOpen(true)}
           notificationCount={notifications.length}
+          header='Dashboard'
         />
 
         Dashboard Content

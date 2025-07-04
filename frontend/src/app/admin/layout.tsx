@@ -12,7 +12,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const checkAdminAuth = async () => {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('ADMINtoken');
+            
             if (!token) {
                 router.replace('/admin/login');
                 return;
@@ -31,7 +32,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         }
         checkAdminAuth()
     })
-
+    
     return <>{children}</>
 }
 

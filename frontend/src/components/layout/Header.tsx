@@ -6,9 +6,11 @@ import { Menu, Search, Bell } from 'lucide-react';
 interface HeaderProps {
   onMenuClick: () => void;
   notificationCount: number;
+  header?:string
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick, notificationCount }) => {
+
+const Header: React.FC<HeaderProps> = ({ onMenuClick, notificationCount,header }) => {
   return (
     <header className="bg-gray-800 border-b border-gray-700 p-4 lg:p-6">
       <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
@@ -20,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, notificationCount }) => {
             >
               <Menu className="w-6 h-6" />
             </button>
-            <h2 className="text-xl md:text-2xl font-bold">Dashboard</h2>
+            <h2 className="text-xl md:text-2xl font-bold">{header}</h2>
           </div>
           
           {/* Mobile: Right side icons */}
