@@ -1,12 +1,14 @@
 
-import { Controller,Post,Body } from "@nestjs/common";
+import { Controller,Post,Body, UseGuards, Get, Param, Req } from "@nestjs/common";
 import { AuthService } from "../application/auth.service";
 import { RegisterDto,SignInDto,ForgotPasswordDto,ResetPasswordDto,VerifyOtpDto, } from "./dto/auth.dto";
+import { JwtAuthGuard } from "./jwt-auth.guard";
+import { Request } from "express";
 
 
 @Controller ('auth')
 export class AuthController{
-    constructor(private authservice:AuthService){}
+    constructor(private authservice:AuthService){};
     @Post('register')
     async register(@Body()dto:RegisterDto){
         return this.authservice.register(dto);
@@ -35,4 +37,13 @@ export class AuthController{
     async resendOtp(@Body('email')email:string){
         return this.authservice.resendOtp(email);
     }
+    @UseGuards(JwtAuthGuard)
+    @Get('verify-token')
+    async verifyToken(@Req() req:Request){
+        return {
+            valid:true,
+            user:req.user,
+        }
+    }
+
 }

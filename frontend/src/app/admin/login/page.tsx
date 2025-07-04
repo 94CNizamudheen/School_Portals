@@ -1,9 +1,9 @@
-'use client'
 
-import React from 'react'
 import Login from '@/components/login'
 import AuthHeader from '@/components/AuthHeader'
+
 const LoginPage = () => {
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col items-center">
            

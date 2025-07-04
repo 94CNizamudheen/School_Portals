@@ -97,7 +97,7 @@ body, html {
     word-wrap: break-word;
     word-break: break-word;
   }
-  
+
   /* Ensure buttons don't cause overflow */
   button {
     max-width: 100%;

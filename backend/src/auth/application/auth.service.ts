@@ -5,8 +5,7 @@ import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from 'bcrypt'
 import { User } from "../domine/user.schema"; 
 import { Otp } from "../domine/otp.schema";
-import { RegisterDto, SignInDto, ForgotPasswordDto, VerifyOtpDto, ResetPasswordDto, Role } from '../infrastrucure/dto/auth.dto';
-import { BADFAMILY } from "dns";
+import { RegisterDto, SignInDto, ForgotPasswordDto, VerifyOtpDto, ResetPasswordDto, } from '../infrastrucure/dto/auth.dto';
 
 @Injectable()
 export class  AuthService{
