@@ -1,29 +1,19 @@
-
 'use client'
-import React, { useState } from 'react';
+
 import { Users, GraduationCap, DollarSign, TrendingUp } from 'lucide-react';
 
-// Layout components
-import Sidebar from './layout/Sidebar';
-import Header from './layout/Header';
 
-// UI components
 import StatCard from './ui/StatCard';
-
-// Chart components
 import PerformanceChart from './charts/PerformanceChart';
 import ClassDistributionChart from './charts/ClassDistributionChart';
 import AttendanceChart from './charts/AttendanceChart';
-
-// Section components
 import RecentStudents from './sections/RecentStudents';
 import UnpaidStudents from './sections/UnpaidStudents';
 import NotificationsPanel from './sections/NotificationPanel';
 
 const Dashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  
-  // Static data that would normally come from API/database
+
+
   const notifications = [
     { id: 1, type: 'warning', message: 'John Doe has 3 unpaid fees', time: '2 hours ago' },
     { id: 2, type: 'info', message: 'New student enrolled: Sarah Wilson', time: '4 hours ago' },
@@ -79,67 +69,27 @@ const Dashboard = () => {
     { title: 'Avg Performance', value: '92%', change: 3, icon: TrendingUp, color: 'purple' }
   ];
 
-  return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <Sidebar 
-        isOpen={sidebarOpen} 
-        onClose={() => setSidebarOpen(false)} 
-      />
-
-      {/* Main Content */}
-      <div className="lg:ml-64">
-        {/* Header */}
-        <Header 
-          onMenuClick={() => setSidebarOpen(true)}
-          notificationCount={notifications.length}
-          header='Dashboard'
-        />
-
-        Dashboard Content
-        <main className="p-4 lg:p-6 space-y-6">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {statsData.map((stat, index) => (
-              <StatCard 
-                key={index}
-                title={stat.title}
-                value={stat.value}
-                change={stat.change}
-                icon={stat.icon}
-                color={stat.color}
-              />
-            ))}
-          </div>
-
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <PerformanceChart data={performanceData} />
-            <ClassDistributionChart data={classDistribution} />
-          </div>
-
-          {/* Tables Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <RecentStudents students={recentStudents} />
-            <UnpaidStudents students={unpaidStudents} />
-          </div>
-
-          {/* Attendance Chart */}
-          <AttendanceChart data={attendanceData} />
-
-          {/* Notifications Panel */}
-          <NotificationsPanel notifications={notifications} />
-        </main>
+    return (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {statsData.map((stat, index) => (
+          <StatCard key={index} {...stat} />
+        ))}
       </div>
-    </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PerformanceChart data={performanceData} />
+        <ClassDistributionChart data={classDistribution} />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentStudents students={recentStudents} />
+        <UnpaidStudents students={unpaidStudents} />
+      </div>
+
+      <AttendanceChart data={attendanceData} />
+      <NotificationsPanel notifications={notifications} />
+    </>
   );
 };
 

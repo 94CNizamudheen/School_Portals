@@ -6,7 +6,7 @@ import { Filter } from 'lucide-react';
 import StudentTableRow from './StudentTableRow';
 
 interface Student {
-  id: string;
+  id:number;
   name: string;
   email: string;
   rollNumber: string;

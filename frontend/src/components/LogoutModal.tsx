@@ -3,21 +3,23 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useDispatch } from 'react-redux'
+import { logout } from '@/app/store/authSlice'
 
 type LogoutModalProps = {
   trigger: React.ReactNode
   tokenKey?: string 
 }
 
-const LogoutModal = ({ trigger, tokenKey='token' }: LogoutModalProps) => {
+const LogoutModal = ({ trigger,  }: LogoutModalProps) => {
   const [show, setShow] = useState(false)
   const router = useRouter()
+  const dispatch= useDispatch()
+ const handleLogout = () => {
+  dispatch(logout());
+  router.push('/admin/login');
+};
 
-  const handleLogout = () => {
-    localStorage.removeItem(tokenKey)
-    setShow(false)
-    router.refresh()
-  }
 
   return (
     <>

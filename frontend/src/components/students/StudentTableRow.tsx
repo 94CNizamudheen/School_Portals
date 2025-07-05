@@ -3,7 +3,7 @@
 import React from 'react';
 import StudentActions from './StudentActions';
 interface Student {
-  id: string;
+  id: number;
   name: string;
   email: string;
   rollNumber: string;

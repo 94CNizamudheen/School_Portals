@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import React, { useState } from 'react';
-import Sidebar from '@/components/layout/Sidebar';
+
 import Header from '@/components/layout/Header';
 import StudentStatsCards from '@/components/students/StudentsStateCards';
 import StudentTable from '@/components/students/StudentTable';
@@ -77,7 +78,6 @@ const StudentsPage: React.FC = () => {
 
    return (
     <div className="flex h-screen bg-gray-900">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex-1 lg:ml-64 overflow-hidden">
         <Header onMenuClick={() => setSidebarOpen(true)} notificationCount={3} header='Students' />
         <div className="p-4 sm:p-6 lg:p-8">
