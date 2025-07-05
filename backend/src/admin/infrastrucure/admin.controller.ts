@@ -2,13 +2,12 @@
 import { Controller,Get,Post,Put,Delete,Param,Body, UseGuards } from "@nestjs/common";
 import { AdminService } from "../application/admin.service";
 import { CreateAdminDto,UpdateAdminDto } from "./admin.dto";
-import { CreateStudentDto } from "src/student/infrastructure/dto/student.dto";
 import { CreateTeacherDto, UpdateTeacherDto } from "src/teacher/infrastruture/dto/teacher.dto";
 import { CreateParentDto, UpdateParentDto } from "src/parent/infrastructure/dto/parent.dto";
 import { JwtAuthGuard } from "src/auth/infrastrucure/jwt-auth.guard";
 import { Role } from "src/auth/infrastrucure/dto/auth.dto";
 import { Roles } from "src/auth/infrastrucure/roles.decorator";
-
+import { AdmissionFormData } from "src/student/infrastructure/student.controller";
 @Controller('admins')
 @UseGuards(JwtAuthGuard)
 export class AdminController{
@@ -39,8 +38,8 @@ export class AdminController{
 
     @Roles(Role.ADMIN)
     @Post(':id')
-    createStudent(@Body()createDto:CreateStudentDto){
-        return this.adminService.createStudent(createDto);
+    createAdmission(@Body()admissionData:AdmissionFormData){
+        return this.adminService.createAdmission(admissionData);
     };
 
     @Roles(Role.ADMIN)

@@ -7,6 +7,7 @@ import { StudentModule } from './student/student.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { AdminModule } from './admin/admin.module';
 import { ParentModule } from './parent/parent.module';
+import { v2 as cloudinary } from 'cloudinary';
 
 @Module({
     imports:[
@@ -25,5 +26,13 @@ import { ParentModule } from './parent/parent.module';
         ParentModule
     ],
 })
-export class AppModule{}
+export class AppModule{
+    constructor(){
+        cloudinary.config({
+            cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
+            api_key:process.env.CLOUDINARY_API_KEY,
+            api_secret:process.env.CLOUDINARY_API_SECRET
+        });
+    }
+}
 

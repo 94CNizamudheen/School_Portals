@@ -5,15 +5,21 @@ import { CreateStudentDto,UpdateStudentDto } from "./dto/student.dto";
 import { JwtAuthGuard } from "src/auth/infrastrucure/jwt-auth.guard";
 import { Roles } from "src/auth/infrastrucure/roles.decorator";
 import { Role } from "src/auth/infrastrucure/dto/auth.dto";
+import { CreateParentDto } from "src/parent/infrastructure/dto/parent.dto";
+
+export interface AdmissionFormData{
+    studend:CreateStudentDto;
+    parent:CreateParentDto
+}
 
 @Controller('students')
 @UseGuards(JwtAuthGuard)
 export class StudentController{
     constructor(private readonly studentService:StudentService){}
     @Roles(Role.ADMIN)
-    @Post()
-    create(@Body() createStudentDto:CreateStudentDto){
-        return this.studentService.create(createStudentDto)
+    @Post('admission')
+    createAdmisiion(@Body() admissionData:AdmissionFormData){
+        return this.studentService.createAdmission(admissionData)
     };
 
     @Roles(Role.ADMIN,Role.PARENT,Role.STUDENT)

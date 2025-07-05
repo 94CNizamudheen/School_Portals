@@ -2,14 +2,11 @@
 'use client'
 
 import React, { useState } from 'react';
-
-import Header from '@/components/layout/Header';
 import StudentStatsCards from '@/components/students/StudentsStateCards';
 import StudentTable from '@/components/students/StudentTable';
-
+import Link from 'next/link';
 const StudentsPage: React.FC = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+const [searchTerm, setSearchTerm] = useState('');
 
   // Sample student data
   const students = [
@@ -76,21 +73,33 @@ const StudentsPage: React.FC = () => {
     student.rollNumber.includes(searchTerm)
   );
 
-   return (
-    <div className="flex h-screen bg-gray-900">
-      <div className="flex-1 lg:ml-64 overflow-hidden">
-        <Header onMenuClick={() => setSidebarOpen(true)} notificationCount={3} header='Students' />
-        <div className="p-4 sm:p-6 lg:p-8">
-          <StudentStatsCards
-            total={students.length}
-            active={students.filter(s => s.status === 'Active').length}
-            inactive={students.filter(s => s.status === 'Inactive').length}
-            newThisMonth={2}
-          />
-          <StudentTable students={filteredStudents} />
-        </div>
+
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-white">Students Management</h1>
+        <Link href='/admin/students/add' >
+        <button
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center gap-2"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Add Student
+        </button>
+        </Link>
+        
       </div>
-    </div>
+      
+      <StudentStatsCards
+        total={students.length}
+        active={students.filter(s => s.status === 'Active').length}
+        inactive={students.filter(s => s.status === 'Inactive').length}
+        newThisMonth={2}
+      />
+      <StudentTable students={filteredStudents} />
+    </>
   );
 };
 

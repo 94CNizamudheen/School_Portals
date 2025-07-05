@@ -14,6 +14,7 @@ import { CreateParentDto, UpdateParentDto } from "src/parent/infrastructure/dto/
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from "@nestjs/config";
 import { Logger } from "@nestjs/common";
+import { AdmissionFormData } from "src/student/infrastructure/student.controller";
 
 
 @Injectable()
@@ -50,8 +51,8 @@ export class AdminService {
         console.log(`Admin created: ${savedAdmin.email}, Password: ${randomPassword}`)
         return savedAdmin;
     };
-    async createStudent(createStudentDto: CreateStudentDto): Promise<any> {
-        return this.studentService.create(createStudentDto);
+    async createAdmission(admissionData: AdmissionFormData): Promise<any> {
+        return this.studentService.createAdmission(admissionData);
     }
     async updateStudent(id: string, updateStudentDto: UpdateStudentDto): Promise<any> {
         return this.studentService.update(id, updateStudentDto)

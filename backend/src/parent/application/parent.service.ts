@@ -28,8 +28,8 @@ export class ParentService {
         const newParent= new this.parentModel(createDto);
         const savedParent= await newParent.save()
 
-        if (createDto.studentsIds) {
-            for (const studentId of createDto.studentsIds) {
+        if (createDto.studentIds) {
+            for (const studentId of createDto.studentIds) {
                 const student = await this.studentModel.findById(studentId).exec();
 
                 if (!student) throw new NotFoundException('Student not found');
@@ -72,12 +72,13 @@ export class ParentService {
             if(ex_parent && (ex_parent._id as string).toString()!==id) throw new ForbiddenException("Email already exists");
         };
         const user= await this.userModel.findOne({profileId:id});
-        if(user){
-            user.email= update_dto.email;
+        
+        if(user && update_dto.email){
+            user.email = update_dto.email;
             await user.save();
         }
-        if(update_dto.studentsIds){
-            for(const studentId of update_dto.studentsIds){
+        if(update_dto.studentIds){
+            for(const studentId of update_dto.studentIds){
                 const student= await this.studentModel.findById(studentId).exec();
                 if(!student) throw new NotFoundException("Student not found");
                 if(!student.parentIds) student.parentIds=[];
