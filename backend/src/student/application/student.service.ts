@@ -1,5 +1,5 @@
 
-import { Injectable, NotFoundException, ForbiddenException, Param, } from "@nestjs/common";
+import { Injectable, NotFoundException, ForbiddenException, Param, BadRequestException, } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AuthService } from "src/auth/application/auth.service";
@@ -12,16 +12,106 @@ import { AdmissionFormData } from "../infrastructure/student.controller";
 import { Types } from "mongoose";
 import { File as MulterFile } from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
+import * as nodemailer from 'nodemailer'
+import * as crypto from 'crypto';
+import { VerificationToken } from "../domine/verification.token.schema";
+
+
 @Injectable()
 export class StudentService {
+    private transporter: nodemailer.Transporter
     constructor(
         @InjectModel(Student.name) private studentModel: Model<Student>,
         @InjectModel(Parent.name) private parantModel: Model<Parent>,
         @InjectModel(User.name) private userModel: Model<User>,
+        @InjectModel(VerificationToken.name) private verificationTokenModel: Model<VerificationToken>,
         private authService: AuthService
-    ) { }
+    ) {
+        this.transporter = nodemailer.createTransport({
+            host: process.env.EMAIL_HOST,
+            port: Number(process.env.EMAIL_PORT),
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            }
+        });
+    };
+    async sendVerificationEmail(email: string, admissionData: AdmissionFormData): Promise<void> {
+        const token = crypto.randomBytes(32).toString("hex");
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+        const verificationToken = new this.verificationTokenModel({
+            email,
+            token,
+            expiresAt,
+        });
+        
+        await verificationToken.save();
+
+        const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${token}&email=${encodeURIComponent(email)}`;
+        console.log("verificationLink",verificationLink)
+
+        const { student, parent } = admissionData;
+        const summary = `
+      <h3>Student Admission Application Preview</h3>
+      <p>Please review the following details and verify your email to confirm the application.</p>
+      <h4>Student Information</h4>
+      <ul>
+        <li><strong>Name:</strong> ${student.firstName} ${student.lastName}</li>
+        <li><strong>Email:</strong> ${student.email}</li>
+        <li><strong>Phone:</strong> ${student.mobileNumber}</li>
+        <li><strong>Date of Birth:</strong> ${student.dateOfBirth || "Not provided"}</li>
+        <li><strong>Gender:</strong> ${student.gender || "Not provided"}</li>
+        <li><strong>Grade:</strong> ${student.grade || "Not provided"}</li>
+        <li><strong>Class:</strong> ${student.class || "Not provided"}</li>
+        <li><strong>Roll Number:</strong> ${student.rollNumber || "Not provided"}</li>
+        <li><strong>Address:</strong> ${student.address || "Not provided"}, ${student.city || ""}, ${student.state || ""}, ${student.pincode || ""}</li>
+      </ul>
+      <h4>Parent Information</h4>
+      <ul>
+        <li><strong>Name:</strong> ${parent.name}</li>
+        <li><strong>Email:</strong> ${parent.email}</li>
+        <li><strong>Phone:</strong> ${parent.mobileNumber}</li>
+        <li><strong>Relationship:</strong> ${parent.relationship || "Not provided"}</li>
+      </ul>
+      <p><strong>Click the link below to verify your email:</strong></p>
+      <a href="${verificationLink}">Verify Email</a>
+      <p>This link will expire in 24 hours.</p>
+    `;
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: "Verify Student Admission Application",
+            html: summary,
+        };
+
+        try {
+            await this.transporter.sendMail(mailOptions);
+            console.log(`Verification email sent to ${email}`);
+        } catch (error) {
+            console.error("Error sending verification email:", error);
+            throw new BadRequestException("Failed to send verification email");
+        }
+    }
+
+    async verifyEmailToken(email: string, token: string): Promise<boolean> {
+        const verificationToken = await this.verificationTokenModel.findOne({ email, token }).exec();
+        if (!verificationToken) {
+            throw new BadRequestException("Invalid or expired verification token");
+        }
+        if (verificationToken.expiresAt < new Date()) {
+            await this.verificationTokenModel.deleteOne({ _id: verificationToken._id }).exec();
+            throw new BadRequestException("Verification token has expired");          
+        }
+        await this.verificationTokenModel.deleteOne({ _id: verificationToken._id }).exec();
+        return true;
+    }
+
+
     async createAdmission(admissionData: AdmissionFormData, file?: MulterFile): Promise<Student> {
-        const { studend: studentData, parent: parentData } = admissionData;
+        const { student: studentData, parent: parentData } = admissionData;
 
         const ex_student = await this.studentModel.findOne({ $or: [{ email: studentData.email }, { mobileNumber: studentData.mobileNumber }] }).exec()
         if (ex_student) {
@@ -176,7 +266,7 @@ export class StudentService {
 
         const publicId = student.profileImage.split("/").pop()?.split(".")[0];
         await cloudinary.uploader.destroy(`student_profiles/${publicId}`);
-        
+
         await this.userModel.deleteOne({ profileId: id }).exec();
         await this.studentModel.deleteOne({ _id: id });
     }

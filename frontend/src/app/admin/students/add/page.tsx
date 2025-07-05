@@ -1,8 +1,8 @@
-// pages/admin/students/admission.tsx
-'use client'
+'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import { StudentFormData, AdmissionFormData } from '@/types/student';
 import { FormHeader } from '@/components/forms/FormHeader';
 import { ProgressBar } from '@/components/forms/ProgressBar';
@@ -11,13 +11,16 @@ import { PersonalInformationForm } from '@/components/forms/PersonalInformationF
 import { AcademicInformationForm } from '@/components/forms/AccademicInformation';
 import { ParentInformationForm } from '@/components/forms/ParentInformationForm';
 import { MedicalInformationForm } from '@/components/forms/MedicalInformationForm';
+import {toast} from 'react-toastify';
 
 const StudentAdmissionForm: React.FC = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [verificationToken, setVerificationToken] = useState<string | null>(null);
   const totalSteps = 4;
-
+  const API= process.env.NEXT_PUBLIC_BACKEND_URL;
   const [formData, setFormData] = useState<StudentFormData>({
     firstName: '',
     lastName: '',
@@ -50,15 +53,31 @@ const StudentAdmissionForm: React.FC = () => {
     profileImage: null,
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
+    if (name === 'parentEmail') {
+      setIsEmailVerified(false);
+      setVerificationToken(null);
+    }
   };
 
   const handleImageChange = (file: File | null) => {
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size exceeds 5MB');
+        return;
+      }
+      if (!['image/jpeg', 'image/png'].includes(file.type)) {
+        alert('Only JPEG and PNG images are allowed');
+        return;
+      }
+    }
     setFormData(prev => ({
       ...prev,
       profileImage: file,
@@ -69,7 +88,60 @@ const StudentAdmissionForm: React.FC = () => {
     router.push('/admin/students');
   };
 
+  const handleSendVerificationEmail = async (admissionData: AdmissionFormData) => {
+    if (!formData.parentEmail) {
+      toast.error('Please enter a parent email address');
+      return;
+    }
+    setLoading(true);
+    try {
+      await axios.post(`${API}/students/send-verification-email`, admissionData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+      });
+      toast.success('Verification email sent! Please ask the parent to verify their email.');
+
+      console.error('Error sending verification email:',);
+      toast.error( 'Failed to send verification email');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCheckVerification = async () => {
+    if (!formData.parentEmail || !verificationToken) {
+      alert('Please send a verification email first or enter a valid token');
+      return;
+    }
+    setLoading(true);
+    try {
+      await axios.get(`${API}/students/verify-email`, {
+        params: {
+          email: formData.parentEmail,
+          token: verificationToken,
+        },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+      });
+
+      setIsEmailVerified(true);
+      alert('Email verified successfully!');
+    } catch (error) {
+      console.error('Error verifying email:', error);
+      toast.error('Email not verified');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async () => {
+    if (!isEmailVerified) {
+      alert('Please verify the parent email before submitting');
+      return;
+    }
+
     setLoading(true);
     try {
       const formDataToSend = new FormData();
@@ -95,7 +167,7 @@ const StudentAdmissionForm: React.FC = () => {
           medicalConditions: formData.medicalConditions || undefined,
           allergies: formData.allergies || undefined,
           medications: formData.medications || undefined,
-          profileImage: undefined, // Will be handled by Cloudinary in backend
+          profileImage: undefined,
         },
         parent: {
           name: formData.parentName,
@@ -109,29 +181,24 @@ const StudentAdmissionForm: React.FC = () => {
         },
       };
 
-      formDataToSend.append("student", JSON.stringify(admissionData.student));
-      formDataToSend.append("parent", JSON.stringify(admissionData.parent));
+      formDataToSend.append('student', JSON.stringify(admissionData.student));
+      formDataToSend.append('parent', JSON.stringify(admissionData.parent));
       if (formData.profileImage) {
-        formDataToSend.append("profileImage", formData.profileImage);
+        formDataToSend.append('profileImage', formData.profileImage);
       }
+      formDataToSend.append('verificationToken', verificationToken || '');
 
-      const response = await fetch("/api/students/admission", {
-        method: "POST",
+      await axios.post(`${API}/students/admission`, formDataToSend, {
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token") || ''}`, // Adjust based on your auth setup
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+          'Content-Type': 'multipart/form-data',
         },
-        body: formDataToSend,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit form");
-      }
 
       router.push('/admin/students');
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert(error || "Failed to submit form");
+      console.error('Error submitting form:', error);
+      toast.error('Failed to submit form');
     } finally {
       setLoading(false);
     }
@@ -160,26 +227,11 @@ const StudentAdmissionForm: React.FC = () => {
           />
         );
       case 2:
-        return (
-          <AcademicInformationForm
-            formData={formData}
-            onChange={handleInputChange}
-          />
-        );
+        return <AcademicInformationForm formData={formData} onChange={handleInputChange} />;
       case 3:
-        return (
-          <ParentInformationForm
-            formData={formData}
-            onChange={handleInputChange}
-          />
-        );
+        return <ParentInformationForm formData={formData} onChange={handleInputChange} />;
       case 4:
-        return (
-          <MedicalInformationForm
-            formData={formData}
-            onChange={handleInputChange}
-          />
-        );
+        return <MedicalInformationForm formData={formData} onChange={handleInputChange} />;
       default:
         return (
           <PersonalInformationForm
@@ -194,26 +246,23 @@ const StudentAdmissionForm: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="bg-gray-800 rounded-lg shadow-lg p-6">
-        <FormHeader 
-          title="Student Admission Form" 
-          onClose={handleClose}
-        />
-        
-        <ProgressBar 
-          currentStep={currentStep} 
-          totalSteps={totalSteps}
-        />
-
+        <FormHeader title="Student Admission Form" onClose={handleClose} />
+        <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
         <form onSubmit={(e) => e.preventDefault()}>
           {renderStepContent()}
-
           <FormNavigation
             currentStep={currentStep}
             totalSteps={totalSteps}
             onPrevious={prevStep}
             onNext={nextStep}
             onSubmit={handleSubmit}
+            onSendVerification={handleSendVerificationEmail}
+            formData={formData}
             loading={loading}
+            isEmailVerified={isEmailVerified}
+            verificationToken={verificationToken}
+            setVerificationToken={setVerificationToken}
+            handleCheckVerification={handleCheckVerification}
           />
         </form>
       </div>

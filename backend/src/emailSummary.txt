@@ -1,0 +1,26 @@
+`
+      <h3>Student Admission Application Preview</h3>
+      <p>Please review the following details and verify your email to confirm the application.</p>
+      <h4>Student Information</h4>
+      <ul>
+        <li><strong>Name:</strong> ${student.firstName} ${student.lastName}</li>
+        <li><strong>Email:</strong> ${student.email}</li>
+        <li><strong>Phone:</strong> ${student.mobileNumber}</li>
+        <li><strong>Date of Birth:</strong> ${student.dateOfBirth || "Not provided"}</li>
+        <li><strong>Gender:</strong> ${student.gender || "Not provided"}</li>
+        <li><strong>Grade:</strong> ${student.grade || "Not provided"}</li>
+        <li><strong>Class:</strong> ${student.class || "Not provided"}</li>
+        <li><strong>Roll Number:</strong> ${student.rollNumber || "Not provided"}</li>
+        <li><strong>Address:</strong> ${student.address || "Not provided"}, ${student.city || ""}, ${student.state || ""}, ${student.pincode || ""}</li>
+      </ul>
+      <h4>Parent Information</h4>
+      <ul>
+        <li><strong>Name:</strong> ${parent.name}</li>
+        <li><strong>Email:</strong> ${parent.email}</li>
+        <li><strong>Phone:</strong> ${parent.mobileNumber}</li>
+        <li><strong>Relationship:</strong> ${parent.relationship || "Not provided"}</li>
+      </ul>
+      <p><strong>Click the link below to verify your email:</strong></p>
+      <a href="${verificationLink}">Verify Email</a>
+      <p>This link will expire in 24 hours.</p>
+    `

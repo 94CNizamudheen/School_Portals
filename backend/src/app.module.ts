@@ -11,7 +11,7 @@ import { v2 as cloudinary } from 'cloudinary';
 
 @Module({
     imports:[
-        ConfigModule.forRoot({isGlobal:true}),
+        ConfigModule.forRoot({isGlobal:true, envFilePath: ".env"}),
         MongooseModule.forRootAsync({
             imports:[ConfigModule],
             inject:[ConfigService],
