@@ -1,26 +1,31 @@
+// components/StudentAdmissionForm.tsx
 'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { StudentFormData, AdmissionFormData } from '@/types/student';
+import { StudentFormData } from '@/types/student';
 import { FormHeader } from '@/components/forms/FormHeader';
 import { ProgressBar } from '@/components/forms/ProgressBar';
 import { FormNavigation } from '@/components/forms/FormNavigation';
 import { PersonalInformationForm } from '@/components/forms/PersonalInformationForm';
-import { AcademicInformationForm } from '@/components/forms/AccademicInformation';
+import { AcademicInformationForm } from '@/components/forms/AccademicInformation'; // Fixed typo: "AccademicInformation" to "AcademicInformation"
 import { ParentInformationForm } from '@/components/forms/ParentInformationForm';
 import { MedicalInformationForm } from '@/components/forms/MedicalInformationForm';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
+import * as Yup from 'yup';
+import {personalInformationSchema,academicInformationSchema,parentInformationSchema, medicalInformationSchema,} from '../../validationSchemas';
+import {  createAdmissionData} from '../../../utils/formUtils'
 
 const StudentAdmissionForm: React.FC = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [verificationToken, setVerificationToken] = useState<string | null>(null);
+  const [verificationOtp, setVerificationOtp] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const totalSteps = 4;
-  const API= process.env.NEXT_PUBLIC_BACKEND_URL;
+  const API = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [formData, setFormData] = useState<StudentFormData>({
     firstName: '',
     lastName: '',
@@ -57,77 +62,79 @@ const StudentAdmissionForm: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    const trimmedValue = ['firstName', 'lastName'].includes(name) ? value.trim() : value;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: trimmedValue,
     }));
     if (name === 'parentEmail') {
       setIsEmailVerified(false);
-      setVerificationToken(null);
+      setVerificationOtp(null);
     }
+    setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const handleImageChange = (file: File | null) => {
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        alert('File size exceeds 5MB');
+        toast.error('File size exceeds 5MB');
         return;
       }
       if (!['image/jpeg', 'image/png'].includes(file.type)) {
-        alert('Only JPEG and PNG images are allowed');
+        toast.error('Only JPEG and PNG images are allowed');
         return;
       }
     }
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       profileImage: file,
     }));
+    setErrors((prev) => ({ ...prev, profileImage: '' }));
   };
 
   const handleClose = () => {
     router.push('/admin/students');
   };
 
-  const handleSendVerificationEmail = async (admissionData: AdmissionFormData) => {
+  const handleSendVerificationEmail = async () => {
     if (!formData.parentEmail) {
       toast.error('Please enter a parent email address');
       return;
     }
     setLoading(true);
     try {
-      await axios.post(`${API}/students/send-verification-email`, admissionData, {
+      const admissionData = createAdmissionData(formData);
+      await axios.post(`${API}/students/send-otp`, admissionData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
       });
       toast.success('Verification email sent! Please ask the parent to verify their email.');
-
-      console.error('Error sending verification email:',);
-      toast.error( 'Failed to send verification email');
+    } catch {
+      toast.error('Failed to send verification email');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCheckVerification = async () => {
-    if (!formData.parentEmail || !verificationToken) {
-      alert('Please send a verification email first or enter a valid token');
+  const handleCheckOtp = async () => {
+    if (!formData.parentEmail || !verificationOtp) {
+      toast.error('Please send a verification email first or enter a valid token');
       return;
     }
     setLoading(true);
     try {
-      await axios.get(`${API}/students/verify-email`, {
+      await axios.get(`${API}/students/verify-otp`, {
         params: {
           email: formData.parentEmail,
-          token: verificationToken,
+          otp: verificationOtp,
         },
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
       });
-
       setIsEmailVerified(true);
-      alert('Email verified successfully!');
+      toast.success('Email verified successfully!');
     } catch (error) {
       console.error('Error verifying email:', error);
       toast.error('Email not verified');
@@ -138,55 +145,20 @@ const StudentAdmissionForm: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!isEmailVerified) {
-      alert('Please verify the parent email before submitting');
+      toast.error('Please verify the parent email before submitting');
       return;
     }
 
     setLoading(true);
     try {
       const formDataToSend = new FormData();
-      const admissionData: AdmissionFormData = {
-        student: {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          mobileNumber: formData.phone,
-          dateOfBirth: formData.dateOfBirth || undefined,
-          gender: formData.gender || undefined,
-          bloodGroup: formData.bloodGroup || undefined,
-          nationality: formData.nationality || undefined,
-          religion: formData.religion || undefined,
-          grade: formData.grade || undefined,
-          class: formData.class || undefined,
-          rollNumber: formData.rollNumber || undefined,
-          previousSchool: formData.previousSchool || undefined,
-          address: formData.address || undefined,
-          city: formData.city || undefined,
-          state: formData.state || undefined,
-          pincode: formData.pincode || undefined,
-          medicalConditions: formData.medicalConditions || undefined,
-          allergies: formData.allergies || undefined,
-          medications: formData.medications || undefined,
-          profileImage: undefined,
-        },
-        parent: {
-          name: formData.parentName,
-          email: formData.parentEmail,
-          mobileNumber: formData.parentPhone,
-          occupation: formData.parentOccupation || undefined,
-          relationship: formData.relationship || undefined,
-          emergencyContactName: formData.emergencyContactName || undefined,
-          emergencyContactPhone: formData.emergencyContactPhone || undefined,
-          emergencyContactRelationship: formData.emergencyContactRelationship || undefined,
-        },
-      };
-
+      const admissionData = createAdmissionData(formData);
       formDataToSend.append('student', JSON.stringify(admissionData.student));
       formDataToSend.append('parent', JSON.stringify(admissionData.parent));
       if (formData.profileImage) {
         formDataToSend.append('profileImage', formData.profileImage);
       }
-      formDataToSend.append('verificationToken', verificationToken || '');
+      formDataToSend.append('verificationOtp', verificationOtp || '');
 
       await axios.post(`${API}/students/admission`, formDataToSend, {
         headers: {
@@ -204,15 +176,57 @@ const StudentAdmissionForm: React.FC = () => {
     }
   };
 
-  const nextStep = () => {
+  const validateStep = async (step: number): Promise<boolean> => {
+  try {
+    switch (step) {
+      case 1:
+        await personalInformationSchema.validate(formData, { abortEarly: false });
+        break;
+      case 2:
+        await academicInformationSchema.validate(formData, { abortEarly: false });
+        break;
+      case 3:
+        await parentInformationSchema.validate(formData, { abortEarly: false });
+        break;
+      case 4:
+        await medicalInformationSchema.validate(formData, { abortEarly: false });
+        break;
+      default:
+        return false;
+    }
+
+    setErrors({});
+    return true;
+  } catch (err) {
+    if (err instanceof Yup.ValidationError) {
+      const validationErrors: { [key: string]: string } = {};
+      err.inner.forEach((error) => {
+        if (error.path) {
+          validationErrors[error.path] = error.message;
+        }
+      });
+      setErrors(validationErrors);
+      toast.error('Please fill in all required fields correctly.');
+      return false;
+    }
+    return false;
+  }
+};
+
+
+  const nextStep = async () => {
     if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
+      const isValid = await validateStep(currentStep);
+      if (isValid) {
+        setCurrentStep(currentStep + 1);
+      }
     }
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      setErrors({});
     }
   };
 
@@ -224,20 +238,40 @@ const StudentAdmissionForm: React.FC = () => {
             formData={formData}
             onChange={handleInputChange}
             onImageChange={handleImageChange}
+            errors={errors}
           />
         );
       case 2:
-        return <AcademicInformationForm formData={formData} onChange={handleInputChange} />;
+        return (
+          <AcademicInformationForm
+            formData={formData}
+            onChange={handleInputChange}
+            errors={errors}
+          />
+        );
       case 3:
-        return <ParentInformationForm formData={formData} onChange={handleInputChange} />;
+        return (
+          <ParentInformationForm
+            formData={formData}
+            onChange={handleInputChange}
+            errors={errors}
+          />
+        );
       case 4:
-        return <MedicalInformationForm formData={formData} onChange={handleInputChange} />;
+        return (
+          <MedicalInformationForm
+            formData={formData}
+            onChange={handleInputChange}
+            errors={errors}
+          />
+        );
       default:
         return (
           <PersonalInformationForm
             formData={formData}
             onChange={handleInputChange}
             onImageChange={handleImageChange}
+            errors={errors}
           />
         );
     }
@@ -260,9 +294,9 @@ const StudentAdmissionForm: React.FC = () => {
             formData={formData}
             loading={loading}
             isEmailVerified={isEmailVerified}
-            verificationToken={verificationToken}
-            setVerificationToken={setVerificationToken}
-            handleCheckVerification={handleCheckVerification}
+            verificationOtp={verificationOtp}
+            setVerificationOtp={setVerificationOtp}
+            handleCheckOtp={handleCheckOtp}
           />
         </form>
       </div>

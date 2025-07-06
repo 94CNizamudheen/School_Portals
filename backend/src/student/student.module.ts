@@ -8,10 +8,7 @@ import { AuthModule } from "src/auth/auth.module";
 import {User, UserSchema } from "src/auth/domine/user.schema";
 import { ParentModule } from "src/parent/parent.module";
 import { VerificationToken, VerificationTokenSchema } from "./domine/verification.token.schema";
-import { ConfigModule } from "@nestjs/config";
 import { Parent, ParentSchema } from "src/parent/domine/parent.schema";
-
-
 
 
 @Module({

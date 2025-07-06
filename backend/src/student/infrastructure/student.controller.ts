@@ -1,11 +1,12 @@
 
 import { StudentService } from "../application/student.service";
-import { Controller, Injectable, UseGuards, Post, Get, Delete, Query, Body, Param, } from "@nestjs/common";
+import { Controller, Injectable, UseGuards, Post, Get, Delete, Query, Body, Param, UseInterceptors, UploadedFile, } from "@nestjs/common";
 import { CreateStudentDto, UpdateStudentDto } from "./dto/student.dto";
 import { JwtAuthGuard } from "src/auth/infrastrucure/jwt-auth.guard";
 import { Roles } from "src/auth/infrastrucure/roles.decorator";
 import { Role } from "src/auth/infrastrucure/dto/auth.dto";
 import { CreateParentDto } from "src/parent/infrastructure/dto/parent.dto";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 export interface AdmissionFormData {
     student: CreateStudentDto;
@@ -18,20 +19,26 @@ export class StudentController {
     constructor(private readonly studentService: StudentService) { }
 
     @Roles(Role.ADMIN)
-    @Post("send-verification-email")
+    @Post("send-otp")
     async sendVerificationEmail(@Body() admissionData: AdmissionFormData) {
-        return this.studentService.sendVerificationEmail(admissionData.parent.email, admissionData);
+        return this.studentService.sendOtp(admissionData.parent.email, admissionData);
     }
 
-    @Get("verify-email")
-    async verifyEmail(@Query("email") email: string, @Query("token") token: string) {
-        console.log(email,token)
-        return this.studentService.verifyEmailToken(email, token);
+    @Get("verify-otp")
+    async verifyOtp(@Query("email") email: string, @Query("otp") otp: string) {
+        console.log(email,otp)
+        return this.studentService.verifyOtp(email, otp);
     }
     @Roles(Role.ADMIN)
     @Post('admission')
-    createAdmisiion(@Body() admissionData: AdmissionFormData) {
-        return this.studentService.createAdmission(admissionData)
+    @UseInterceptors(FileInterceptor('profileImage'))
+
+    async createAdmisiion(@UploadedFile()file:Express.Multer.File, @Body() body:any) {
+        const admissionData:AdmissionFormData={
+            student:JSON.parse(body.student),
+            parent:JSON.parse(body.parent)
+        }
+        return this.studentService.createAdmission(admissionData,file)
     };
 
     @Roles(Role.ADMIN, Role.PARENT, Role.STUDENT)

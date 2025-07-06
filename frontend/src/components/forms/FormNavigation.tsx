@@ -1,21 +1,22 @@
 // components/forms/FormNavigation.tsx
 import React, { useState } from 'react';
-import { StudentFormData, AdmissionFormData } from '@/types/student';
+import { StudentFormData } from '@/types/student';
 import Image from 'next/image';
+// import { createAdmissionData } from '@/app/utils/formUtils';
 
 interface FormNavigationProps {
   currentStep: number;
   totalSteps: number;
   onPrevious: () => void;
-  onNext: () => void;
+  onNext: () => Promise<void>;
   onSubmit: () => void;
-  onSendVerification: (admissionData: AdmissionFormData) => Promise<void>;
+  onSendVerification: () => Promise<void>;
   formData: StudentFormData;
   loading: boolean;
   isEmailVerified: boolean;
-  verificationToken: string | null; // Add verificationToken prop
-  setVerificationToken: (token: string | null) => void; // Add setVerificationToken prop
-  handleCheckVerification: () => Promise<void>; // Add handleCheckVerification prop
+  verificationOtp: string | null;
+  setVerificationOtp: (token: string | null) => void;
+  handleCheckOtp: () => Promise<void>;
 }
 
 export const FormNavigation: React.FC<FormNavigationProps> = ({
@@ -28,51 +29,16 @@ export const FormNavigation: React.FC<FormNavigationProps> = ({
   formData,
   loading,
   isEmailVerified,
-  verificationToken,
-  setVerificationToken,
-  handleCheckVerification,
+  verificationOtp,
+  setVerificationOtp,
+  handleCheckOtp,
 }) => {
   const [showPreview, setShowPreview] = useState(false);
 
   const handlePreviewAndVerify = async () => {
-    const admissionData: AdmissionFormData = {
-      student: {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        mobileNumber: formData.phone,
-        dateOfBirth: formData.dateOfBirth || undefined,
-        gender: formData.gender || undefined,
-        bloodGroup: formData.bloodGroup || undefined,
-        nationality: formData.nationality || undefined,
-        religion: formData.religion || undefined,
-        grade: formData.grade || undefined,
-        class: formData.class || undefined,
-        rollNumber: formData.rollNumber || undefined,
-        previousSchool: formData.previousSchool || undefined,
-        address: formData.address || undefined,
-        city: formData.city || undefined,
-        state: formData.state || undefined,
-        pincode: formData.pincode || undefined,
-        medicalConditions: formData.medicalConditions || undefined,
-        allergies: formData.allergies || undefined,
-        medications: formData.medications || undefined,
-        profileImage: undefined,
-      },
-      parent: {
-        name: formData.parentName,
-        email: formData.parentEmail,
-        mobileNumber: formData.parentPhone,
-        occupation: formData.parentOccupation || undefined,
-        relationship: formData.relationship || undefined,
-        emergencyContactName: formData.emergencyContactName || undefined,
-        emergencyContactPhone: formData.emergencyContactPhone || undefined,
-        emergencyContactRelationship: formData.emergencyContactRelationship || undefined,
-      },
-    };
-
+    // const admissionData = createAdmissionData(formData);
     setShowPreview(true);
-    await onSendVerification(admissionData);
+    await onSendVerification();
   };
 
   return (
@@ -96,8 +62,9 @@ export const FormNavigation: React.FC<FormNavigationProps> = ({
             type="button"
             onClick={onNext}
             className="px-6 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors"
+            disabled={loading}
           >
-            Next
+            {loading ? 'Validating...' : 'Next'}
           </button>
         ) : (
           <>
@@ -142,18 +109,39 @@ export const FormNavigation: React.FC<FormNavigationProps> = ({
             <h3 className="text-lg font-semibold text-white mb-4">Application Preview</h3>
             <div className="space-y-4 text-white">
               <h4 className="text-md font-semibold">Student Information</h4>
-              <p><strong>Name:</strong> {formData.firstName} {formData.lastName}</p>
-              <p><strong>Email:</strong> {formData.email}</p>
-              <p><strong>Phone:</strong> {formData.phone}</p>
-              <p><strong>Date of Birth:</strong> {formData.dateOfBirth || "Not provided"}</p>
-              <p><strong>Gender:</strong> {formData.gender || "Not provided"}</p>
-              <p><strong>Grade:</strong> {formData.grade || "Not provided"}</p>
-              <p><strong>Class:</strong> {formData.class || "Not provided"}</p>
-              <p><strong>Roll Number:</strong> {formData.rollNumber || "Not provided"}</p>
-              <p><strong>Address:</strong> {formData.address || "Not provided"}, {formData.city || ""}, {formData.state || ""}, {formData.pincode || ""}</p>
+              <p>
+                <strong>Name:</strong> {formData.firstName} {formData.lastName}
+              </p>
+              <p>
+                <strong>Email:</strong> {formData.email}
+              </p>
+              <p>
+                <strong>Phone:</strong> {formData.phone}
+              </p>
+              <p>
+                <strong>Date of Birth:</strong> {formData.dateOfBirth || 'Not provided'}
+              </p>
+              <p>
+                <strong>Gender:</strong> {formData.gender || 'Not provided'}
+              </p>
+              <p>
+                <strong>Grade:</strong> {formData.grade || 'Not provided'}
+              </p>
+              <p>
+                <strong>Class:</strong> {formData.class || 'Not provided'}
+              </p>
+              <p>
+                <strong>Roll Number:</strong> {formData.rollNumber || 'Not provided'}
+              </p>
+              <p>
+                <strong>Address:</strong> {formData.address || 'Not provided'},{' '}
+                {formData.city || ''}, {formData.state || ''}, {formData.pincode || ''}
+              </p>
               {formData.profileImage && (
                 <div>
-                  <p><strong>Profile Image:</strong></p>
+                  <p>
+                    <strong>Profile Image:</strong>
+                  </p>
                   <Image
                     src={URL.createObjectURL(formData.profileImage)}
                     alt="Profile Preview"
@@ -164,34 +152,51 @@ export const FormNavigation: React.FC<FormNavigationProps> = ({
                 </div>
               )}
               <h4 className="text-md font-semibold mt-4">Parent Information</h4>
-              <p><strong>Name:</strong> {formData.parentName}</p>
-              <p><strong>Email:</strong> {formData.parentEmail}</p>
-              <p><strong>Phone:</strong> {formData.parentPhone}</p>
-              <p><strong>Relationship:</strong> {formData.relationship || "Not provided"}</p>
+              <p>
+                <strong>Name:</strong> {formData.parentName}
+              </p>
+              <p>
+                <strong>Email:</strong> {formData.parentEmail}
+              </p>
+              <p>
+                <strong>Phone:</strong> {formData.parentPhone}
+              </p>
+              <p>
+                <strong>Relationship:</strong> {formData.relationship || 'Not provided'}
+              </p>
               <h4 className="text-md font-semibold mt-4">Medical Information</h4>
-              <p><strong>Medical Conditions:</strong> {formData.medicalConditions || "Not provided"}</p>
-              <p><strong>Allergies:</strong> {formData.allergies || "Not provided"}</p>
-              <p><strong>Medications:</strong> {formData.medications || "Not provided"}</p>
+              <p>
+                <strong>Medical Conditions:</strong> {formData.medicalConditions || 'Not provided'}
+              </p>
+              <p>
+                <strong>Allergies:</strong> {formData.allergies || 'Not provided'}
+              </p>
+              <p>
+                <strong>Medications:</strong> {formData.medications || 'Not provided'}
+              </p>
             </div>
             <p className="text-gray-400 mt-4">
-              A verification email has been sent to {formData.parentEmail}. Please ask the parent to verify their email, or enter the verification token below.
+              A verification email has been sent to {formData.parentEmail}. Please ask the parent
+              to verify their email, or enter the verification token below.
             </p>
             <div className="mt-4">
-              <label htmlFor="verificationToken" className="text-white">Verification Token (optional):</label>
+              <label htmlFor="otp" className="text-white">
+                Enter OTP:
+              </label>
               <input
-                id="verificationToken"
+                id="otp"
                 type="text"
-                value={verificationToken || ''}
-                onChange={(e) => setVerificationToken(e.target.value)}
+                value={verificationOtp || ''}
+                onChange={(e) => setVerificationOtp(e.target.value)}
                 className="mt-1 p-2 w-full bg-gray-700 text-white rounded-md"
               />
               <button
                 type="button"
-                onClick={handleCheckVerification}
+                onClick={handleCheckOtp}
                 className="mt-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                 disabled={loading}
               >
-                Check Verification
+                Verify OTP
               </button>
             </div>
             <div className="flex justify-end mt-4">

@@ -4,17 +4,19 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AuthService } from "src/auth/application/auth.service";
 import { Student } from "src/student/domine/student.schema";
-import { CreateStudentDto, UpdateStudentDto } from "src/student/infrastructure/dto/student.dto";
+import { UpdateStudentDto } from "src/student/infrastructure/dto/student.dto";
 import { User } from "src/auth/domine/user.schema";
 import { Parent } from "../../parent/domine/parent.schema";
-import * as bcrypt from 'bcrypt';
 import { AdmissionFormData } from "../infrastructure/student.controller";
 import { Types } from "mongoose";
-import { File as MulterFile } from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import * as nodemailer from 'nodemailer'
-import * as crypto from 'crypto';
 import { VerificationToken } from "../domine/verification.token.schema";
+import { generateAdmissionSummary } from "../infrastructure/utils/email.summary";
+import { validateUniqueness } from "../infrastructure/utils/validate.uniqueness";
+import { uploadImage } from "../infrastructure/utils/upload.image";
+import { createOrUpdateParent } from "../infrastructure/utils/createOrUpdate.parent";
+import { createUsers } from "../infrastructure/utils/create.users";
 
 
 @Injectable()
@@ -37,56 +39,24 @@ export class StudentService {
             }
         });
     };
-    async sendVerificationEmail(email: string, admissionData: AdmissionFormData): Promise<void> {
-        const token = crypto.randomBytes(32).toString("hex");
-        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    async sendOtp(email: string, admissionData: AdmissionFormData): Promise<void> {
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 24 hours
 
         const verificationToken = new this.verificationTokenModel({
             email,
-            token,
+            token: otp,
             expiresAt,
         });
-        
+
         await verificationToken.save();
-
-        const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${token}&email=${encodeURIComponent(email)}`;
-        console.log("verificationLink",verificationLink)
-
-        const { student, parent } = admissionData;
-        const summary = `
-      <h3>Student Admission Application Preview</h3>
-      <p>Please review the following details and verify your email to confirm the application.</p>
-      <h4>Student Information</h4>
-      <ul>
-        <li><strong>Name:</strong> ${student.firstName} ${student.lastName}</li>
-        <li><strong>Email:</strong> ${student.email}</li>
-        <li><strong>Phone:</strong> ${student.mobileNumber}</li>
-        <li><strong>Date of Birth:</strong> ${student.dateOfBirth || "Not provided"}</li>
-        <li><strong>Gender:</strong> ${student.gender || "Not provided"}</li>
-        <li><strong>Grade:</strong> ${student.grade || "Not provided"}</li>
-        <li><strong>Class:</strong> ${student.class || "Not provided"}</li>
-        <li><strong>Roll Number:</strong> ${student.rollNumber || "Not provided"}</li>
-        <li><strong>Address:</strong> ${student.address || "Not provided"}, ${student.city || ""}, ${student.state || ""}, ${student.pincode || ""}</li>
-      </ul>
-      <h4>Parent Information</h4>
-      <ul>
-        <li><strong>Name:</strong> ${parent.name}</li>
-        <li><strong>Email:</strong> ${parent.email}</li>
-        <li><strong>Phone:</strong> ${parent.mobileNumber}</li>
-        <li><strong>Relationship:</strong> ${parent.relationship || "Not provided"}</li>
-      </ul>
-      <p><strong>Click the link below to verify your email:</strong></p>
-      <a href="${verificationLink}">Verify Email</a>
-      <p>This link will expire in 24 hours.</p>
-    `;
-
+        const summary = generateAdmissionSummary(admissionData, otp);
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
             subject: "Verify Student Admission Application",
             html: summary,
         };
-
         try {
             await this.transporter.sendMail(mailOptions);
             console.log(`Verification email sent to ${email}`);
@@ -96,115 +66,46 @@ export class StudentService {
         }
     }
 
-    async verifyEmailToken(email: string, token: string): Promise<boolean> {
-        const verificationToken = await this.verificationTokenModel.findOne({ email, token }).exec();
-        if (!verificationToken) {
-            throw new BadRequestException("Invalid or expired verification token");
-        }
-        if (verificationToken.expiresAt < new Date()) {
-            await this.verificationTokenModel.deleteOne({ _id: verificationToken._id }).exec();
-            throw new BadRequestException("Verification token has expired");          
-        }
-        await this.verificationTokenModel.deleteOne({ _id: verificationToken._id }).exec();
+    async verifyOtp(email: string, otp: string): Promise<boolean> {
+        const token = await this.verificationTokenModel.findOne({ email, token: otp });
+
+        if (!token || token.expiresAt < new Date()) {
+            throw new BadRequestException('Invalid or expired OTP');
+        };
+
+        await this.verificationTokenModel.deleteOne({ _id: token._id });
         return true;
     }
 
-
-    async createAdmission(admissionData: AdmissionFormData, file?: MulterFile): Promise<Student> {
+    async createAdmission(admissionData: AdmissionFormData, file?: Express.Multer.File): Promise<Student> {
         const { student: studentData, parent: parentData } = admissionData;
 
-        const ex_student = await this.studentModel.findOne({ $or: [{ email: studentData.email }, { mobileNumber: studentData.mobileNumber }] }).exec()
-        if (ex_student) {
-            throw new ForbiddenException("student with email or Mobile number alreadty exists");
-        }
-        let parent = await this.parantModel.findOne({ $or: [{ email: parentData.email }, { mobileNumber: parentData.mobileNumber }] }).exec();
+        const existingParent = await validateUniqueness(
+            this.studentModel, this.parantModel,
+            studentData.email, studentData.mobileNumber,
+            parentData.email, parentData.mobileNumber
+        );
 
-        const randomPassWord = Math.random().toString(36).slice(-8);
-        const hashedPassword = await bcrypt.hash(randomPassWord, 10);
-        if (!parent) {
-            parent = new this.parantModel({ ...parentData, studentIds: [] })
-        }
-        const student = new this.studentModel({ ...studentData, enrollmentDate: new Date(), parentIds: [parent._id] });
+        const student = new this.studentModel({ ...studentData, enrollmentDate: new Date(), parentIds: [], });
 
-        parent.studentIds = [...(parent.studentIds || []), student._id as Types.ObjectId];
-
-        let profileImageUrl = '';
         if (file) {
-            if (file.size > 5 * 1024 * 1024) {
-                throw new ForbiddenException('FileSize exceed 5MB')
-            };
-            if (!["image/jpeg", "image/png"].includes(file.mimetype)) {
-                throw new ForbiddenException("Only JPEG and PNG images are allowed");
-            }
-            try {
-                const uploadResult = await new Promise<any>((resolve, reject) => {
-                    const uploadStream = cloudinary.uploader.upload_stream(
-                        { folder: "student_profiles", resource_type: 'image' },
-                        (error, result) => {
-                            if (error) reject(error);
-                            else resolve(result);
-                        }
-                    );
-                    uploadStream.end(file.buffer);
-                });
-                profileImageUrl = uploadResult.secure_url;
-            } catch (error) {
-                throw new ForbiddenException("Failed to upload image to Cloudinary")
-            }
+            const imageUrl = await uploadImage(file);
+            student.profileImage = imageUrl;
         }
 
         const savedStudent = await student.save();
-        await parent.save()
 
-        const studentUser = new this.userModel({
-            email: studentData.email,
-            password: hashedPassword,
-            role: "STUDENT",
-            profileId: savedStudent._id,
-        });
+        const parent = await createOrUpdateParent(this.parantModel, parentData, savedStudent._id as Types.ObjectId, existingParent);
+        student.parentIds = [parent._id as Types.ObjectId];
+        await student.save();
 
-        const parentUser = new this.userModel({
-            email: parentData.email,
-            password: hashedPassword,
-            role: "PARENT",
-            profileId: parent._id,
-        });
-        await Promise.all([studentUser.save(), parentUser.save()]);
-        console.log(`Student created: ${savedStudent.email}, Password: ${randomPassWord}`);
-        console.log(`Parent created/updated: ${parent.email}, Password: ${randomPassWord}`);
-        return savedStudent
-    }
-    // async create(createStudentDto: CreateStudentDto): Promise<Student> {
-    //     const existingStudent = await this.studentModel.findOne({ email: createStudentDto.email });
-    //     if (existingStudent) throw new ForbiddenException("Email already exists")
+        const { password } = await createUsers(this.userModel, studentData.email, parentData.email, savedStudent._id as Types.ObjectId, parent._id as Types.ObjectId);
 
-    //     const randomPassWord = Math.random().toString(36).slice(-8);
-    //     const hashedPassword = await bcrypt.hash(randomPassWord, 10);
+        console.log(`Student created: ${savedStudent.email}, Password: ${password}`);
+        console.log(`Parent created/updated: ${parent.email}, Password: ${password}`);
 
-    //     const student = new this.studentModel(createStudentDto);
-    //     const savedStudent = await student.save();
-
-    //     if (createStudentDto.parentIds) {
-    //         for (let parentId of createStudentDto.parentIds) {
-    //             const parent = await this.parantModel.findById(parentId).exec();
-    //             if (!parent) throw new NotFoundException(`parent with ID ${parentId} not found`);
-    //             if (!parent.studentIds) parent.studentIds = [];
-    //             if (!parent.studentIds.some((id) => id.toString() === savedStudent.id.toString())) {
-    //                 parent.studentIds.push(savedStudent?.id);
-    //                 await parent.save();
-    //             }
-    //         }
-    //     }
-    //     const user = new this.userModel({
-    //         email: createStudentDto.email,
-    //         password: hashedPassword,
-    //         role: 'STUDENT',
-    //         profileId: savedStudent._id
-    //     });
-    //     await user.save();
-    //     console.log(`student created ${savedStudent.email}, password: ${randomPassWord}`);
-    //     return savedStudent;
-    // };
+        return savedStudent;
+    };
 
     async findAll(): Promise<Student[]> {
         return this.studentModel.find().populate('parentIds').exec();

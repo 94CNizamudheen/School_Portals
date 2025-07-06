@@ -1,4 +1,4 @@
-
+// types/student.ts
 export interface StudentFormData {
   firstName: string;
   lastName: string;
@@ -24,11 +24,11 @@ export interface StudentFormData {
   relationship: string;
   emergencyContactName: string;
   emergencyContactPhone: string;
-  emergencyContactRelationship: string;
+ emergencyContactRelationship: string;
   medicalConditions: string;
   allergies: string;
   medications: string;
-  profileImage: File | null; // For frontend form state
+  profileImage: File | null;
 }
 
 export interface AdmissionFormData {
@@ -53,7 +53,7 @@ export interface AdmissionFormData {
     medicalConditions?: string;
     allergies?: string;
     medications?: string;
-    profileImage?: string; 
+    profileImage?: File | null;
   };
   parent: {
     name: string;

@@ -1,4 +1,4 @@
-// components/forms/PersonalInformationForm.tsx
+
 import React, { useState, useEffect } from 'react';
 import { FormInput } from './FormInput';
 import { FormSelect } from './FormSelect';
@@ -9,19 +9,21 @@ interface PersonalInformationFormProps {
   formData: StudentFormData;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   onImageChange?: (file: File | null) => void;
+  errors?: { [key: string]: string };
 }
 
 export const PersonalInformationForm: React.FC<PersonalInformationFormProps> = ({
   formData,
   onChange,
-  onImageChange
+  onImageChange,
+  errors = {},
 }) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const genderOptions = [
     { value: 'Male', label: 'Male' },
     { value: 'Female', label: 'Female' },
-    { value: 'Other', label: 'Other' }
+    { value: 'Other', label: 'Other' },
   ];
 
   const bloodGroupOptions = [
@@ -32,18 +34,18 @@ export const PersonalInformationForm: React.FC<PersonalInformationFormProps> = (
     { value: 'AB+', label: 'AB+' },
     { value: 'AB-', label: 'AB-' },
     { value: 'O+', label: 'O+' },
-    { value: 'O-', label: 'O-' }
+    { value: 'O-', label: 'O-' },
   ];
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        alert("File size exceeds 5MB");
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size exceeds 5MB');
         return;
       }
-      if (!["image/jpeg", "image/png"].includes(file.type)) {
-        alert("Only JPEG and PNG images are allowed");
+      if (!['image/jpeg', 'image/png'].includes(file.type)) {
+        alert('Only JPEG and PNG images are allowed');
         return;
       }
       const previewUrl = URL.createObjectURL(file);
@@ -56,7 +58,6 @@ export const PersonalInformationForm: React.FC<PersonalInformationFormProps> = (
     }
   };
 
-  // Clean up preview URL to prevent memory leaks
   useEffect(() => {
     return () => {
       if (imagePreview) {
@@ -68,8 +69,6 @@ export const PersonalInformationForm: React.FC<PersonalInformationFormProps> = (
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold text-white mb-4">Personal Information</h3>
-
-      {/* Image Upload Section */}
       <div className="flex flex-col items-center space-y-4">
         <div className="relative">
           <div className="w-32 h-32 rounded-full bg-gray-700 border-2 border-gray-600 flex items-center justify-center overflow-hidden">
@@ -128,71 +127,107 @@ export const PersonalInformationForm: React.FC<PersonalInformationFormProps> = (
             onChange={handleImageChange}
             className="hidden"
           />
+          {errors.profileImage && (
+            <p className="text-red-500 text-sm mt-1">{errors.profileImage}</p>
+          )}
         </div>
         <p className="text-sm text-gray-400">Upload Profile Picture</p>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormInput
-          label="First Name"
-          name="firstName"
-          value={formData.firstName}
-          onChange={onChange}
-          required
-        />
-        <FormInput
-          label="Last Name"
-          name="lastName"
-          value={formData.lastName}
-          onChange={onChange}
-          required
-        />
-        <FormInput
-          label="Email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={onChange}
-          required
-        />
-        <FormInput
-          label="Phone"
-          name="phone"
-          type="tel"
-          value={formData.phone}
-          onChange={onChange}
-          required
-        />
-        <FormInput
-          label="Date of Birth"
-          name="dateOfBirth"
-          type="date"
-          value={formData.dateOfBirth}
-          onChange={onChange}
-          required
-        />
-        <FormSelect
-          label="Gender"
-          name="gender"
-          value={formData.gender}
-          onChange={onChange}
-          options={genderOptions}
-          required
-        />
-        <FormSelect
-          label="Blood Group"
-          name="bloodGroup"
-          value={formData.bloodGroup}
-          onChange={onChange}
-          options={bloodGroupOptions}
-          placeholder="Select Blood Group"
-        />
-        <FormInput
-          label="Nationality"
-          name="nationality"
-          value={formData.nationality}
-          onChange={onChange}
-        />
+        <div>
+          <FormInput
+            label="First Name"
+            name="firstName"
+            value={formData.firstName}
+            onChange={onChange}
+            required
+          />
+          {errors.firstName && (
+            <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
+          )}
+        </div>
+        <div>
+          <FormInput
+            label="Last Name"
+            name="lastName"
+            value={formData.lastName}
+            onChange={onChange}
+            required
+          />
+          {errors.lastName && (
+            <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
+          )}
+        </div>
+        <div>
+          <FormInput
+            label="Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={onChange}
+            required
+          />
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+        </div>
+        <div>
+          <FormInput
+            label="Phone"
+            name="phone"
+            type="tel"
+            value={formData.phone}
+            onChange={onChange}
+            required
+          />
+          {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+        </div>
+        <div>
+          <FormInput
+            label="Date of Birth"
+            name="dateOfBirth"
+            type="date"
+            value={formData.dateOfBirth}
+            onChange={onChange}
+            required
+          />
+          {errors.dateOfBirth && (
+            <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth}</p>
+          )}
+        </div>
+        <div>
+          <FormSelect
+            label="Gender"
+            name="gender"
+            value={formData.gender}
+            onChange={onChange}
+            options={genderOptions}
+            required
+          />
+          {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+        </div>
+        <div>
+          <FormSelect
+            label="Blood Group"
+            name="bloodGroup"
+            value={formData.bloodGroup}
+            onChange={onChange}
+            options={bloodGroupOptions}
+            placeholder="Select Blood Group"
+          />
+          {errors.bloodGroup && (
+            <p className="text-red-500 text-sm mt-1">{errors.bloodGroup}</p>
+          )}
+        </div>
+        <div>
+          <FormInput
+            label="Nationality"
+            name="nationality"
+            value={formData.nationality}
+            onChange={onChange}
+          />
+          {errors.nationality && (
+            <p className="text-red-500 text-sm mt-1">{errors.nationality}</p>
+          )}
+        </div>
       </div>
     </div>
   );
