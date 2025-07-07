@@ -11,13 +11,12 @@ import { AdmissionFormData } from "../infrastructure/student.controller";
 import { Types } from "mongoose";
 import { v2 as cloudinary } from 'cloudinary';
 import * as nodemailer from 'nodemailer'
-import { VerificationToken } from "../domine/verification.token.schema";
 import { generateAdmissionSummary } from "../infrastructure/utils/email.summary";
 import { validateUniqueness } from "../infrastructure/utils/validate.uniqueness";
 import { uploadImage } from "../infrastructure/utils/upload.image";
 import { createOrUpdateParent } from "../infrastructure/utils/createOrUpdate.parent";
 import { createUsers } from "../infrastructure/utils/create.users";
-
+import { Otp, OtpSchema } from "src/auth/domine/otp.schema";
 
 @Injectable()
 export class StudentService {
@@ -26,7 +25,7 @@ export class StudentService {
         @InjectModel(Student.name) private studentModel: Model<Student>,
         @InjectModel(Parent.name) private parantModel: Model<Parent>,
         @InjectModel(User.name) private userModel: Model<User>,
-        @InjectModel(VerificationToken.name) private verificationTokenModel: Model<VerificationToken>,
+        @InjectModel(Otp.name) private otpModel:Model<Otp>,
         private authService: AuthService
     ) {
         this.transporter = nodemailer.createTransport({
@@ -39,17 +38,18 @@ export class StudentService {
             }
         });
     };
-    async sendOtp(email: string, admissionData: AdmissionFormData): Promise<void> {
+    async sendVerificationEmail(email: string, admissionData: AdmissionFormData): Promise<void> {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 24 hours
+        const expireAt = new Date(Date.now() + 10 * 60 * 1000); // 24 hours
 
-        const verificationToken = new this.verificationTokenModel({
+
+        const verificationOtp = new this.otpModel({
             email,
-            token: otp,
-            expiresAt,
+            password: otp,
+            expireAt,
         });
 
-        await verificationToken.save();
+        await verificationOtp.save();
         const summary = generateAdmissionSummary(admissionData, otp);
         const mailOptions = {
             from: process.env.EMAIL_USER,
@@ -64,17 +64,6 @@ export class StudentService {
             console.error("Error sending verification email:", error);
             throw new BadRequestException("Failed to send verification email");
         }
-    }
-
-    async verifyOtp(email: string, otp: string): Promise<boolean> {
-        const token = await this.verificationTokenModel.findOne({ email, token: otp });
-
-        if (!token || token.expiresAt < new Date()) {
-            throw new BadRequestException('Invalid or expired OTP');
-        };
-
-        await this.verificationTokenModel.deleteOne({ _id: token._id });
-        return true;
     }
 
     async createAdmission(admissionData: AdmissionFormData, file?: Express.Multer.File): Promise<Student> {

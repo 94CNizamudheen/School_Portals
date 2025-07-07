@@ -1,6 +1,6 @@
 
 import { StudentService } from "../application/student.service";
-import { Controller, Injectable, UseGuards, Post, Get, Delete, Query, Body, Param, UseInterceptors, UploadedFile, } from "@nestjs/common";
+import { Controller, UseGuards, Post, Get, Delete, Query, Body, Param, UseInterceptors, UploadedFile, } from "@nestjs/common";
 import { CreateStudentDto, UpdateStudentDto } from "./dto/student.dto";
 import { JwtAuthGuard } from "src/auth/infrastrucure/jwt-auth.guard";
 import { Roles } from "src/auth/infrastrucure/roles.decorator";
@@ -19,15 +19,9 @@ export class StudentController {
     constructor(private readonly studentService: StudentService) { }
 
     @Roles(Role.ADMIN)
-    @Post("send-otp")
+    @Post("send-verification-email")
     async sendVerificationEmail(@Body() admissionData: AdmissionFormData) {
-        return this.studentService.sendOtp(admissionData.parent.email, admissionData);
-    }
-
-    @Get("verify-otp")
-    async verifyOtp(@Query("email") email: string, @Query("otp") otp: string) {
-        console.log(email,otp)
-        return this.studentService.verifyOtp(email, otp);
+        return this.studentService.sendVerificationEmail(admissionData.parent.email, admissionData);
     }
     @Roles(Role.ADMIN)
     @Post('admission')

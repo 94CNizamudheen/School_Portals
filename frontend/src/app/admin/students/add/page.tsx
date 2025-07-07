@@ -104,7 +104,7 @@ const StudentAdmissionForm: React.FC = () => {
     setLoading(true);
     try {
       const admissionData = createAdmissionData(formData);
-      await axios.post(`${API}/students/send-otp`, admissionData, {
+      await axios.post(`${API}/students/send-verification-email`, admissionData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
         },
@@ -124,17 +124,17 @@ const StudentAdmissionForm: React.FC = () => {
     }
     setLoading(true);
     try {
-      await axios.get(`${API}/students/verify-otp`, {
-        params: {
-          email: formData.parentEmail,
-          otp: verificationOtp,
-        },
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-      });
+        await axios.post(`${API}/auth/verify-otp`,{
+          email:formData.parentEmail,
+          code:verificationOtp
+        },{
+          headers:{
+            Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+          }
+        })
       setIsEmailVerified(true);
       toast.success('Email verified successfully!');
+
     } catch (error) {
       console.error('Error verifying email:', error);
       toast.error('Email not verified');

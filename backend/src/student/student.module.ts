@@ -7,7 +7,7 @@ import { Student,StudentSchema } from "./domine/student.schema";
 import { AuthModule } from "src/auth/auth.module";
 import {User, UserSchema } from "src/auth/domine/user.schema";
 import { ParentModule } from "src/parent/parent.module";
-import { VerificationToken, VerificationTokenSchema } from "./domine/verification.token.schema";
+import { Otp,OtpSchema } from "src/auth/domine/otp.schema";
 import { Parent, ParentSchema } from "src/parent/domine/parent.schema";
 
 
@@ -17,7 +17,7 @@ import { Parent, ParentSchema } from "src/parent/domine/parent.schema";
             {name:Student.name,schema:StudentSchema},
             {name:User.name,schema:UserSchema},
             {name:Parent.name,schema:ParentSchema},
-            {name:VerificationToken.name,schema:VerificationTokenSchema}
+            {name:Otp.name,schema:OtpSchema}
         ]),
         AuthModule,
         ParentModule
