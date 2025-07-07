@@ -74,9 +74,7 @@ export class StudentService {
             studentData.email, studentData.mobileNumber,
             parentData.email, parentData.mobileNumber
         );
-
         const student = new this.studentModel({ ...studentData, enrollmentDate: new Date(), parentIds: [], });
-
         if (file) {
             const imageUrl = await uploadImage(file);
             student.profileImage = imageUrl;
