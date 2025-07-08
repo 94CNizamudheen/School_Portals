@@ -3,8 +3,8 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from 'bcrypt'
-import { User } from "../domine/user.schema"; 
-import { Otp } from "../domine/otp.schema";
+import { User } from "../domain/user.schema"; 
+import { Otp } from "../domain/otp.schema";
 import { RegisterDto, SignInDto, ForgotPasswordDto, VerifyOtpDto, ResetPasswordDto, } from '../infrastrucure/dto/auth.dto';
 
 @Injectable()

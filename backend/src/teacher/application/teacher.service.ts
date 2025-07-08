@@ -2,9 +2,9 @@ import {NotFoundException,ForbiddenException, Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AuthService } from "src/auth/application/auth.service";
-import { Teacher } from "../domine/teacher.schema";
+import { Teacher } from "../domain/teacher.schema";
 import { CreateTeacherDto,UpdateTeacherDto } from "../infrastruture/dto/teacher.dto";
-import { User } from "src/auth/domine/user.schema";
+import { User } from "src/auth/domain/user.schema";
 import * as bcrypt from 'bcrypt';
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { User } from '../../../auth/domine/user.schema';
+import { User } from '../../../auth/domain/user.schema';
 import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { ForbiddenException } from '@nestjs/common';

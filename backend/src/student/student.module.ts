@@ -3,12 +3,12 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { StudentService } from "./application/student.service";
 import { StudentController } from "./infrastructure/student.controller";
-import { Student,StudentSchema } from "./domine/student.schema";
+import { Student,StudentSchema } from "./domain/student.schema";
 import { AuthModule } from "src/auth/auth.module";
-import {User, UserSchema } from "src/auth/domine/user.schema";
+import {User, UserSchema } from "src/auth/domain/user.schema";
 import { ParentModule } from "src/parent/parent.module";
-import { Otp,OtpSchema } from "src/auth/domine/otp.schema";
-import { Parent, ParentSchema } from "src/parent/domine/parent.schema";
+import { Otp,OtpSchema } from "src/auth/domain/otp.schema";
+import { Parent, ParentSchema } from "src/parent/domain/parent.schema";
 
 
 @Module({

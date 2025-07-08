@@ -3,10 +3,10 @@ import { Injectable, NotFoundException, ForbiddenException, Param, BadRequestExc
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AuthService } from "src/auth/application/auth.service";
-import { Student } from "src/student/domine/student.schema";
+import { Student } from "src/student/domain/student.schema";
 import { UpdateStudentDto } from "src/student/infrastructure/dto/student.dto";
-import { User } from "src/auth/domine/user.schema";
-import { Parent } from "../../parent/domine/parent.schema";
+import { User } from "src/auth/domain/user.schema";
+import { Parent } from "../../parent/domain/parent.schema";
 import { AdmissionFormData } from "../infrastructure/student.controller";
 import { Types } from "mongoose";
 import { v2 as cloudinary } from 'cloudinary';
@@ -16,7 +16,7 @@ import { validateUniqueness } from "../infrastructure/utils/validate.uniqueness"
 import { uploadImage } from "../infrastructure/utils/upload.image";
 import { createOrUpdateParent } from "../infrastructure/utils/createOrUpdate.parent";
 import { createUsers } from "../infrastructure/utils/create.users";
-import { Otp, OtpSchema } from "src/auth/domine/otp.schema";
+import { Otp, OtpSchema } from "src/auth/domain/otp.schema";
 
 @Injectable()
 export class StudentService {

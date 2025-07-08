@@ -2,9 +2,9 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 
-import { Parent,ParentSchema } from "./domine/parent.schema";
-import { User,UserSchema } from "src/auth/domine/user.schema";
-import { Student,StudentSchema } from "src/student/domine/student.schema";
+import { Parent,ParentSchema } from "./domain/parent.schema";
+import { User,UserSchema } from "src/auth/domain/user.schema";
+import { Student,StudentSchema } from "src/student/domain/student.schema";
 import { AuthModule } from "src/auth/auth.module";
 import { ParentController } from "./infrastructure/parent.controller";
 import { ParentService } from "./application/parent.service";

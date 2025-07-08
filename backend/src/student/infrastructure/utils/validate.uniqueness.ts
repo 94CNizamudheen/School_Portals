@@ -2,8 +2,8 @@
 
 import { ForbiddenException } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Student } from '../../domine/student.schema';
-import { Parent } from '../../../parent/domine/parent.schema';
+import { Student } from '../../domain/student.schema';
+import { Parent } from '../../../parent/domain/parent.schema';
 
 export async function validateUniqueness(
   studentModel: Model<Student>,

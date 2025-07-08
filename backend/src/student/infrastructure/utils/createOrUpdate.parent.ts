@@ -1,4 +1,4 @@
-import { Parent } from '../../../parent/domine/parent.schema';
+import { Parent } from '../../../parent/domain/parent.schema';
 import { Model, Types } from 'mongoose';
 
 export async function createOrUpdateParent(

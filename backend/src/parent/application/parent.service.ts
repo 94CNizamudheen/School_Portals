@@ -2,11 +2,11 @@
 import { UpdateParentDto, CreateParentDto } from "../infrastructure/dto/parent.dto";
 import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Parent, ParentSchema } from "../domine/parent.schema";
+import { Parent, ParentSchema } from "../domain/parent.schema";
 import { Model ,Types} from "mongoose";
 import { AuthService } from "src/auth/application/auth.service";
-import { User } from "src/auth/domine/user.schema";
-import { Student } from "src/student/domine/student.schema";
+import { User } from "src/auth/domain/user.schema";
+import { Student } from "src/student/domain/student.schema";
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
