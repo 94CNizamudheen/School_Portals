@@ -17,7 +17,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
-  // const { token, role, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
   const checkAdminAuth = async () => {
@@ -33,14 +32,14 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           },
         });
 
-        const user = response.data.user;
+        const {user,access_token} = response.data;
 
         if (user?.role !== 'ADMIN') {
           dispatch(logout());
           router.replace('/unauthorized');
         } else {
           // Dispatch login to update Redux state
-          dispatch(login({ token, role: user.role }));
+         dispatch(login({ access_token: access_token, role: user.role, userId: user.id }))
         }
       } catch (err) {
         console.error('Token verification failed:', err);

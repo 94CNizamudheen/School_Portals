@@ -37,19 +37,19 @@ export class StudentController {
 
     @Roles(Role.ADMIN, Role.PARENT, Role.STUDENT)
     @Get()
-    findall() {
+    async findall() {
         return this.studentService.findAll();
     };
 
     @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
     @Get(':id')
-    findOne(@Param('id') id: string) {
+    async findOne(@Param('id') id: string) {
         return this.studentService.findOne(id)
     };
 
     @Roles(Role.ADMIN)
     @Delete(':id')
-    delete(@Param('id') id: string) {
+    async delete(@Param('id') id: string) {
         return this.studentService.delete(id);
     }
 }

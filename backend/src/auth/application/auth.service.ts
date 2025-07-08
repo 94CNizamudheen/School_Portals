@@ -30,14 +30,15 @@ export class  AuthService{
     };
 
 
-    async signIn(dto:SignInDto): Promise<{access_token:string}>{
+    async signIn(dto:SignInDto): Promise<{access_token:string,userId:string}>{
         console.log(dto)
         const user= await this.userModel.findOne({email:dto.email})
         if(!user|| !(await bcrypt.compare(dto.password,user.password)) ){
              throw new UnauthorizedException("Invalid Credentials")
         }
         const payload= {sub:user._id,email:user.email,role:user.role}
-        return{access_token:this.jwtService.sign(payload)}
+        console.log(user.id)
+        return{access_token:this.jwtService.sign(payload),userId:user.id.toString()}
     };
 
     async sendOtp(email:string): Promise<void>{

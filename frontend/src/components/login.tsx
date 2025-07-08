@@ -39,10 +39,11 @@ const Login = () => {
         role,
       });
 
-      const token = response.data.access_token;
+      const {access_token,userId} = response.data;
       console.log('responce', response)
-      console.log("token", token)
-      dispatch(login({ token, role }));
+      console.log("token", access_token)
+      console.log("userId",userId)
+      dispatch(login({ access_token, role ,userId}));
       setIsloggedIn(true);
 
     } catch (err: unknown) {

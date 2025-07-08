@@ -72,6 +72,9 @@ export class Student extends Document {
 
   @Prop()
   enrollmentDate: Date;
+  
+  @Prop({default:true})
+  isActive: boolean;
 }
 
 export const StudentSchema = SchemaFactory.createForClass(Student);

@@ -1,20 +1,7 @@
-
-
-
 import React from 'react';
 import { Filter } from 'lucide-react';
 import StudentTableRow from './StudentTableRow';
-
-interface Student {
-  id:number;
-  name: string;
-  email: string;
-  rollNumber: string;
-  grade: string;
-  class: string;
-  phone: string;
-  status: string;
-}
+import { Student } from '@/types/student';
 
 interface StudentTableProps {
   students: Student[];
@@ -25,7 +12,7 @@ const StudentTable: React.FC<StudentTableProps> = ({ students }) => {
     <div className="bg-gray-800 rounded-xl shadow-sm overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
         <h2 className="text-lg font-semibold text-white">All Students</h2>
-        <button className="flex items-center space-x-2 px-3 py-2  hover:text-gray-700">
+        <button className="flex items-center space-x-2 px-3 py-2 hover:text-gray-700">
           <Filter className="w-4 h-4" />
           <span>Filter</span>
         </button>
@@ -43,7 +30,7 @@ const StudentTable: React.FC<StudentTableProps> = ({ students }) => {
           </thead>
           <tbody className="bg-gray-500 divide-y divide-gray-200">
             {students.map(student => (
-              <StudentTableRow key={student.id} student={student} />
+              <StudentTableRow key={student._id} student={student} />
             ))}
           </tbody>
         </table>

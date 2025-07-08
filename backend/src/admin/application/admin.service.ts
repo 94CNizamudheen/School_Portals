@@ -1,20 +1,13 @@
-import { Injectable, NotFoundException, ForbiddenException, Inject } from "@nestjs/common";
+import { Injectable, NotFoundException, ForbiddenException, } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { AuthService } from "src/auth/application/auth.service";
 import { Admin } from "../domine/admin.schema";
 import { CreateAdminDto, UpdateAdminDto } from "../infrastrucure/admin.dto";
 import { User } from "src/auth/domine/user.schema";
-import { StudentService } from "src/student/application/student.service";
-import { ParentService } from "src/parent/application/parent.service";
-import { TeacherService } from "src/teacher/application/teacher.service";
-import { CreateTeacherDto, UpdateTeacherDto } from "src/teacher/infrastruture/dto/teacher.dto";
-import { CreateStudentDto, UpdateStudentDto } from "src/student/infrastructure/dto/student.dto";
-import { CreateParentDto, UpdateParentDto } from "src/parent/infrastructure/dto/parent.dto";
+
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from "@nestjs/config";
 import { Logger } from "@nestjs/common";
-import { AdmissionFormData } from "src/student/infrastructure/student.controller";
 
 
 @Injectable()
@@ -22,12 +15,7 @@ export class AdminService {
     constructor(
         @InjectModel(Admin.name) private adminModel: Model<Admin>,
         @InjectModel(User.name) private userModel: Model<User>,
-        private authService: AuthService,
-        private studentService: StudentService,
-        private teacherService: TeacherService,
-        private parentSrvice: ParentService,
         private configService: ConfigService
-
     ) { };
 
 
@@ -51,24 +39,7 @@ export class AdminService {
         console.log(`Admin created: ${savedAdmin.email}, Password: ${randomPassword}`)
         return savedAdmin;
     };
-    async createAdmission(admissionData: AdmissionFormData): Promise<any> {
-        return this.studentService.createAdmission(admissionData);
-    }
-    async updateStudent(id: string, updateStudentDto: UpdateStudentDto): Promise<any> {
-        return this.studentService.update(id, updateStudentDto)
-    };
-    async createTeacher(createDto: CreateTeacherDto): Promise<any> {
-        return this.teacherService.create(createDto);
-    }
-    async updateTeacher(id: string, updateDto: UpdateTeacherDto): Promise<any> {
-        return this.teacherService.update(id, updateDto);
-    };
-    async createParent(createDto: CreateParentDto): Promise<any> {
-        return this.parentSrvice.create(createDto);
-    }
-    async updateParent(id: string, updateDto: UpdateParentDto): Promise<any> {
-        return this.parentSrvice.update(id, updateDto);
-    };
+
 
     async findAll(): Promise<Admin[]> {
         return this.adminModel.find().exec();
@@ -105,8 +76,6 @@ export class AdminService {
         const password = this.configService.get<string>('SUPERADMIN_PASSWORD');
         const name = this.configService.get<string>('SUPERADMIN_NAME');
         const mobileNumber = this.configService.get<string>('SUPERADMIN_MOBILE');
-
-
         if (!email || !password || !name || !mobileNumber) {
             logger.error('Missing super admin environment variables');
             throw new Error('Missing super admin environment variables');

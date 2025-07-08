@@ -1,48 +1,39 @@
 import React from 'react';
-
-interface Student {
-  id: number;
-  name: string;
-  email: string;
-  rollNumber: string;
-  grade: string;
-  class: string;
-  phone: string;
-  status: string;
-}
+import { Student } from '@/types/student';
 
 interface StudentTableRowProps {
   student: Student;
 }
 
 const StudentTableRow: React.FC<StudentTableRowProps> = ({ student }) => {
+  const fullName = `${student.firstName} ${student.lastName}`;
+  const status = student.isActive ? 'Active' : 'Inactive';
+
   const handleViewStudent = () => {
-    // Handle view student logic here
-    console.log('View student:', student.id);
-    // You can navigate to student details page or open a modal
+    console.log('View student:', student._id);
   };
 
   return (
-    <tr key={student.id} className="hover:bg-gray-300">
+    <tr className="hover:bg-gray-300">
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
           <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-            <span className="text-blue-600 font-medium">{student.name.charAt(0)}</span>
+            <span className="text-blue-600 font-medium">{student.firstName?.charAt(0)}</span>
           </div>
           <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">{student.name}</div>
+            <div className="text-sm font-medium text-gray-900">{fullName}</div>
             <div className="text-sm text-gray-500">{student.email}</div>
           </div>
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{student.rollNumber}</td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{student.grade} - {student.class}</td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{student.phone}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{student.mobileNumber}</td>
       <td className="px-6 py-4 whitespace-nowrap">
         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-          student.status === 'Active' ? 'bg-green-800 text-green-100' : 'bg-red-800 text-red-100'
+          student.isActive ? 'bg-green-800 text-green-100' : 'bg-red-800 text-red-100'
         }`}>
-          {student.status}
+          {status}
         </span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

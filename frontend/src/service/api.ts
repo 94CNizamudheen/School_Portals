@@ -67,6 +67,18 @@ export const submitAdmission = async ( formData: StudentFormData,  verificationO
   })
 }
 
+export const findAllStudent= async()=>{
+  try {
+    const response= await apiClient.get('/students',{
+      headers:getAuthHeaders()
+    });
+    return response.data;
+  } catch (error) {
+    console.error('failed to fetch students',error)
+    throw error;
+  }
+
+}
 
 
 

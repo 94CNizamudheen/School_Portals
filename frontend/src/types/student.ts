@@ -65,4 +65,32 @@ export interface AdmissionFormData {
     emergencyContactPhone?: string;
     emergencyContactRelationship?: string;
   };
+};
+
+export interface Student {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobileNumber: string;
+  dateOfBirth?: string;
+  gender?: string;
+  bloodGroup?: string;
+  nationality?: string;
+  religion?: string;
+  grade?: string;
+  class?: string;
+  rollNumber?: string;
+  previousSchool?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  medicalConditions?: string;
+  allergies?: string;
+  medications?: string;
+  profileImage?: string;
+  enrollmentDate?: string;
+  isActive?: boolean;
+  parentIds?: string[]; 
 }
