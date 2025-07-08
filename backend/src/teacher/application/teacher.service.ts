@@ -1,73 +1,97 @@
-import {NotFoundException,ForbiddenException, Injectable } from "@nestjs/common";
+import { NotFoundException, ForbiddenException, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AuthService } from "src/auth/application/auth.service";
 import { Teacher } from "../domain/teacher.schema";
-import { CreateTeacherDto,UpdateTeacherDto } from "../infrastruture/dto/teacher.dto";
+import { CreateTeacherDto, UpdateTeacherDto } from "../infrastruture/dto/teacher.dto";
 import { User } from "src/auth/domain/user.schema";
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class TeacherService{
+export class TeacherService {
     constructor(
-        @InjectModel(Teacher.name) private teacherModel:Model<Teacher>,
-        @InjectModel(User.name) private userModel:Model<User>,
-        private authService:AuthService
-    ){};
-    async create(create_dto:CreateTeacherDto):Promise<Teacher>{
-        const existingTeacher= await this.teacherModel.findOne({email:create_dto.email});
-        if(existingTeacher) throw new ForbiddenException("Teacher with this email already exists");
+        @InjectModel(Teacher.name) private teacherModel: Model<Teacher>,
+        @InjectModel(User.name) private userModel: Model<User>,
+        private authService: AuthService
+    ) { }
 
-        const randomPassWord= Math.random().toString(36).slice(-8)
-        const hashedPassword= await bcrypt.hash(randomPassWord,10);
+    async create(create_dto: CreateTeacherDto): Promise<Teacher> {
+        try {
+            const existingTeacher = await this.teacherModel.findOne({ email: create_dto.email });
+            if (existingTeacher) throw new ForbiddenException("Teacher with this email already exists");
 
-        const teacher= new this.teacherModel(create_dto);
-        const savedTeacher= await teacher.save();
+            const randomPassWord = Math.random().toString(36).slice(-8);
+            const hashedPassword = await bcrypt.hash(randomPassWord, 10);
 
-        const user= new this.userModel({
-            name:create_dto.name,
-            password:hashedPassword,
-            role:'TEACHER',
-            profileId:savedTeacher._id
-        })
-        await user.save();
-        console.log(`Teacher created: ${savedTeacher.email}, Password: ${randomPassWord}`);
-        return savedTeacher;
-    };
+            const teacher = new this.teacherModel(create_dto);
+            const savedTeacher = await teacher.save();
 
-    async findAll():Promise<Teacher[]>{
-        return this.teacherModel.find().exec()
-    };
-    async findOne(id:string):Promise<Teacher>{
-        const teacher= await this.teacherModel.findById(id).exec()
-        if(!teacher) throw new NotFoundException("Teacher Not found");
-        return teacher;
+            const user = new this.userModel({
+                name: create_dto.name,
+                password: hashedPassword,
+                role: 'TEACHER',
+                profileId: savedTeacher._id
+            });
+            await user.save();
+
+            console.log(`Teacher created: ${savedTeacher.email}, Password: ${randomPassWord}`);
+            return savedTeacher;
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to create teacher');
+        }
     }
 
-    async update(id:string,update_dto:UpdateTeacherDto):Promise  <Teacher|null>{
-        const teacher = await this.teacherModel.findById(id).exec();
-        if(!teacher) throw new NotFoundException('Teacher not Found');
+    async findAll(): Promise<Teacher[]> {
+        try {
+            return await this.teacherModel.find().exec();
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to fetch teachers');
+        }
+    }
 
-        if(update_dto.email){
-            const existingTeacher= await this.teacherModel.findOne({email:update_dto.email});
-            if(existingTeacher && (existingTeacher?._id as string).toString()!==id) throw new ForbiddenException("Email already exists");
+    async findOne(id: string): Promise<Teacher> {
+        try {
+            const teacher = await this.teacherModel.findById(id).exec();
+            if (!teacher) throw new NotFoundException("Teacher Not found");
+            return teacher;
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to fetch teacher');
+        }
+    }
 
-            const user= await this.userModel.findOne({profileId:id});
-            if(user){
-                user.email= update_dto.email;
-                await user.save();
+    async update(id: string, update_dto: UpdateTeacherDto): Promise<Teacher | null> {
+        try {
+            const teacher = await this.teacherModel.findById(id).exec();
+            if (!teacher) throw new NotFoundException('Teacher not Found');
+
+            if (update_dto.email) {
+                const existingTeacher = await this.teacherModel.findOne({ email: update_dto.email });
+                if (existingTeacher && (existingTeacher?._id as string).toString() !== id) {
+                    throw new ForbiddenException("Email already exists");
+                }
+
+                const user = await this.userModel.findOne({ profileId: id });
+                if (user) {
+                    user.email = update_dto.email;
+                    await user.save();
+                }
             }
-         
-        }  
-         return this.teacherModel.findByIdAndUpdate(id,update_dto,{new:true}).exec();
-    }
-    async delete(id:string):Promise<void>{
-        const teacher= await this.teacherModel.findById(id).exec();
-        if(!teacher) throw new NotFoundException("Teacher not found");
-        await this.teacherModel.deleteOne({id:id}).exec();
-        await this.userModel.deleteOne({profileId:id}).exec();
+
+            return await this.teacherModel.findByIdAndUpdate(id, update_dto, { new: true }).exec();
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to update teacher');
+        }
     }
 
+    async delete(id: string): Promise<void> {
+        try {
+            const teacher = await this.teacherModel.findById(id).exec();
+            if (!teacher) throw new NotFoundException("Teacher not found");
+
+            await this.teacherModel.deleteOne({ _id: id }).exec();
+            await this.userModel.deleteOne({ profileId: id }).exec();
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to delete teacher');
+        }
+    }
 }
-
-
