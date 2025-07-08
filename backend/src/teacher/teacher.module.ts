@@ -5,7 +5,7 @@ import { TeacherService } from "./application/teacher.service";
 import { TeacherController } from "./infrastruture/teacher.controller";
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { AuthModule } from "src/auth/auth.module";
+import { AuthModule } from "src/auth/infrastrucure/auth.module";
 
 @Module({
     imports:[

@@ -1,94 +1,64 @@
-
-import {Injectable,NotFoundException,ForbiddenException,InternalServerErrorException,Logger,} from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Admin } from '../domain/admin.schema';
-import { CreateAdminDto, UpdateAdminDto } from '../infrastrucure/admin.dto';
-import { User } from 'src/auth/domain/user.schema';
-import * as bcrypt from 'bcrypt';
+// application/admin.service.ts
+import {
+  Injectable,
+  ForbiddenException,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import { AdminRepository } from '../domain/admin.repository';
+import { CreateAdminDto, UpdateAdminDto } from '../infrastructure/admin.dto';
 import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcrypt';
+import { Admin } from '../domain/admin.schema';
 
 @Injectable()
 export class AdminService {
   constructor(
-    @InjectModel(Admin.name) private adminModel: Model<Admin>,
-    @InjectModel(User.name) private userModel: Model<User>,
-    private configService: ConfigService
+    private readonly adminRepository: AdminRepository,
+    private readonly configService: ConfigService
   ) {}
 
-  async create(createAdminDto: CreateAdminDto): Promise<Admin> {
+  async create(createDto: CreateAdminDto): Promise<Admin> {
     try {
-      const ex_admin = await this.adminModel.findOne({ email: createAdminDto.email }).exec();
-      if (ex_admin) throw new ForbiddenException('Admin with this email already exists');
+      const existing = await this.adminRepository.findByEmail(createDto.email);
+      if (existing) throw new ForbiddenException('Admin already exists');
 
-      const randomPassword = Math.random().toString(36).slice(-8);
-      const hashedPassword = await bcrypt.hash(randomPassword, 10);
-      const admin = new this.adminModel(createAdminDto);
-      const savedAdmin = await admin.save();
+      const password = Math.random().toString(36).slice(-8);
+      const savedAdmin = await this.adminRepository.createAdmin(createDto);
+      await this.adminRepository.createUserAccount(savedAdmin._id as string, createDto.name, createDto.email, password);
 
-      const user = new this.userModel({
-        name: createAdminDto.name,
-        password: hashedPassword,
-        role: 'ADMIN',
-        profileId: savedAdmin._id,
-      });
-      await user.save();
-
-      console.log(`Admin created: ${savedAdmin.email}, Password: ${randomPassword}`);
+      console.log(`Admin created: ${createDto.email}, Password: ${password}`);
       return savedAdmin;
     } catch (error) {
-      console.error('Create Admin Error:', error);
       throw new InternalServerErrorException('Unable to create admin');
     }
   }
 
   async findAll(): Promise<Admin[]> {
-    try {
-      return await this.adminModel.find().exec();
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to fetch admin list');
-    }
+    return this.adminRepository.findAll();
   }
 
   async findOne(id: string): Promise<Admin> {
-    try {
-      const admin = await this.adminModel.findById(id).exec();
-      if (!admin) throw new NotFoundException('Admin not found');
-      return admin;
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to fetch admin');
-    }
+    return this.adminRepository.findById(id);
   }
 
   async delete(id: string): Promise<void> {
-    try {
-      const admin = await this.adminModel.findById(id).exec();
-      if (!admin) throw new NotFoundException('Admin not found');
-
-      await this.adminModel.deleteOne({ _id: id });
-      await this.userModel.deleteOne({ profileId: id });
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to delete admin');
-    }
+    await this.findOne(id); // throws if not found
+    await this.adminRepository.deleteAdminAndUser(id);
   }
 
   async update(id: string, updateDto: UpdateAdminDto): Promise<Admin | null> {
     try {
-      const admin = await this.adminModel.findById(id).exec();
-      if (!admin) throw new NotFoundException('Admin not found');
+      await this.findOne(id);
 
       if (updateDto.email) {
-        const exist = await this.adminModel.findOne({ email: updateDto.email }).exec();
-        if (exist) throw new ForbiddenException('Email already exists');
+        const existing = await this.adminRepository.findByEmail(updateDto.email);
+        if (existing) throw new ForbiddenException('Email already exists');
+        await this.adminRepository.updateUserEmail(id, updateDto.email);
       }
 
-      const user = await this.userModel.findOne({ profileId: id }).exec();
-      if (user && updateDto.email) {
-        user.email = updateDto.email;
-        await user.save();
-      }
-
-      return await this.adminModel.findByIdAndUpdate(id, updateDto, { new: true }).exec();
+      return this.adminRepository.updateAdmin(id, updateDto);
     } catch (error) {
       throw new InternalServerErrorException('Failed to update admin');
     }
@@ -101,39 +71,26 @@ export class AdminService {
       const email = this.configService.get<string>('SUPERADMIN_EMAIL');
       const password = this.configService.get<string>('SUPERADMIN_PASSWORD');
       const name = this.configService.get<string>('SUPERADMIN_NAME');
-      const mobileNumber = this.configService.get<string>('SUPERADMIN_MOBILE');
+      const mobile = this.configService.get<string>('SUPERADMIN_MOBILE');
 
-      if (!email || !password || !name || !mobileNumber) {
-        logger.error('Missing super admin environment variables');
-        throw new Error('Missing super admin environment variables');
+      if (!email || !password || !name || !mobile) {
+        logger.error('Missing environment variables');
+        throw new Error('Missing super admin env variables');
       }
 
-      const ex_super = await this.adminModel.findOne({ email }).exec();
-      if (ex_super) {
+      const exists = await this.adminRepository.findByEmail(email);
+      if (exists) {
         logger.log('Super admin already exists');
         return;
       }
 
+      const admin = await this.adminRepository.createAdmin({ name, email, mobileNumber: mobile });
       const hashedPassword = await bcrypt.hash(password, 10);
-      const admin = new this.adminModel({
-        name,
-        email,
-        mobileNumber,
-      });
-      const savedAdmin = await admin.save();
+      await this.adminRepository.createUserAccount(admin._id as string , name, email, hashedPassword);
 
-      const user = new this.userModel({
-        name,
-        email,
-        password: hashedPassword,
-        role: 'ADMIN',
-        profileId: savedAdmin._id,
-      });
-
-      await user.save();
-      logger.log(`Super admin created. Email: ${email}, Password: ${password}`);
+      logger.log(`Super admin created: ${email}`);
     } catch (error) {
-      logger.error('Super admin creation failed:', error);
+      logger.error('Error creating super admin', error);
       throw new InternalServerErrorException('Failed to seed super admin');
     }
   }

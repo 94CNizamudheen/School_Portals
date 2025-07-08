@@ -4,14 +4,14 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ConfigService,ConfigModule } from "@nestjs/config";
-import { AuthController } from "./infrastrucure/auth.controller";
-import { AuthService } from "./application/auth.service";
-import { Otp,OtpSchema } from "./domain/otp.schema";
-import { User,UserSchema } from "./domain/user.schema";
-
+import { AuthController } from "./auth.controller";
+import { AuthService } from "../application/auth.service";
+import { Otp,OtpSchema } from "../domain/otp.schema";
+import { User,UserSchema } from "../domain/user.schema";
+import { AuthRepository } from "../domain/auth.repository";
 import { JwtModule } from "@nestjs/jwt";
-import { JwtStrategy } from "./infrastrucure/jwt.strategy";
-import { RoleGuard } from "./infrastrucure/roles.guard";
+import { JwtStrategy } from "./jwt.strategy";
+import { RoleGuard } from "./roles.guard";
 
 @Module({
     imports:[
@@ -29,7 +29,7 @@ import { RoleGuard } from "./infrastrucure/roles.guard";
         })
     ],
     controllers:[AuthController],
-    providers:[AuthService,JwtStrategy,RoleGuard],
+    providers:[AuthService,JwtStrategy,RoleGuard,AuthRepository],
     exports:[AuthService]
 })
 export class AuthModule{}

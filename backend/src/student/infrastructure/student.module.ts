@@ -1,15 +1,15 @@
 
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { StudentService } from "./application/student.service";
-import { StudentController } from "./infrastructure/student.controller";
-import { Student,StudentSchema } from "./domain/student.schema";
-import { AuthModule } from "src/auth/auth.module";
+import { StudentService } from "../application/student.service";
+import { StudentController } from "./student.controller";
+import { Student,StudentSchema } from "../domain/student.schema";
+import { AuthModule } from "src/auth/infrastrucure/auth.module";
 import {User, UserSchema } from "src/auth/domain/user.schema";
-import { ParentModule } from "src/parent/parent.module";
+import { ParentModule } from "src/parent/infrastructure/parent.module";
 import { Otp,OtpSchema } from "src/auth/domain/otp.schema";
 import { Parent, ParentSchema } from "src/parent/domain/parent.schema";
-
+import { StudentRepository } from "../domain/student.repository";
 
 @Module({
     imports:[
@@ -23,7 +23,7 @@ import { Parent, ParentSchema } from "src/parent/domain/parent.schema";
         ParentModule
     ],
     controllers:[StudentController],
-    providers:[StudentService],
+    providers:[StudentService,StudentService],
     exports:[StudentService]
 })
 export class StudentModule{}

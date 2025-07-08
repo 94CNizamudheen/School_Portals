@@ -1,179 +1,120 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException, InternalServerErrorException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
-import { AuthService } from "src/auth/application/auth.service";
-import { Student } from "src/student/domain/student.schema";
-import { UpdateStudentDto } from "src/student/infrastructure/dto/student.dto";
-import { User } from "src/auth/domain/user.schema";
-import { Parent } from "../../parent/domain/parent.schema";
-import { AdmissionFormData } from "../infrastructure/student.controller";
-import { v2 as cloudinary } from 'cloudinary';
+
+import {Injectable,NotFoundException,ForbiddenException,BadRequestException,} from '@nestjs/common';
+import { StudentRepository } from '../domain/student.repository';
+import { AdmissionFormData } from '../infrastructure/student.controller';
+import { Types } from 'mongoose';
+import { uploadImage } from '../infrastructure/utils/upload.image';
 import * as nodemailer from 'nodemailer';
-import { generateAdmissionSummary } from "../infrastructure/utils/email.summary";
-import { validateUniqueness } from "../infrastructure/utils/validate.uniqueness";
-import { uploadImage } from "../infrastructure/utils/upload.image";
-import { createOrUpdateParent } from "../infrastructure/utils/createOrUpdate.parent";
-import { createUsers } from "../infrastructure/utils/create.users";
-import { Otp } from "src/auth/domain/otp.schema";
+import { generateAdmissionSummary } from '../infrastructure/utils/email.summary';
+import * as bcrypt from 'bcrypt';
+import { User } from 'src/auth/domain/user.schema';
+import {v2 as cloudinary } from 'cloudinary'
 
 @Injectable()
 export class StudentService {
-    private transporter: nodemailer.Transporter
-    constructor(
-        @InjectModel(Student.name) private studentModel: Model<Student>,
-        @InjectModel(Parent.name) private parantModel: Model<Parent>,
-        @InjectModel(User.name) private userModel: Model<User>,
-        @InjectModel(Otp.name) private otpModel: Model<Otp>,
-        private authService: AuthService
-    ) {
-        this.transporter = nodemailer.createTransport({
-            host: process.env.EMAIL_HOST,
-            port: Number(process.env.EMAIL_PORT),
-            secure: false,
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
-            }
-        });
+  private transporter: nodemailer.Transporter;
+
+  constructor(private readonly repo: StudentRepository) {
+    this.transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: Number(process.env.EMAIL_PORT),
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+  }
+
+  async sendVerificationEmail(email: string, admissionData: AdmissionFormData): Promise<void> {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expireAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await this.repo.createOtp(email, otp, expireAt);
+
+    const summary = generateAdmissionSummary(admissionData, otp);
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Verify Student Admission Application',
+      html: summary,
     };
 
-    async sendVerificationEmail(email: string, admissionData: AdmissionFormData): Promise<void> {
-        try {
-            const otp = Math.floor(100000 + Math.random() * 900000).toString();
-            const expireAt = new Date(Date.now() + 10 * 60 * 1000);
+    try {
+      await this.transporter.sendMail(mailOptions);
+    } catch (error) {
+      throw new BadRequestException('Failed to send verification email');
+    }
+  }
 
-            const verificationOtp = new this.otpModel({ email, password: otp, expireAt });
-            await verificationOtp.save();
+  async createAdmission(data: AdmissionFormData, file?: Express.Multer.File) {
+    const { student, parent } = data;
 
-            const summary = generateAdmissionSummary(admissionData, otp);
-            const mailOptions = {
-                from: process.env.EMAIL_USER,
-                to: email,
-                subject: "Verify Student Admission Application",
-                html: summary,
-            };
+    const existingStudent = await this.repo.findStudentByEmailOrPhone(student.email, student.mobileNumber);
+    if (existingStudent) throw new ForbiddenException('Student already exists');
 
-            await this.transporter.sendMail(mailOptions);
-            console.log(`Verification email sent to ${email}`);
-        } catch (error) {
-            console.error("Error sending verification email:", error);
-            throw new InternalServerErrorException("Failed to send verification email");
-        }
+    const existingParent = await this.repo.findParentByEmailOrPhone(parent.email, parent.mobileNumber);
+
+    const newStudent = {...student, enrollmentDate: new Date(), parentIds: [],} as any;
+
+    if (file) {
+      newStudent.profileImage = await uploadImage(file);
     }
 
-    async createAdmission(admissionData: AdmissionFormData, file?: Express.Multer.File): Promise<Student> {
-        try {
-            const { student: studentData, parent: parentData } = admissionData;
+    const savedStudent = await this.repo.createStudent(newStudent);
+    const savedParent = await this.repo.createOrUpdateParent(parent, savedStudent._id as string, existingParent);
 
-            const existingParent = await validateUniqueness(
-                this.studentModel, this.parantModel,
-                studentData.email, studentData.mobileNumber,
-                parentData.email, parentData.mobileNumber
-            );
+    savedStudent.parentIds = [savedParent._id as Types.ObjectId];
+    await savedStudent.save();
 
-            const student = new this.studentModel({ ...studentData, enrollmentDate: new Date(), parentIds: [], });
+    const randomPassword = Math.random().toString(36).slice(-8);
+    const hashed = await bcrypt.hash(randomPassword, 10);
 
-            if (file) {
-                const imageUrl = await uploadImage(file);
-                student.profileImage = imageUrl;
-            }
+    const users: Partial<User>[] = [
+      {
+        email: student.email,
+        password: hashed,
+        role: 'STUDENT',
+        profileId: savedStudent._id as string,
+      },
+    ];
 
-            const savedStudent = await student.save();
-            const parent = await createOrUpdateParent(this.parantModel, parentData, savedStudent._id as Types.ObjectId, existingParent);
-            student.parentIds = [parent._id as Types.ObjectId];
-            await student.save();
-
-            const { password } = await createUsers(this.userModel, studentData.email, parentData.email, savedStudent._id as Types.ObjectId, parent._id as Types.ObjectId);
-
-            console.log(`Student created: ${savedStudent.email}, Password: ${password}`);
-            console.log(`Parent created/updated: ${parent.email}, Password: ${password}`);
-
-            return savedStudent;
-        } catch (error) {
-            throw new InternalServerErrorException("Failed to create admission");
-        }
-    };
-
-    async findAll(): Promise<Student[]> {
-        try {
-            return await this.studentModel.find().populate('parentIds').exec();
-        } catch {
-            throw new InternalServerErrorException("Failed to fetch students");
-        }
-    };
-
-    async findOne(id: string): Promise<Student> {
-        try {
-            const student = await this.studentModel.findById(id).exec();
-            if (!student) throw new NotFoundException("Student not found");
-            return student;
-        } catch {
-            throw new InternalServerErrorException("Failed to fetch student");
-        }
-    };
-
-    async update(id: string, updateStudentDto: UpdateStudentDto): Promise<Student | null> {
-        try {
-            const student = await this.studentModel.findById(id).exec();
-            if (!student) throw new NotFoundException("student not found");
-
-            if (updateStudentDto.profileImage && student.profileImage) {
-                const publicId = student.profileImage.split("/").pop()?.split(".")[0];
-                await cloudinary.uploader.destroy(`student_profiles/${publicId}`);
-            }
-
-            if (updateStudentDto.email) {
-                const existingStudent = await this.studentModel.findOne({ email: updateStudentDto.email });
-                if (existingStudent && (existingStudent._id as string).toString() !== id) {
-                    throw new ForbiddenException('Email already Exists');
-                }
-                const user = await this.userModel.findOne({ profileId: id });
-                if (user) {
-                    user.email = updateStudentDto.email;
-                    await user.save();
-                }
-            };
-
-            if (updateStudentDto.parentIds) {
-                for (const parentId of updateStudentDto.parentIds) {
-                    const parent = await this.parantModel.findById(parentId).exec();
-                    if (!parent) throw new NotFoundException(`parantId with ${parentId} not found`);
-                    if (!parent.studentIds) parent.studentIds = [];
-                    if (!parent.studentIds.some((s_id) => s_id.toString() === id)) {
-                        parent.studentIds.push(student.id);
-                        await parent.save();
-                    }
-                }
-            }
-
-            return await this.studentModel.findByIdAndUpdate(id, updateStudentDto, { new: true }).populate('parentIds').exec();
-        } catch {
-            throw new InternalServerErrorException("Failed to update student");
-        }
-    };
-
-    async delete(id: string): Promise<void> {
-        try {
-            const student = await this.studentModel.findById(id).exec();
-            if (!student) throw new NotFoundException("Student not Found");
-
-            if (student.parentIds) {
-                for (const parentId of student.parentIds) {
-                    const parent = await this.parantModel.findById(parentId).exec();
-                    if (parent && parent.studentIds) {
-                        parent.studentIds = parent.studentIds.filter((s_id) => s_id.toString() !== id);
-                        await parent.save();
-                    }
-                }
-            }
-
-            const publicId = student.profileImage.split("/").pop()?.split(".")[0];
-            await cloudinary.uploader.destroy(`student_profiles/${publicId}`);
-
-            await this.userModel.deleteOne({ profileId: id }).exec();
-            await this.studentModel.deleteOne({ _id: id });
-        } catch {
-            throw new InternalServerErrorException("Failed to delete student");
-        }
+    if (!existingParent) {
+      users.push({
+        email: parent.email,
+        password: hashed,
+        role: 'PARENT',
+        profileId: savedParent._id as string,
+      });
     }
+
+    await this.repo.createUsers(users);
+
+    return savedStudent;
+  }
+
+  async findAll() {
+    return this.repo.findAllStudents();
+  }
+
+  async findOne(id: string) {
+    const student = await this.repo.findStudentById(id);
+    if (!student) throw new NotFoundException('Student not found');
+    return student;
+  }
+
+  async delete(id: string) {
+    const student = await this.repo.findStudentById(id);
+    if (!student) throw new NotFoundException('Student not found');
+
+    await this.repo.removeStudentFromParents(id, student.parentIds || []);
+    await this.repo.deleteUserByProfileId(id);
+
+    if (student.profileImage) {
+      const publicId = student.profileImage.split('/').pop()?.split('.')[0];
+      await cloudinary.uploader.destroy(`student_profiles/${publicId}`);
+    }
+
+    await this.repo.deleteStudent(id);
+  }
 }
