@@ -1,5 +1,5 @@
 import React from 'react';
-import { Student } from '@/types/student';
+import type { Student } from '../../types/student';
 
 interface StudentTableRowProps {
   student: Student;

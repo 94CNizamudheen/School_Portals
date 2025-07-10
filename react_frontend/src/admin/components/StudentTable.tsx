@@ -1,7 +1,7 @@
 import React from 'react';
 import { Filter } from 'lucide-react';
 import StudentTableRow from './StudentTableRow';
-import { Student } from '@/types/student';
+import type { Student } from '../../types/student';
 
 interface StudentTableProps {
   students: Student[];

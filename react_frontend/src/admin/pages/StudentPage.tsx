@@ -1,35 +1,32 @@
-
 import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import StudentStatsCards from '@/admin/components/StudentsStateCards'
-import StudentTable from '@/admin/components/StudentTable'
-import { findAllStudent } from '@/service/api'
-import type { Student } from '@/types/student'
+import StudentStatsCards from '../../admin/components/StudentsStateCards'
+import StudentTable from '../../admin/components/StudentTable'
+import type { RootState, AppDispatch } from '../../store/store'
+import { fetchAllStudents } from '../../store/studentSlice'
 
 const StudentsPage = () => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [studentList, setStudentList] = useState<Student[]>([])
+  const dispatch = useDispatch<AppDispatch>()
+  const { students, error } = useSelector((state: RootState) => state.student)
 
   useEffect(() => {
-    const fetchStudent = async () => {
-      try {
-        const students = await findAllStudent()
-        setStudentList(students)
-      } catch (error ) {
-        console.error(error)
-        toast.error('Failed to load students')
-      }
-    }
+    dispatch(fetchAllStudents())
+  }, [dispatch])
 
-    fetchStudent()
-  }, [])
+  useEffect(() => {
+    if (error) toast.error(error)
+  }, [error])
 
-  const filteredStudents = studentList.filter((student) =>
+  const filteredStudents = students.filter((student) =>
     student.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     student.rollNumber?.includes(searchTerm)
   )
+   
 
   return (
     <div className="p-4 text-white">
@@ -54,9 +51,9 @@ const StudentsPage = () => {
       />
 
       <StudentStatsCards
-        total={studentList.length}
-        active={studentList.filter((s) => s.isActive).length}
-        inactive={studentList.filter((s) => !s.isActive).length}
+        total={students.length}
+        active={students.filter((s) => s.isActive).length}
+        inactive={students.filter((s) => !s.isActive).length}
         newThisMonth={2}
       />
 

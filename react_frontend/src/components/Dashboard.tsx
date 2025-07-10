@@ -1,8 +1,6 @@
 
 
 import { Users, GraduationCap, DollarSign, TrendingUp } from 'lucide-react';
-
-
 import StatCard from './ui/StatCard';
 import PerformanceChart from './charts/PerformanceChart';
 import ClassDistributionChart from './charts/ClassDistributionChart';
@@ -71,6 +69,7 @@ const Dashboard = () => {
 
     return (
     <>
+    
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {statsData.map((stat, index) => (
           <StatCard key={index} {...stat} />

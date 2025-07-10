@@ -1,67 +1,60 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit"
 
-export interface Student {
-  id: string
-  email: string
-  name: string
-  profileImage?: string
-  class: string
-  rollNumber: string
-  phone?: string
-  address?: string
-}
+import axios, { AxiosError } from "axios"
+import type { Student } from "../types/student"
 
 interface StudentState {
   student: Student | null
+  students: Student[]
   loading: boolean
   error: string | null
 }
 
 const initialState: StudentState = {
   student: null,
+  students: [],
   loading: false,
   error: null,
 }
+
+export const fetchAllStudents = createAsyncThunk(
+  "student/fetchAll",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get("/api/student/all") // Change to your actual API endpoint
+      return response.data.students
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>
+      return rejectWithValue(err.response?.data?.message || "Failed to fetch students")
+    }
+  }
+)
 
 export const fetchStudentByEmail = createAsyncThunk(
   "student/fetchByEmail",
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await fetch(`/api/student/by-email?email=${encodeURIComponent(email)}`)
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch student")
-      }
-
-      const data = await response.json()
-      return data.student
+      const response = await axios.get(`/api/student/by-email?email=${encodeURIComponent(email)}`)
+      return response.data.student
     } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : "Unknown error")
+      const err = error as AxiosError<{ message: string }>
+      return rejectWithValue(err.response?.data?.message || "Failed to fetch student")
     }
-  },
+  }
 )
 
-// Async thunk to reset password
-export const resetPassword = createAsyncThunk("student/resetPassword", async (email: string, { rejectWithValue }) => {
-  try {
-    const response = await fetch("/api/student/reset-password", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    })
-
-    if (!response.ok) {
-      throw new Error("Failed to send reset password email")
+export const resetPassword = createAsyncThunk(
+  "student/resetPassword",
+  async (email: string, { rejectWithValue }) => {
+    try {
+      const response = await axios.post("/api/student/reset-password", { email })
+      return response.data.message
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>
+      return rejectWithValue(err.response?.data?.message || "Failed to reset password")
     }
-
-    const data = await response.json()
-    return data.message
-  } catch (error) {
-    return rejectWithValue(error instanceof Error ? error.message : "Unknown error")
   }
-})
+)
 
 const studentSlice = createSlice({
   name: "student",
@@ -77,7 +70,19 @@ const studentSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch student by email
+      .addCase(fetchAllStudents.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(fetchAllStudents.fulfilled, (state, action: PayloadAction<Student[]>) => {
+        state.loading = false
+        state.students = action.payload
+      })
+      .addCase(fetchAllStudents.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload as string
+      })
+
       .addCase(fetchStudentByEmail.pending, (state) => {
         state.loading = true
         state.error = null
@@ -85,20 +90,18 @@ const studentSlice = createSlice({
       .addCase(fetchStudentByEmail.fulfilled, (state, action: PayloadAction<Student>) => {
         state.loading = false
         state.student = action.payload
-        state.error = null
       })
       .addCase(fetchStudentByEmail.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload as string
       })
-      // Reset password
+
       .addCase(resetPassword.pending, (state) => {
         state.loading = true
         state.error = null
       })
       .addCase(resetPassword.fulfilled, (state) => {
         state.loading = false
-        state.error = null
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false

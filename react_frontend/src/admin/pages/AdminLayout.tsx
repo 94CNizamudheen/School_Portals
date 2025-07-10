@@ -3,6 +3,7 @@
 import React, {  useState } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
+import { Outlet } from 'react-router-dom';
 
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
@@ -27,6 +28,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           notificationCount={0}
         />
         <main className="p-4 sm:p-6 lg:p-8 space-y-10">{children}</main>
+         <Outlet />
       </div>
     </div>
   );

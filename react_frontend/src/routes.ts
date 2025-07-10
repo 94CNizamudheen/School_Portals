@@ -12,7 +12,8 @@ const StudentLogin = lazy(() => import("./pages/Logins/StudentLogin"))
 const ParentLogin = lazy(() => import("./pages/Logins/ParentLogin"))
 const TeacherLogin = lazy(() => import("./pages/Logins/TeacherLogin"))
 const NotFound = lazy(() => import("./pages/NotFound"))
-const Dashboard = lazy(() => import('./admin/components/Dashboard'))
+const Dashboard = lazy(() => import('./admin/pages/DashboardPage'))
+const StudentPage= lazy (()=>import('./admin/pages/StudentPage'))
 
 export const router = createBrowserRouter([
   { path: "/", element: React.createElement(Home) },
@@ -30,10 +31,8 @@ export const router = createBrowserRouter([
     React.createElement(AdminLayout)
   ),
   children: [
-    {
-      path: "dashboard",
-      element: React.createElement(Dashboard),
-    },
+    { path: "dashboard", element: React.createElement(Dashboard), },
+    { path: 'students',element: React.createElement(StudentPage)}
   ],
 }
 
