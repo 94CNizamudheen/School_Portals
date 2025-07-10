@@ -20,10 +20,10 @@ import { StudentRepository } from "../domain/student.repository";
             {name:Otp.name,schema:OtpSchema}
         ]),
         AuthModule,
-        ParentModule
+        ParentModule,
     ],
     controllers:[StudentController],
-    providers:[StudentService,StudentService],
-    exports:[StudentService]
+    providers:[StudentService,StudentService,StudentRepository],
+    exports:[StudentService,StudentRepository]
 })
 export class StudentModule{}

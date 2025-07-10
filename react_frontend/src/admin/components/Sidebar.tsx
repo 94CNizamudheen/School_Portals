@@ -2,10 +2,7 @@
 
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import {
-  Home, Users, GraduationCap, BookOpen, Calendar,
-  DollarSign, TrendingUp, Settings, LogOut, X,
-} from 'lucide-react';
+import { Home, Users, GraduationCap, BookOpen, Calendar,DollarSign, TrendingUp, Settings, LogOut, X,} from 'lucide-react';
 import LogoutModal from '../../components/LogoutModal';
 
 interface SidebarProps {

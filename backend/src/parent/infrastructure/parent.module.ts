@@ -8,6 +8,7 @@ import { Student,StudentSchema } from "src/student/domain/student.schema";
 import { AuthModule } from "src/auth/infrastrucure/auth.module";
 import { ParentController } from "./parent.controller";
 import { ParentService } from "../application/parent.service";
+import { ParentRepository } from "../domain/parent.repository";
 
 @Module({
     imports:[
@@ -19,7 +20,7 @@ import { ParentService } from "../application/parent.service";
         AuthModule
     ],
     controllers:[ParentController],
-    providers:[ParentService],
-    exports:[ParentService,MongooseModule]
+    providers:[ParentService,ParentRepository],
+    exports:[ParentService,MongooseModule,ParentRepository]
 })
 export class ParentModule{}

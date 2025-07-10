@@ -1,13 +1,13 @@
 
 import { Users, GraduationCap, DollarSign, TrendingUp } from 'lucide-react'
 
-import StatCard from './ui/StatCard'
-import PerformanceChart from './charts/PerformanceChart'
-import ClassDistributionChart from './charts/ClassDistributionChart'
-import AttendanceChart from './charts/AttendanceChart'
-import RecentStudents from './sections/RecentStudents'
-import UnpaidStudents from './sections/UnpaidStudents'
-import NotificationsPanel from './sections/NotificationPanel'
+import StatCard from '../../components/ui/StatCard'
+import PerformanceChart from '../../components/charts/PerformanceChart'
+import ClassDistributionChart from '../../components/charts/ClassDistributionChart'
+import AttendanceChart from '../../components/charts/AttendanceChart'
+import RecentStudents from '../../components/sections/RecentStudents'
+import UnpaidStudents from '../../components/sections/UnpaidStudents'
+import NotificationsPanel from '../../components/sections/NotificationPanel'
 
 const Dashboard = () => {
   const notifications = [

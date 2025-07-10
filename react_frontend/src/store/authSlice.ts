@@ -1,5 +1,6 @@
 
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice,  } from '@reduxjs/toolkit';
+import type { PayloadAction,  } from '@reduxjs/toolkit';
 
 interface AuthState {
   role: string | null;
@@ -9,10 +10,10 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
-  role: typeof window !== 'undefined' ? localStorage.getItem('role') : null,
-  userId: typeof window !== 'undefined' ? localStorage.getItem('userId') : null,
-  isAuthenticated: typeof window !== 'undefined' ? !!localStorage.getItem('token') : false,
+  token: null,
+  role: null,
+  userId: null,
+  isAuthenticated: false,
 };
 
 const authSlice = createSlice({
@@ -20,25 +21,17 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login(state, action: PayloadAction<{ access_token: string; role: string ;userId:string}>) {
+      console.log(action)
       state.token = action.payload.access_token;
       state.role = action.payload.role;
       state.userId= action.payload.userId;
       state.isAuthenticated = true;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('token', action.payload.access_token);
-        localStorage.setItem('role', action.payload.role);
-        localStorage.setItem('userId',action.payload.userId)
-      }
     },
     logout(state) {
       state.token = null;
       state.role = null;
+      state.userId = null;
       state.isAuthenticated = false;
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
-        localStorage.removeItem('userId');
-      }
     },
   },
 });

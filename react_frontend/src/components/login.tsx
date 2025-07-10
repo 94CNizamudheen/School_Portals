@@ -5,7 +5,6 @@ import  { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useLocation, useNavigate } from "react-router-dom"
 import { login } from "../store/authSlice"
-
 const API = import.meta.env.VITE_BACKEND_URL 
 
 const Login = () => {
@@ -43,6 +42,9 @@ const Login = () => {
       })
 
       const { access_token, userId } = response.data
+
+      console.log(access_token, userId, role)
+
       dispatch(login({ access_token, role, userId }))
       setIsLoggedIn(true)
     } catch (err: unknown) {
@@ -76,7 +78,7 @@ const Login = () => {
   }, [isLoggedIn, role, navigate])
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-purple-800/50 to-purple-900/50">
+    <div className="flex justify-center items-center ">
       <div className="w-full max-w-md bg-white/10 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-purple-700/30">
         {error && (
           <div className="bg-red-500/20 text-red-300 p-3 rounded-full mb-4 text-center">
@@ -124,12 +126,12 @@ const Login = () => {
         </div>
 
         <div className="text-center">
-          <span className="text-gray-300">Don’t have an Account? </span>
+          <span className="text-gray-300">Need any help? </span>
           <button
             onClick={() => navigate(`/${role.toLowerCase()}/register`)}
             className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
           >
-            Register
+            Help center
           </button>
         </div>
 

@@ -4,7 +4,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { databaseConfig } from "./config/database.config";
 import {AuthModule} from './auth/infrastrucure/auth.module'
 import { StudentModule } from './student/infrastructure/student.module';
-import { TeacherModule } from './teacher/teacher.module';
+import { TeacherModule } from './teacher/infrastruture/teacher.module';
 import { AdminModule } from './admin/infrastructure/admin.module';
 import { ParentModule } from './parent/infrastructure/parent.module';
 import { v2 as cloudinary } from 'cloudinary';

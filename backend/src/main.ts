@@ -2,11 +2,12 @@ import { NestFactory } from "@nestjs/core";
 import {AppModule} from './app.module';
 import { AdminService } from "./admin/application/admin.service";
 import { NocacheInreceptor } from "./interceptor";
+const url= process.env.FRONTEND_URL
 
 async function bootstrap(){
     const app= await NestFactory.create(AppModule);
     app.enableCors({
-        origin:['http://localhost:3000'],
+        origin:[`${url}`],
         methods:['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS','PATCH'],
         allowedHeaders:['content-Type','Authorization'],
         credentials:true
