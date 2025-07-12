@@ -9,7 +9,7 @@ async function bootstrap(){
     app.enableCors({
         origin:[`${url}`],
         methods:['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS','PATCH'],
-        allowedHeaders:['content-Type','Authorization'],
+        allowedHeaders:['Content-Type','Authorization'],
         credentials:true
     })
     app.useGlobalInterceptors(new NocacheInreceptor())

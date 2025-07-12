@@ -1,8 +1,8 @@
 import axios from "axios";
 const API = import.meta.env.VITE_BACKEND_URL;
 
-import type { StudentFormData } from "@/types/student"
-import { createAdmissionData } from "@/utils/formUtils";
+import type { StudentFormData } from "../types/student"
+import { createAdmissionData } from "../utils/formUtils";
 
 
 
@@ -17,21 +17,6 @@ const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
 })
 
-export const checkUserAuth=async ()=>{
-   const token=  localStorage.getItem('token');
-   if(!token) return false;
-   
-   try {
-    const response= await apiClient.get(`/auth/verify-token`,{
-        headers:{
-            Authorization:`Bearer ${token}`,
-        },
-    });
-    return response.data?.valid||false;
-   } catch {
-    return false;
-   }
-};
 
 export const sendVerificationEmail = async (formData: StudentFormData) => {
   const admissionData = createAdmissionData(formData)
@@ -40,7 +25,6 @@ export const sendVerificationEmail = async (formData: StudentFormData) => {
   })
 }
 
-// API to verify OTP
 export const verifyOtp = async (email: string, code: string) => {
   return await apiClient.post( "/auth/verify-otp",
     { email, code },

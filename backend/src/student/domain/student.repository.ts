@@ -1,5 +1,5 @@
 
-// student.repository.ts
+
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Student } from './student.schema';
@@ -8,6 +8,7 @@ import { User } from 'src/auth/domain/user.schema';
 import { Otp } from 'src/auth/domain/otp.schema';
 import { Model, Types } from 'mongoose';
 import { CreateParentDto } from 'src/parent/infrastructure/dto/parent.dto';
+import { UpdateStudentDto } from '../infrastructure/dto/student.dto';
 
 @Injectable()
 export class StudentRepository {
@@ -69,7 +70,7 @@ async createOrUpdateParent(parentData: CreateParentDto,studentId: string,existin
     return this.studentModel.findById(id).exec();
   }
 
-  updateStudent(id: string, update: Partial<Student>) {
+  updateStudent(id: string, update:UpdateStudentDto) {
     return this.studentModel.findByIdAndUpdate(id, update, { new: true }).populate('parentIds').exec();
   }
 

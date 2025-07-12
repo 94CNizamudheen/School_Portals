@@ -9,6 +9,7 @@ import { generateAdmissionSummary } from '../infrastructure/utils/email.summary'
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/auth/domain/user.schema';
 import {v2 as cloudinary } from 'cloudinary'
+import { UpdateStudentDto } from '../infrastructure/dto/student.dto';
 
 @Injectable()
 export class StudentService {
@@ -116,5 +117,22 @@ export class StudentService {
     }
 
     await this.repo.deleteStudent(id);
+  };
+
+  async update(id:string,updateData:UpdateStudentDto){
+    const student=  await this.repo.findStudentById(id);
+    if (!student) throw new NotFoundException("Student Not Found");
+    if(updateData.email && updateData.email!==student.email){
+      await this.repo.updateUserEmail(id,updateData.email);
+    };
+    const updatedStudent= await this.repo.updateStudent(id,updateData)
+    return updatedStudent;
+  };
+
+  async updateStatus(id:string,isActive:boolean){
+    const student= await this.repo.findStudentById(id);
+    if(!student) throw new NotFoundException('Student not Found');
+    const updatedStudent= this.repo.updateStudent(id,{isActive});
+    return updatedStudent;
   }
 }

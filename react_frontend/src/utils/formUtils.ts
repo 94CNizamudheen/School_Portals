@@ -1,5 +1,5 @@
 
-import { StudentFormData, AdmissionFormData } from '@/types/student';
+import type { StudentFormData, AdmissionFormData } from '../types/student';
 
 export const createAdmissionData = (formData: StudentFormData): AdmissionFormData => ({
   student: {

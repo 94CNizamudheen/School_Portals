@@ -1,7 +1,11 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit"
+import { isTokenExpired } from "../utils/token"
+import { logout } from "./authSlice"
 
 import axios, { AxiosError } from "axios"
 import type { Student } from "../types/student"
+import type { RootState } from "./store"
+const API= import.meta.env.VITE_BACKEND_URL
 
 interface StudentState {
   student: Student | null
@@ -17,18 +21,34 @@ const initialState: StudentState = {
   error: null,
 }
 
+
+
+
 export const fetchAllStudents = createAsyncThunk(
   "student/fetchAll",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState, dispatch }) => {
+    const state = getState() as RootState
+    const token = state.auth.token
+
+    if (!token || isTokenExpired(token)) {
+      dispatch(logout())
+      return rejectWithValue("Session expired. Please login again.")
+    }
+
     try {
-      const response = await axios.get("/api/student/all") // Change to your actual API endpoint
-      return response.data.students
+      const response = await axios.get(`${API}/students`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      return response.data
     } catch (error) {
       const err = error as AxiosError<{ message: string }>
       return rejectWithValue(err.response?.data?.message || "Failed to fetch students")
     }
   }
 )
+
 
 export const fetchStudentByEmail = createAsyncThunk(
   "student/fetchByEmail",

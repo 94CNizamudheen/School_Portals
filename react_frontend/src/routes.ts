@@ -14,6 +14,7 @@ const TeacherLogin = lazy(() => import("./pages/Logins/TeacherLogin"))
 const NotFound = lazy(() => import("./pages/NotFound"))
 const Dashboard = lazy(() => import('./admin/pages/DashboardPage'))
 const StudentPage= lazy (()=>import('./admin/pages/StudentPage'))
+const AdmissionForm= lazy(()=>import('./admin/pages/AdmissionForm'))
 
 export const router = createBrowserRouter([
   { path: "/", element: React.createElement(Home) },
@@ -32,7 +33,9 @@ export const router = createBrowserRouter([
   ),
   children: [
     { path: "dashboard", element: React.createElement(Dashboard), },
-    { path: 'students',element: React.createElement(StudentPage)}
+    { path: 'students',element: React.createElement(StudentPage)},
+    { path: 'student/add',element: React.createElement(AdmissionForm)},
+
   ],
 }
 

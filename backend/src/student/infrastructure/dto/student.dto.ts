@@ -1,5 +1,5 @@
 
-import { IsEmail, IsString, IsOptional, IsDateString, IsArray, IsMongoId } from "class-validator";
+import { IsEmail, IsString, IsOptional, IsDateString, IsArray, IsMongoId, IsBoolean } from "class-validator";
 
 export class CreateStudentDto {
   @IsString() firstName: string;
@@ -23,6 +23,7 @@ export class CreateStudentDto {
   @IsOptional() @IsString() allergies?: string;
   @IsOptional() @IsString() medications?: string;
   @IsOptional() @IsString() profileImage?: string;
+  @IsOptional() @IsBoolean() isActive?: boolean;
   @IsOptional() @IsArray() @IsMongoId({ each: true }) parentIds?: string[];
 }
 
@@ -49,5 +50,6 @@ export class UpdateStudentDto {
   @IsOptional() @IsString() allergies?: string;
   @IsOptional() @IsString() medications?: string;
   @IsOptional() @IsString() profileImage?: string;
+  @IsOptional() @IsBoolean() isActive?: boolean;
   @IsOptional() @IsArray() @IsMongoId({ each: true }) parentIds?: string[];
 }

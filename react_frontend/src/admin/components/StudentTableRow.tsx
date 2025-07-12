@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { Student } from '../../types/student';
 
 interface StudentTableRowProps {
@@ -6,19 +7,28 @@ interface StudentTableRowProps {
 }
 
 const StudentTableRow: React.FC<StudentTableRowProps> = ({ student }) => {
+  const navigate = useNavigate();
   const fullName = `${student.firstName} ${student.lastName}`;
-  const status = student.isActive ? 'Active' : 'Inactive';
+  const status = student.isActive ? 'Active' : 'Suspended';
 
   const handleViewStudent = () => {
-    console.log('View student:', student._id);
+    navigate(`/students/${student._id}`);
   };
 
   return (
-    <tr className="hover:bg-gray-300">
+    <tr className="hover:bg-gray-50">
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
           <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-            <span className="text-blue-600 font-medium">{student.firstName?.charAt(0)}</span>
+            {student.profileImage ? (
+              <img
+                src={student.profileImage}
+                alt={fullName}
+                className="h-10 w-10 rounded-full object-cover"
+              />
+            ) : (
+              <span className="text-blue-600 font-medium">{student.firstName?.charAt(0)}</span>
+            )}
           </div>
           <div className="ml-4">
             <div className="text-sm font-medium text-gray-900">{fullName}</div>
@@ -26,12 +36,20 @@ const StudentTableRow: React.FC<StudentTableRowProps> = ({ student }) => {
           </div>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{student.rollNumber}</td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{student.grade} - {student.class}</td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{student.mobileNumber}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+        {student.rollNumber || 'Not assigned'}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+        {student.grade && student.class ? `${student.grade} - ${student.class}` : 'Not specified'}
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+        {student.mobileNumber}
+      </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-          student.isActive ? 'bg-green-800 text-green-100' : 'bg-red-800 text-red-100'
+          student.isActive 
+            ? 'bg-green-100 text-green-800' 
+            : 'bg-red-100 text-red-800'
         }`}>
           {status}
         </span>

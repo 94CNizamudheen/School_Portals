@@ -1,30 +1,23 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom\";
+
+import  { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 
-import type { StudentFormData } from "@/types/student";
-import { FormHeader } from "@/components/forms/FormHeader";
-import { ProgressBar } from "@/components/forms/ProgressBar";
-import { FormNavigation } from "@/components/forms/FormNavigation";
-import { PersonalInformationForm } from "@/components/forms/PersonalInformationForm";
-import { AcademicInformationForm } from "@/components/forms/AcademicInformation";
-import { MedicalInformationForm } from "@/components/forms/MedicalInformationForm";
-import { ParentInformationForm } from "@/components/forms/ParentInformationForm";
+import { FormHeader } from "../../components/forms/FormHeader";
+import { ProgressBar } from "../../components/forms/ProgressBar";
+import { FormNavigation } from "../../components/forms/FormNavigation";
+import { PersonalInformationForm } from "../../components/forms/PersonalInformationForm";
+import { AcademicInformationForm } from "../../components/forms/AcademicInformation";
+import { MedicalInformationForm } from "../../components/forms/MedicalInformationForm";
+import { ParentInformationForm } from "../../components/forms/ParentInformationForm";
 
 import * as Yup from "yup";
-import {
-  personalInformationSchema,
-  academicInformationSchema,
-  parentInformationSchema,
-  medicalInformationSchema,
-} from "../../validationSchemas";
+import { personalInformationSchema,academicInformationSchema, parentInformationSchema,medicalInformationSchema,} from "../../utils/validationSchemas";
 
-import {
-  sendVerificationEmail,
-  verifyOtp,
-  submitAdmission,
-} from "@/service/api";
+import {sendVerificationEmail,verifyOtp,submitAdmission,} from "../../service/api";
+import type { StudentFormData } from "../../types/student";
+
 
 const StudentAdmissionForm: React.FC = () => {
   const navigate = useNavigate();
