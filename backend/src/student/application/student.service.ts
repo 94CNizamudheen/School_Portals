@@ -31,8 +31,8 @@ export class StudentService {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expireAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    await this.repo.createOtp(email, otp, expireAt);
-
+    let created= await this.repo.createOtp(email, otp, expireAt);
+    console.log(created)
     const summary = generateAdmissionSummary(admissionData, otp);
     const mailOptions = {
       from: process.env.EMAIL_USER,

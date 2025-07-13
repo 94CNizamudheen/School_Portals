@@ -14,19 +14,19 @@ const apiClient = axios.create({
 })
 
 const getAuthHeaders = () => ({
-  Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+  Authorization: `Bearer ${localStorage.getItem("token") ||""}`,
 })
 
 
 export const sendVerificationEmail = async (formData: StudentFormData) => {
   const admissionData = createAdmissionData(formData)
-  return await apiClient.post("/students/send-verification-email", admissionData, {
+  return await apiClient.post(`/students/send-verification-email`, admissionData, {
     headers: getAuthHeaders(),
   })
 }
 
 export const verifyOtp = async (email: string, code: string) => {
-  return await apiClient.post( "/auth/verify-otp",
+  return await apiClient.post( `/auth/verify-otp`,
     { email, code },
     { headers: getAuthHeaders() }
   )
@@ -51,18 +51,7 @@ export const submitAdmission = async ( formData: StudentFormData,  verificationO
   })
 }
 
-export const findAllStudent= async()=>{
-  try {
-    const response= await apiClient.get('/students',{
-      headers:getAuthHeaders()
-    });
-    return response.data;
-  } catch (error) {
-    console.error('failed to fetch students',error)
-    throw error;
-  }
 
-}
 
 
 

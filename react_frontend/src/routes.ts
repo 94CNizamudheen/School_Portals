@@ -4,6 +4,7 @@ import React, { lazy } from "react"
 import AdminLayout from "./admin/pages/AdminLayout"
 import  ProtectedRoute from "../src/utils/protected/AdminProtection" 
 
+
 // Lazy-loaded components
 const Home = lazy(() => import("./pages/Home"))
 const PortalsPage = lazy(() => import("./pages/PortalsPage"))
@@ -15,6 +16,7 @@ const NotFound = lazy(() => import("./pages/NotFound"))
 const Dashboard = lazy(() => import('./admin/pages/DashboardPage'))
 const StudentPage= lazy (()=>import('./admin/pages/StudentPage'))
 const AdmissionForm= lazy(()=>import('./admin/pages/AdmissionForm'))
+const StudentDetailPage= lazy(()=>import("./admin/pages/StudentDeatailsPage"))
 
 export const router = createBrowserRouter([
   { path: "/", element: React.createElement(Home) },
@@ -35,6 +37,7 @@ export const router = createBrowserRouter([
     { path: "dashboard", element: React.createElement(Dashboard), },
     { path: 'students',element: React.createElement(StudentPage)},
     { path: 'student/add',element: React.createElement(AdmissionForm)},
+    {path: 'students/:id',element:React.createElement(StudentDetailPage)}
 
   ],
 }

@@ -12,7 +12,7 @@ const StudentTableRow: React.FC<StudentTableRowProps> = ({ student }) => {
   const status = student.isActive ? 'Active' : 'Suspended';
 
   const handleViewStudent = () => {
-    navigate(`/students/${student._id}`);
+    navigate(`/admin/students/${student._id}`);
   };
 
   return (

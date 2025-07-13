@@ -135,11 +135,10 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
               type="button"
               onClick={handleSendOtp}
               disabled={sendingOtp}
-              className={`w-full px-4 py-3 rounded-md font-medium transition-colors flex items-center justify-center gap-2 ${
-                sendingOtp 
-                  ? "bg-gray-600 text-gray-400 cursor-not-allowed" 
+              className={`w-full px-4 py-3 rounded-md font-medium transition-colors flex items-center justify-center gap-2 ${sendingOtp
+                  ? "bg-gray-600 text-gray-400 cursor-not-allowed"
                   : "bg-blue-600 text-white hover:bg-blue-700"
-              }`}
+                }`}
             >
               {sendingOtp ? (
                 <>
@@ -155,6 +154,7 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
               <p className="text-gray-300 mb-4">
                 OTP sent to <span className="text-blue-400 font-medium">{formData.parentEmail}</span>. Please enter it below to verify.
               </p>
+
               <div className="space-y-3">
                 <div>
                   <label htmlFor="otp" className="block text-white text-sm font-medium mb-1">Enter OTP:</label>
@@ -168,15 +168,15 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
                     maxLength={6}
                   />
                 </div>
+
                 <button
                   type="button"
                   onClick={handleOtpVerification}
                   disabled={loading || !verificationOtp}
-                  className={`w-full px-4 py-3 rounded-md font-medium transition-colors flex items-center justify-center gap-2 ${
-                    loading || !verificationOtp 
-                      ? "bg-gray-600 text-gray-400 cursor-not-allowed" 
+                  className={`w-full px-4 py-3 rounded-md font-medium transition-colors flex items-center justify-center gap-2 ${loading || !verificationOtp
+                      ? "bg-gray-600 text-gray-400 cursor-not-allowed"
                       : "bg-green-600 text-white hover:bg-green-700"
-                  }`}
+                    }`}
                 >
                   {loading ? (
                     <>
@@ -187,11 +187,33 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
                     "Verify OTP"
                   )}
                 </button>
+
+                {/* Resend OTP button */}
+                <button
+                  type="button"
+                  onClick={handleSendOtp}
+                  disabled={sendingOtp}
+                  className={`w-full px-4 py-2 text-sm rounded-md mt-2 transition-colors ${sendingOtp
+                      ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                      : "bg-yellow-600 text-white hover:bg-yellow-700"
+                    }`}
+                >
+                  {sendingOtp ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                      Resending OTP...
+                    </>
+                  ) : (
+                    "Resend OTP"
+                  )}
+                </button>
               </div>
+
               {isOtpVerified && (
                 <p className="text-green-400 text-sm font-medium mt-3">✅ OTP Verified! Closing preview...</p>
               )}
             </>
+
           )}
         </div>
 

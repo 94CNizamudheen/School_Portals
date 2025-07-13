@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Student } from '../../types/student';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
 
 interface StudentDetailPageProps {
   // Optional prop if you want to pass student data directly
@@ -15,20 +17,22 @@ const StudentDetailPage: React.FC<StudentDetailPageProps> = ({ student: propStud
   const [loading, setLoading] = useState(!propStudent);
   const [error, setError] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
-
+  const API = import.meta.env.VITE_BACKEND_URL;
+  const token= useSelector((state:RootState)=>state.auth.token)
+  console.log("token in student detail page",token)
   useEffect(() => {
     if (!propStudent && id) {
       fetchStudent();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, propStudent]);
 
   const fetchStudent = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/students/${id}`, {
+      const response = await fetch(`${API}/students/${id}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -157,11 +161,10 @@ const StudentDetailPage: React.FC<StudentDetailPageProps> = ({ student: propStud
                 <button
                   onClick={handleStatusToggle}
                   disabled={isUpdating}
-                  className={`px-4 py-2 rounded-md font-medium transition-colors duration-200 ${
-                    student.isActive
+                  className={`px-4 py-2 rounded-md font-medium transition-colors duration-200 ${student.isActive
                       ? 'bg-red-600 hover:bg-red-700 text-white'
                       : 'bg-green-600 hover:bg-green-700 text-white'
-                  } ${isUpdating ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    } ${isUpdating ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {isUpdating ? (
                     <div className="flex items-center">
@@ -206,9 +209,8 @@ const StudentDetailPage: React.FC<StudentDetailPageProps> = ({ student: propStud
                 </h2>
                 <p className="text-gray-600 text-lg">{student.email}</p>
                 <div className="mt-2">
-                  <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
-                    student.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${student.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
                     {student.isActive ? 'Active' : 'Suspended'}
                   </span>
                 </div>
