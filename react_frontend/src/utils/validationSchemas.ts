@@ -141,3 +141,18 @@ export const completeFormSchema = Yup.object().shape({
   allergies: Yup.string().notRequired(),
   medications: Yup.string().notRequired(),
 });
+
+export const parentModalSchema = Yup.object({
+  name: Yup.string().required('Name is required'),
+  email: Yup.string().email('Invalid email format').required('Email is required'),
+  mobileNumber: Yup.string()
+    .matches(/^[0-9]{10}$/, 'Mobile number must be 10 digits')
+    .required('Mobile number is required'),
+  occupation: Yup.string().notRequired(),
+  relationship: Yup.string().required('Relationship is required'),
+  emergencyContactName: Yup.string().required('Emergency Contact Name is required'),
+  emergencyContactPhone: Yup.string()
+    .matches(/^[0-9]{10}$/, 'Emergency Contact Phone must be 10 digits')
+    .required('Emergency Contact Phone is required'),
+  emergencyContactRelationship: Yup.string().required('Emergency Contact Relationship is required'),
+});

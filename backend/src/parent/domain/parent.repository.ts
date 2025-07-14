@@ -14,7 +14,7 @@ export class ParentRepository {
     @InjectModel(Parent.name) private parentModel: Model<Parent>,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Student.name) private studentModel: Model<Student>
-  ) {}
+  ) { }
 
   async findByEmail(email: string) {
     return this.parentModel.findOne({ email }).lean();
@@ -78,20 +78,26 @@ export class ParentRepository {
     return student.toObject({ getters: true });
   }
 
- async removeParentFromAllStudents(parentId: string, studentIds: (string | Types.ObjectId)[]) {
-  for (const studentId of studentIds) {
-    const sid = studentId.toString();
-    const student = await this.studentModel.findById(sid);
-    if (student) {
-      student.parentIds = student.parentIds.filter(id => id.toString() !== parentId);
-      await student.save();
+  async removeParentFromAllStudents(parentId: string, studentIds: (string | Types.ObjectId)[]) {
+    for (const studentId of studentIds) {
+      const sid = studentId.toString();
+      const student = await this.studentModel.findById(sid);
+      if (student) {
+        student.parentIds = student.parentIds.filter(id => id.toString() !== parentId);
+        await student.save();
+      }
     }
   }
-}
 
 
   async deleteParent(id: string) {
     await this.userModel.deleteOne({ profileId: id });
     return this.parentModel.deleteOne({ _id: id });
   }
+
+  async findChildrens(ids:Types.ObjectId[]){
+    const childrens= await this.studentModel.find({_id:{$in:ids}},'firstName lastName').lean()
+    return  childrens
+  }
+
 }

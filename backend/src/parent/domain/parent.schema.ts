@@ -28,7 +28,7 @@ export class Parent extends Document {
   @Prop()
   emergencyContactRelationship: string;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: "Student" }] })
+  @Prop({ type: [{ type: Types.ObjectId, ref: "Student" }],default: [] })
   studentIds: Types.ObjectId[];
 }
 

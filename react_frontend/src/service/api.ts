@@ -6,6 +6,7 @@ import { createAdmissionData } from "../utils/formUtils";
 
 
 
+
 const apiClient = axios.create({
   baseURL: API,
   headers: {
@@ -14,6 +15,7 @@ const apiClient = axios.create({
 })
 
 const getAuthHeaders = () => ({
+  
   Authorization: `Bearer ${localStorage.getItem("token") ||""}`,
 })
 

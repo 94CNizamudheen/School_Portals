@@ -67,4 +67,9 @@ export class ParentService {
     await this.repo.removeParentFromAllStudents(id, parent?.studentIds);
     await this.repo.deleteParent(id);
   }
+  async findChildrens(id:string){
+    const parent= await this.repo.findParentById(id)
+    if(!parent) throw new NotFoundException('Parent not found');
+    return this.repo.findChildrens(parent.studentIds)
+  }
 }

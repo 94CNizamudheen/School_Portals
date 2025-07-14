@@ -36,6 +36,8 @@ export const PreviewModal: React.FC<PreviewModalProps> = ({
       setOtpSent(true)
     } catch (error) {
       console.error("Failed to send OTP:", error)
+      setOtpSent(false)
+      
     } finally {
       setSendingOtp(false)
     }

@@ -1,6 +1,4 @@
 import { Suspense } from 'react';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; 
 
 import Spinner from './components/Spinner';
 import { RouterProvider } from 'react-router-dom';
@@ -13,7 +11,6 @@ const App = () => {
         <RouterProvider router={router} />
       </Suspense>
 
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar newestOnTop />
     </>
   );
 };

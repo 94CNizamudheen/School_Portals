@@ -7,7 +7,6 @@ import { Roles } from "src/auth/infrastrucure/roles.decorator";
 import { Role } from "src/auth/infrastrucure/dto/auth.dto";
 import { CreateParentDto } from "src/parent/infrastructure/dto/parent.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { Request } from "express";
 import { uploadImage } from "./utils/upload.image";
 
 export interface AdmissionFormData {
@@ -50,7 +49,9 @@ export class StudentController {
     };
     @Patch(':id')
     @Roles(Role.ADMIN)
-    @UseInterceptors(FileInterceptor('ProfileImage'))
+    @UseInterceptors(FileInterceptor('ProfileImage',{
+        limits:{fileSize:  5 * 1024 * 1024}
+    }))
     async update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto,@UploadedFile()file?:Express.Multer.File) {
         if(file){
             const imageUrl= await uploadImage(file)

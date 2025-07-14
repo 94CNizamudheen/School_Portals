@@ -1,7 +1,6 @@
 
 import  { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 
 import { FormHeader } from "../../components/forms/FormHeader";
@@ -14,10 +13,10 @@ import { ParentInformationForm } from "../../components/forms/ParentInformationF
 
 import * as Yup from "yup";
 import { personalInformationSchema,academicInformationSchema, parentInformationSchema,medicalInformationSchema,} from "../../utils/validationSchemas";
-
-import {sendVerificationEmail,verifyOtp,submitAdmission,} from "../../service/api";
+import {sendVerificationEmail as sendEmailThunk, verifyOtp as verifyOtpThunk, submitAdmission as submitAdmissionThunk} from "../../store/studentSlice";
+import { useDispatch } from "react-redux";
 import type { StudentFormData } from "../../types/student";
-
+import type { AppDispatch } from "../../store/store";
 
 const StudentAdmissionForm: React.FC = () => {
   const navigate = useNavigate();
@@ -27,7 +26,7 @@ const StudentAdmissionForm: React.FC = () => {
   const [verificationOtp, setVerificationOtp] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const totalSteps = 4;
-
+  const dispatch= useDispatch<AppDispatch>()
   const [formData, setFormData] = useState<StudentFormData>({
     firstName: "",
     lastName: "",
@@ -60,11 +59,7 @@ const StudentAdmissionForm: React.FC = () => {
     profileImage: null,
   });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent< HTMLInputElement|HTMLSelectElement | HTMLTextAreaElement >) => {
     const { name, value } = e.target;
     const trimmedValue = ["firstName", "lastName"].includes(name)
       ? value.trim()
@@ -100,64 +95,55 @@ const StudentAdmissionForm: React.FC = () => {
     navigate("/admin/students");
   };
 
-  const handleSendVerificationEmail = async () => {
-    if (!formData.parentEmail) {
-      toast.error("Please enter a parent email address");
-      return;
-    }
+const handleSendVerificationEmail = async () => {
+  if (!formData.parentEmail) {
+    toast.error("Please enter a parent email address");
+    return;
+  }
 
-    setLoading(true);
-    try {
-      await sendVerificationEmail(formData);
-      toast.success("Verification email sent! Please ask the parent to verify their email.");
-    } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      const msg = error.response?.data?.message || "Failed to send verification email";
-      toast.error(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  const resultAction = await dispatch(sendEmailThunk(formData));
+  if (sendEmailThunk.fulfilled.match(resultAction)) {
+    toast.success("Verification email sent! Please ask the parent to verify.");
+  } else {
+    toast.error(resultAction.payload as string|| "Failed to send verification email");
+  }
+  setLoading(false);
+};
 
-  const handleCheckOtp = async () => {
-    if (!formData.parentEmail || !verificationOtp) {
-      toast.error("Please send a verification email first or enter a valid token");
-      return;
-    }
+const handleCheckOtp = async () => {
+  if (!formData.parentEmail || !verificationOtp) {
+    toast.error("Please send a verification email first or enter a valid token");
+    return;
+  }
 
-    setLoading(true);
-    try {
-      await verifyOtp(formData.parentEmail, verificationOtp);
-      setIsEmailVerified(true);
-      toast.success("Email verified successfully!");
-    } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      const msg = error.response?.data?.message || "Verification Failed";
-      toast.error(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  const resultAction = await dispatch(verifyOtpThunk({ email: formData.parentEmail, code: verificationOtp }));
+  if (verifyOtpThunk.fulfilled.match(resultAction)) {
+    setIsEmailVerified(true);
+    toast.success("Email verified successfully!");
+  } else {
+    toast.error(resultAction.payload as string || "Verification failed");
+  }
+  setLoading(false);
+};
 
-  const handleSubmit = async () => {
-    if (!isEmailVerified) {
-      toast.error("Please verify the parent email before submitting");
-      return;
-    }
+const handleSubmit = async () => {
+  if (!isEmailVerified) {
+    toast.error("Please verify the parent email before submitting");
+    return;
+  }
 
-    setLoading(true);
-    try {
-      await submitAdmission(formData, verificationOtp);
-      toast.success("Application submitted successfully!");
-      navigate("/admin/students");
-    } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      const msg = error.response?.data?.message || "Submission Failed";
-      toast.error(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  const resultAction = await dispatch(submitAdmissionThunk({ formData, verificationOtp }));
+  if (submitAdmissionThunk.fulfilled.match(resultAction)) {
+    toast.success("Application submitted successfully!");
+    navigate("/admin/students");
+  } else {
+    toast.error(resultAction.payload as string || "Submission failed");
+  }
+  setLoading(false);
+};
 
   const validateStep = async (step: number): Promise<boolean> => {
     try {
