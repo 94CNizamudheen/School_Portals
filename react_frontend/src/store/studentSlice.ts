@@ -135,7 +135,6 @@ export const fetchStudentById = createAsyncThunk(
 
     if (!token || isTokenExpired(token)) {
       dispatch(logout());
-      return rejectWithValue("Session expired. Please login again.");
     }
 
     try {
@@ -161,7 +160,6 @@ export const updateStudent = createAsyncThunk(
 
     if (!token || isTokenExpired(token)) {
       dispatch(logout());
-      return rejectWithValue("Session expired. Please login again.");
     }
 
     try {
@@ -217,6 +215,8 @@ export const submitAdmission = createAsyncThunk(
     }
   }
 )
+
+
 
 
 
@@ -304,7 +304,7 @@ const studentSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-            .addCase(fetchStudentById.pending, (state) => {
+      .addCase(fetchStudentById.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
@@ -329,7 +329,7 @@ const studentSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-
+      
 
   },
 })

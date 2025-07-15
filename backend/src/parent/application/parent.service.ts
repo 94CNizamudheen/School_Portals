@@ -56,8 +56,17 @@ export class ParentService {
         if (!student) throw new NotFoundException('Student not found');
       }
     }
+    await this.repo.updateParent(id,{studentIds:dto.studentIds})
+    
+    const {studentIds,...rest}=dto;
+    await this.repo.updateParent(id,rest)
 
-    return this.repo.updateParent(id, dto);
+    const updatedParent= await this.repo.findParentById(id);
+    console.log("updatedParent",updatedParent)
+    return{
+       parent:updatedParent,
+       assignedCount:studentIds?.length||0
+    }
   }
 
   async delete(id: string) {

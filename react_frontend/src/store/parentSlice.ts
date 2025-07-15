@@ -1,6 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
 import type { RootState } from './store';
+import { logout } from './authSlice';
+import { isTokenExpired } from '../utils/token';
+
+
+
+
+interface AssignParentPayload {
+    parentId: string;
+    studentIds: string[];
+}
 
 export interface Parent {
     _id: string;
@@ -12,7 +22,7 @@ export interface Parent {
     emergencyContactName?: string;
     emergencyContactPhone?: string;
     emergencyContactRelationship?: string;
-    studentIds?: string[]; 
+    studentIds?: string[];
 }
 
 interface ParentState {
@@ -20,28 +30,28 @@ interface ParentState {
     loading: boolean;
     error: string | null;
 }
-export interface Child{
-    _id:string;
-    firstName:string;
-    lastName:string;
+export interface Child {
+    _id: string;
+    firstName: string;
+    lastName: string;
 }
 
 const initial: ParentState = { parents: [], loading: false, error: null };
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
-export const fetchChildrenOfParent=createAsyncThunk(
+export const fetchChildrenOfParent = createAsyncThunk(
     'parent/fetchChildrens',
-    async(parentId:string,{rejectWithValue,getState})=>{
-        const token= (getState() as RootState).auth.token;
+    async (parentId: string, { rejectWithValue, getState }) => {
+        const token = (getState() as RootState).auth.token;
         try {
-            const res= await axios.get(`${API}/parents/${parentId}/children`,{
-                headers:{Authorization:`Bearer ${token}`}
+            const res = await axios.get(`${API}/parents/${parentId}/children`, {
+                headers: { Authorization: `Bearer ${token}` }
             })
             return res.data as Child[];
 
         } catch (err) {
-            const error= err as AxiosError<{message:string}>;
+            const error = err as AxiosError<{ message: string }>;
             return rejectWithValue(error.response?.data.message)
         }
     }
@@ -118,6 +128,30 @@ export const deleteParent = createAsyncThunk(
         }
     }
 );
+export const assignParent = createAsyncThunk(
+    'parent/assignParent',
+    async ({ parentId, studentIds }: AssignParentPayload, { rejectWithValue, getState, dispatch }) => {
+        const state = await getState() as RootState;
+        const token = state.auth.token;
+        if (!token || isTokenExpired(token)) {
+            dispatch(logout())
+            
+        }
+        try {
+            const response = await axios.patch(`${API}/parents/${parentId}`, { studentIds }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            return response.data
+        } catch (err) {
+            const error = err as AxiosError<{ message: string }>
+            return rejectWithValue(error.response?.data.message || 'failed to assign parent')
+        }
+
+    }
+);
+
 
 const slice = createSlice({
     name: 'parent',
@@ -149,7 +183,7 @@ const slice = createSlice({
             })
             .addCase(deleteParent.rejected, (s, a) => {
                 s.error = a.payload as string;
-            });
+            })
     }
 });
 

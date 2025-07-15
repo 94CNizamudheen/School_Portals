@@ -50,8 +50,7 @@ export class ParentRepository {
   }
 
   async updateParent(id: string, dto: UpdateParentDto) {
-    const payload = {
-      ...dto,
+    const payload = { ...dto,
       studentIds: dto.studentIds?.map(id => new Types.ObjectId(id))
     };
     return this.parentModel.findByIdAndUpdate(id, payload, { new: true }).lean();

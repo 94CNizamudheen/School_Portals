@@ -10,16 +10,32 @@ import { AddEditParentModal } from '../components/AddEditParentModal';
 import { ViewChildrenModal } from '../components/ViewChildrenModal';
 import type { Child } from '../../store/parentSlice';
 import { toast } from 'react-toastify';
-import { isAxiosError } from 'axios';
+import { AxiosError, isAxiosError } from 'axios';
+import { Pagination } from '../../components/shared/Pagination';
+import { AssignChildrenModal } from '../components/AssignChildrenModal';
+import {  fetchAllStudents } from '../../store/studentSlice';
+import { assignParent } from '../../store/parentSlice';
+
 
 const ParentPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { parents, loading, error } = useSelector((s: RootState) => s.parent);
-
+    const students= useSelector((state:RootState)=>state.student.students)
     const [modalOpen, setModalOpen] = useState(false);
     const [editing, setEditing] = useState<Parent | null>(null);
     const [viewing, setViewing] = useState<Parent | null>(null);
     const [childrenList, setChildrenList] = useState<Child[]>([]);
+    const [assigningParent, setAssigningParent] = useState<Parent | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const parentsPerPage = 9;
+
+    const indexOfLastParent = currentPage * parentsPerPage;
+    const indexOfFirstParent = indexOfLastParent - parentsPerPage;
+    const currentParents = parents.slice(indexOfFirstParent, indexOfLastParent);
+    const totalPages = Math.ceil(parents.length / parentsPerPage);
+
+    console.log("students ",students)
+    console.log("Parents from Redux:", parents);
 
     const [form, setForm] = useState<Omit<Parent, '_id' | 'studentIds'>>({
         name: '',
@@ -36,6 +52,7 @@ const ParentPage: React.FC = () => {
 
     useEffect(() => {
         dispatch(fetchParents());
+        dispatch(fetchAllStudents())
     }, [dispatch]);
 
     const openAdd = () => {
@@ -69,21 +86,21 @@ const ParentPage: React.FC = () => {
         setModalOpen(true);
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         try {
             if (editing) {
-            dispatch(updateParent({ id: editing._id, updates: form }));
-        } else {
-            dispatch(addParent(form));
-        }
-        setModalOpen(false);
+                await dispatch(updateParent({ id: editing._id, updates: form })).unwrap();
+            } else {
+                await dispatch(addParent(form));
+            }
+            setModalOpen(false);
         } catch (error) {
-            if(isAxiosError(error)){
+            if (isAxiosError(error)) {
                 toast.error(error.response?.data?.message)
             }
-            
+
         }
-        
+
     };
 
     const handleDelete = (p: Parent) => {
@@ -99,19 +116,27 @@ const ParentPage: React.FC = () => {
 
     const handleViewChildren = async (p: Parent) => {
         try {
-            const res= await dispatch(fetchChildrenOfParent(p._id)).unwrap();
+            const res = await dispatch(fetchChildrenOfParent(p._id)).unwrap();
             setChildrenList(res)
             setViewing(p)
         } catch (error) {
-            if(isAxiosError(error)){
+            if (isAxiosError(error)) {
                 toast.error(error.response?.data?.message)
             }
-            
+
         }
     };
 
-    const handleAssignChildren = (p: Parent) => {
-        alert(`Open assign children modal for ${p.name}`); // You can replace this with a real modal
+    const handleAssignChildren =async (parent: Parent,selectedIds:string[]) => {
+       try {
+        await dispatch(assignParent({parentId:parent._id,studentIds:selectedIds})).unwrap();
+        toast.success('Parent assigned successfully')
+         dispatch(fetchParents());
+        setAssigningParent(null)
+       } catch (error) {
+        const err= error as AxiosError<{message:string}>;
+        toast.error(err.response?.data.message||'failed to assign parent')
+       }
     };
 
     return (
@@ -122,15 +147,15 @@ const ParentPage: React.FC = () => {
             {loading && <p className="text-white">Loading...</p>}
             {error && <p className="text-red-400">{error}</p>}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {parents.map(p => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {currentParents.map(p => (
                     <Card key={p._id}>
-                        <CardHeader className="flex justify-between items-center">
-                            <CardTitle className="text-lg">{p.name}</CardTitle>
-                            <div className="flex gap-2">
+                        <CardHeader>
+                            <CardTitle className="text-lg mb-2">{p.name}</CardTitle>
+                            <div className="flex flex-wrap gap-2">
                                 <Button variant="outline" size="sm" onClick={() => handleViewChildren(p)}>View Children</Button>
                                 {!p.studentIds?.length && (
-                                    <Button variant="outline" size="sm" onClick={() => handleAssignChildren(p)}>Assign</Button>
+                                    <Button variant="outline" size="sm" onClick={() => setAssigningParent(p)}>Assign</Button>
                                 )}
                                 <Button variant="ghost" size="icon" onClick={() => openEdit(p)}><Pencil className="w-4 h-4" /></Button>
                                 <Button variant="destructive" size="icon" onClick={() => handleDelete(p)}><Trash2 className="w-4 h-4" /></Button>
@@ -147,6 +172,11 @@ const ParentPage: React.FC = () => {
                     </Card>
                 ))}
             </div>
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => setCurrentPage(page)}
+            />
 
             {/* Add/Edit Modal */}
             {modalOpen && (
@@ -167,6 +197,16 @@ const ParentPage: React.FC = () => {
                     onClose={() => setViewing(null)}
                 />
             )}
+            {assigningParent && (
+                <AssignChildrenModal
+                    open={!!assigningParent}
+                    parent={assigningParent}
+                    students={students} 
+                    onClose={() => setAssigningParent(null)}
+                    onAssign={(selectedIds) => {handleAssignChildren(assigningParent,selectedIds);}}
+                />
+            )}
+
         </div>
     );
 };
