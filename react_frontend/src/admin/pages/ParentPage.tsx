@@ -34,8 +34,6 @@ const ParentPage: React.FC = () => {
     const currentParents = parents.slice(indexOfFirstParent, indexOfLastParent);
     const totalPages = Math.ceil(parents.length / parentsPerPage);
 
-    console.log("students ",students)
-    console.log("Parents from Redux:", parents);
 
     const [form, setForm] = useState<Omit<Parent, '_id' | 'studentIds'>>({
         name: '',

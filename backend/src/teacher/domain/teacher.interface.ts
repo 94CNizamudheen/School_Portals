@@ -2,11 +2,15 @@
 
 
 export interface Teacher {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   mobileNumber: string;
-  dob?: Date;
-  qualification?: string;
-  experienceYears?: number;
+  profileImage:string;
+  dob: Date;
+  degree?: string;
+  experienceYears: number;
   subjects?: string[];
+  address:string;
+  univerity:string;
 }

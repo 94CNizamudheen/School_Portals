@@ -1,33 +1,51 @@
 
-import { IsString,IsEmail,IsDateString,IsArray,IsNumber, IsOptional } from "class-validator";
+import { IsString,IsEmail,IsDateString,IsArray,IsNumber, IsOptional, isString, ArrayNotEmpty } from "class-validator";
 
 export class CreateTeacherDto{
-    @IsString() name:string;
+
+    @IsString() firstName:string;
+
+    @IsString() lastName:string;
 
     @IsEmail() email:string;
 
     @IsString() mobileNumber:string;
 
-    @IsOptional() @IsDateString() dob:Date;
+    @IsDateString() dob:Date;
 
-    @IsOptional() @IsString() qualification:string;
+    @IsString() address:string;
 
-    @IsOptional() @IsNumber() experienceYear:number;
+    @IsString() degree:string;
 
-    @IsOptional() @IsArray() @IsString({each:true}) subjects?:string[];
+    @IsString() university: string;
+
+    @IsNumber() experienceYears:number;
+
+    @IsString() profileImage: string;
+
+    @IsArray() @ArrayNotEmpty() @IsString({each:true}) subjects?:string[];
 }
 export class UpdateTeacherDto{
-    @IsOptional() @IsString() name:string;
+
+    @IsOptional() @IsString() firstName:string;
+
+    @IsOptional() @IsString() lastName:string;
 
     @IsOptional() @IsEmail() email:string;
 
     @IsOptional() @IsString() mobileNumber:string;
 
+    @IsOptional()  @IsString() address:string;
+
     @IsOptional() @IsDateString() dob:Date;
 
-    @IsOptional() @IsString() qualification:string;
+    @IsOptional() @IsString() university: string;
 
-    @IsOptional() @IsNumber() experienceYear:number;
+    @IsOptional() @IsString() degree:string;
+
+    @IsOptional() @IsNumber() experienceYears:number;
+
+    @IsOptional() @IsString() profileImage?: string;
 
     @IsOptional() @IsArray() @IsString({each:true}) subjects?:string[];
 }

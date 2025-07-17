@@ -6,16 +6,22 @@ import {
 } from '@nestjs/common';
 import { TeacherRepository } from '../domain/teacher.repository';
 import { CreateTeacherDto,UpdateTeacherDto } from '../infrastruture/dto/teacher.dto'; 
+import { uploadImage } from 'src/student/infrastructure/utils/upload.image';
 
 @Injectable()
 export class TeacherService {
   constructor(private readonly repo: TeacherRepository) {}
 
-  async create(dto: CreateTeacherDto) {
+  async create(dto: CreateTeacherDto,file:Express.Multer.File) {
+    console.log("invoked create")
+    console.log("datas from front end",dto)
+
     const existing = await this.repo.findByEmail(dto.email);
     if (existing) throw new ForbiddenException('Teacher with this email already exists');
 
-    const result = await this.repo.createTeacher(dto);
+    const imageUrl= await uploadImage(file)
+
+    const result = await this.repo.createTeacher({...dto, profileImage:imageUrl});
     return result;
   }
 

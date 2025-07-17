@@ -1,11 +1,12 @@
 
 
-import { Put,Post,Get,Body,Param,Controller,UseGuards,Delete } from "@nestjs/common";
+import { Put,Post,Get,Body,Param,Controller,UseGuards,Delete, UseInterceptors, UploadedFile } from "@nestjs/common";
 import { TeacherService } from "../application/teacher.service";
 import { CreateTeacherDto,UpdateTeacherDto } from "./dto/teacher.dto";
 import { JwtAuthGuard } from "src/auth/infrastrucure/jwt-auth.guard";
 import { Roles } from "src/auth/infrastrucure/roles.decorator";
 import { Role } from "src/auth/infrastrucure/dto/auth.dto";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller("teachers")
 @UseGuards(JwtAuthGuard)
@@ -13,9 +14,10 @@ export class TeacherController{
     constructor(private readonly teacherService:TeacherService){}
 
     @Roles(Role.ADMIN)
+    @UseInterceptors(FileInterceptor('profileImage'))
     @Post()
-    create(@Body()create_dto:CreateTeacherDto){
-        return this.teacherService.create(create_dto)
+    create(@UploadedFile()file:Express.Multer.File, @Body()create_dto:CreateTeacherDto){
+        return this.teacherService.create(create_dto,file)
     };
 
     @Roles(Role.ADMIN,Role.TEACHER)

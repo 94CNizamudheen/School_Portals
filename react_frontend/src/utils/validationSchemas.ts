@@ -156,3 +156,26 @@ export const parentModalSchema = Yup.object({
     .required('Emergency Contact Phone is required'),
   emergencyContactRelationship: Yup.string().required('Emergency Contact Relationship is required'),
 });
+
+
+export const teacherSchema = Yup.object({
+  firstName: Yup.string().required("First name is required"),
+  lastName: Yup.string().required("Last name is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  mobileNumber: Yup.string().matches(/^[0-9]{10}$/, 'Mobile number must be 10 digits').required('Mobile number is required'),
+  address: Yup.string().required("Address is required"),
+  dob: Yup.string().required("Date of birth is required"),
+  university: Yup.string().required("University is required"),
+  degree: Yup.string().required("Degree is required"),
+  experienceYears: Yup.number()
+    .typeError("Experience must be a number")
+    .required("Experience is required")
+    .positive("Must be positive")
+    .integer("Must be a whole number"),
+
+  subjects: Yup.array()
+    .of(Yup.string().required("Subject is required"))
+    .min(1, "At least one subject is required")
+    .required("Subjects are required"),
+    profileImage: Yup.mixed().required('select image'),
+});
