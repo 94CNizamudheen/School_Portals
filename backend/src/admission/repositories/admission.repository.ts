@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { Admission, AdmissionDocument } from '../entities/admission.schema';
-import { CreateAdmissionDto } from '../dtos/admission.dto';
+import { CreateAdmissionDto } from '../dtos/create-admission.dto';
 import { IAdmissionRepository } from './interfaces/admission.repositoriy.interface';
 
 @Injectable()

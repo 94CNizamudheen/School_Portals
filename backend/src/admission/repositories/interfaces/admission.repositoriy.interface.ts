@@ -1,6 +1,6 @@
 
 import { Admission } from '../../entities/admission.schema';
-import { CreateAdmissionDto } from 'src/admission/dtos/admission.dto';
+import { CreateAdmissionDto } from 'src/admission/dtos/create-admission.dto';
 
 export interface IAdmissionRepository {
   create(dto: CreateAdmissionDto): Promise<Admission>;
