@@ -1,16 +1,15 @@
-
-
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Admin } from './admin.schema';
-import { CreateAdminDto, UpdateAdminDto } from '../infrastructure/admin.dto';
-import { User } from 'src/auth/domain/user.schema';
+import { Admin } from '../entities/admin.schema';
+import { User } from 'src/auth/entities/user.schema';
 import * as bcrypt from 'bcrypt';
+import { CreateAdminDto,  } from '../dtos/create-admin.dto';
+import { UpdateAdminDto } from '../dtos/update-admin.dto';
+import { IAdminRepository } from './interfaces/admin-repository.interface';
 
 @Injectable()
-export class AdminRepository {
+export class AdminRepository implements IAdminRepository {
   constructor(
     @InjectModel(Admin.name) private adminModel: Model<Admin>,
     @InjectModel(User.name) private userModel: Model<User>,
@@ -21,8 +20,7 @@ export class AdminRepository {
   }
 
   async createAdmin(createDto: CreateAdminDto): Promise<Admin> {
-    const admin = new this.adminModel(createDto);
-    return admin.save();
+    return new this.adminModel(createDto).save();
   }
 
   async createUserAccount(profileId: string, name: string, email: string, password: string): Promise<void> {
@@ -36,7 +34,7 @@ export class AdminRepository {
   }
 
   async findById(id: string): Promise<Admin> {
-    const admin = await this.adminModel.findById(id).exec();
+    const admin = await this.adminModel.findById(id);
     if (!admin) throw new NotFoundException('Admin not found');
     return admin;
   }
@@ -47,11 +45,11 @@ export class AdminRepository {
   }
 
   async updateAdmin(id: string, updateDto: UpdateAdminDto): Promise<Admin | null> {
-    return this.adminModel.findByIdAndUpdate(id, updateDto, { new: true }).exec();
+    return this.adminModel.findByIdAndUpdate(id, updateDto, { new: true });
   }
 
   async updateUserEmail(profileId: string, newEmail: string): Promise<void> {
-    const user = await this.userModel.findOne({ profileId }).exec();
+    const user = await this.userModel.findOne({ profileId });
     if (user) {
       user.email = newEmail;
       await user.save();
