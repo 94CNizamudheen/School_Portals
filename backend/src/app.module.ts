@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
-import { databaseConfig } from "./config/database.config";
 import {AuthModule} from './auth/infrastrucure/auth.module'
 import { StudentModule } from './student/infrastructure/student.module';
 import { TeacherModule } from './teacher/infrastruture/teacher.module';
