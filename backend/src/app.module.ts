@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
 import { AuthModule } from './auth/auth.module';
-import { StudentModule } from './student/infrastructure/student.module';
+import { StudentModule } from './student/student.module';
 import { TeacherModule } from './teacher/infrastruture/teacher.module';
 import { AdminModule } from './admin/admin.module'; 
 import { ParentModule } from './parent/parent.module'; 
