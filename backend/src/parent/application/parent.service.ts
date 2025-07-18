@@ -1,4 +1,4 @@
-// application/parent.service.ts
+
 import {Injectable, NotFoundException, ForbiddenException,} from '@nestjs/common';
 import { ParentRepository } from '../domain/parent.repository';
 import { CreateParentDto, UpdateParentDto } from '../infrastructure/dto/parent.dto';
