@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { AdmissionService } from '../services/admission.service';
-import { CreateAdmissionDto } from '../dtos/create-admission.dto';
+import { CreateAdmissionDto } from '../dtos/admission.dto';
 
 @Controller('admissions')
 export class AdmissionController {
