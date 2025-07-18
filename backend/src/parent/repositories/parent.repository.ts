@@ -1,20 +1,21 @@
-
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Parent } from './parent.schema';
-import { User } from 'src/auth/domain/user.schema';
-import { Student } from 'src/student/domain/student.schema';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { IParentRepository } from "./interfaces/parent.repository.interface";
+import { Parent } from "../entities/parent.schema";
+import { User } from "src/auth/entities/user.schema";
+import { Student } from "src/student/domain/student.schema";
+import { Model, Types } from "mongoose";
+import { CreateParentDto } from "../dtos/create-parent.dto";
+import { UpdateParentDto } from "../dtos/update-parent.dto";
 import * as bcrypt from 'bcrypt';
-import { CreateParentDto, UpdateParentDto } from '../infrastructure/dto/parent.dto';
 
 @Injectable()
-export class ParentRepository {
+export class ParentRepository implements IParentRepository {
   constructor(
-    @InjectModel(Parent.name) private parentModel: Model<Parent>,
-    @InjectModel(User.name) private userModel: Model<User>,
-    @InjectModel(Student.name) private studentModel: Model<Student>
-  ) { }
+    @InjectModel(Parent.name) private readonly parentModel: Model<Parent>,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(Student.name) private readonly studentModel: Model<Student>
+  ) {}
 
   async findByEmail(email: string) {
     return this.parentModel.findOne({ email }).lean();
@@ -27,7 +28,7 @@ export class ParentRepository {
     };
     const parent = new this.parentModel(payload);
     const saved = await parent.save();
-    return saved.toObject({ getters: true }); // exposes `.id` instead of `._id`
+    return saved.toObject({ getters: true }); 
   }
 
   async createUser(email: string, password: string, parentId: string) {
@@ -36,7 +37,7 @@ export class ParentRepository {
       email,
       password: hashed,
       role: 'PARENT',
-      profileId: parentId
+      profileId: new Types.ObjectId(parentId) 
     });
     return user.save();
   }
@@ -46,22 +47,24 @@ export class ParentRepository {
   }
 
   async findParentById(id: string) {
-    return this.parentModel.findById(id).lean();
+    return this.parentModel.findById(new Types.ObjectId(id)).lean();
   }
 
   async updateParent(id: string, dto: UpdateParentDto) {
-    const payload = { ...dto,
+    const payload = {
+      ...dto,
       studentIds: dto.studentIds?.map(id => new Types.ObjectId(id))
     };
     return this.parentModel.findByIdAndUpdate(id, payload, { new: true }).lean();
   }
 
   async updateUserEmail(profileId: string, newEmail: string) {
-    const user = await this.userModel.findOne({ profileId });
+    const user = await this.userModel.findOne({ profileId: new Types.ObjectId(profileId) });
     if (user) {
       user.email = newEmail;
       return user.save();
     }
+    return null;
   }
 
   async addParentToStudent(studentId: string, parentId: string) {
@@ -70,10 +73,12 @@ export class ParentRepository {
 
     const pId = new Types.ObjectId(parentId);
     student.parentIds = student.parentIds || [];
+
     if (!student.parentIds.some(id => id.equals(pId))) {
       student.parentIds.push(pId);
       await student.save();
     }
+
     return student.toObject({ getters: true });
   }
 
@@ -88,15 +93,15 @@ export class ParentRepository {
     }
   }
 
-
   async deleteParent(id: string) {
-    await this.userModel.deleteOne({ profileId: id });
-    return this.parentModel.deleteOne({ _id: id });
+    await this.userModel.deleteOne({ profileId: new Types.ObjectId(id) });
+    return this.parentModel.deleteOne({ _id: new Types.ObjectId(id) });
   }
 
-  async findChildrens(ids:Types.ObjectId[]){
-    const childrens= await this.studentModel.find({_id:{$in:ids}},'firstName lastName').lean()
-    return  childrens
+  async findChildrens(ids: Types.ObjectId[]) {
+    return this.studentModel.find(
+      { _id: { $in: ids } },
+      'firstName lastName' 
+    ).lean();
   }
-
 }
