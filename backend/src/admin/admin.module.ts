@@ -1,12 +1,13 @@
 
+
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AdminController } from './admin.controller';
-import { AdminService } from '../application/admin.service';
-import { AdminRepository } from '../domain/admin.repository';
-import { Admin, AdminSchema } from '../domain/admin.schema';
-import { User, UserSchema } from 'src/auth/domain/user.schema';
-import { AuthModule } from 'src/auth/infrastrucure/auth.module';
+import { AdminController } from './controllers/admin.controller';
+import { AdminService } from './service/admin.services'; 
+import { AdminRepository } from './repositories/admin.repository';
+import { Admin, AdminSchema } from './entities/admin.schema';
+import { User,UserSchema } from 'src/auth/entities/user.schema';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
