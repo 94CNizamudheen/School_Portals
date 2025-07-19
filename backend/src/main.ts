@@ -1,6 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from './app.module';
-import { AdminService } from "./admin/application/admin.service";
+import { AdminService } from "./admin/service/admin.services";
 import { NocacheInreceptor } from "./interceptor";
 const url = process.env.FRONTEND_URL
 import * as express from 'express';

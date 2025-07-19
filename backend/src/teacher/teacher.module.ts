@@ -19,8 +19,8 @@ import { TeacherRepository } from "./repositories/teacher.repository";
     controllers:[TeacherController],
 
     providers:[TeacherService,{provide:"ITeacherRepository",useClass:TeacherRepository}],
-    
-    exports:[TeacherService,TeacherRepository]
+
+    exports:[TeacherService,"ITeacherRepository"]
 })
 
 export class TeacherModule{}

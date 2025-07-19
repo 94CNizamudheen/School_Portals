@@ -3,7 +3,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 import { Parent, ParentSchema } from "./entities/parent.schema";
 import { User ,UserSchema} from "src/auth/entities/user.schema"; 
-import { Student, StudentSchema } from "src/student/domain/student.schema";
+import { Student,StudentSchema } from "src/student/entities/student.schema"; 
 import { AuthModule } from "src/auth/auth.module"; 
 
 import { ParentController } from "./controllers/parent.controller";
