@@ -6,10 +6,12 @@ import { AdmissionService } from './services/admission.service';
 import { AdmissionRepository } from './repositories/admission.repository';
 import { AdmissionController } from './controllers/admission.controller';
 import { AdmissionAdminController } from './controllers/admission-admin.controller';
+import { TeacherModule } from 'src/teacher/infrastruture/teacher.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Admission.name, schema: AdmissionSchema }])
+    MongooseModule.forFeature([{ name: Admission.name, schema: AdmissionSchema }]),
+    TeacherModule
   ],
   controllers: [AdmissionController, AdmissionAdminController],
   providers: [

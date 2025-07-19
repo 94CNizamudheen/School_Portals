@@ -1,10 +1,11 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, Inject } from '@nestjs/common';
 import { CreateAdmissionDto } from '../dtos/create-admission.dto';
 import { IAdmissionRepository } from '../repositories/interfaces/admission.repositoriy.interface';
 
 @Injectable()
 export class AdmissionService {
-  constructor(private readonly repo: IAdmissionRepository) {}
+  
+  constructor(@Inject('IAdmissionRepository') private readonly repo: IAdmissionRepository) {}
 
   async submitApplication(dto: CreateAdmissionDto) {
     if (dto.previousSchool && !dto.transferCertificate) {
