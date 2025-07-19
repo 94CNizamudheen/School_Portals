@@ -1,15 +1,18 @@
 
 
+
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Teacher } from './teacher.schema';
-import { User } from 'src/auth/domain/user.schema';
-import { CreateTeacherDto,UpdateTeacherDto } from '../infrastruture/dto/teacher.dto';
+import { Teacher } from '../entities/teacher.schema'; 
+import { User } from 'src/auth/entities/user.schema'; 
+import { CreateTeacherDto } from '../dtos/create-teacher.dto'; 
+import { UpdateTeacherDto } from '../dtos/update-teacher.dto';
 import * as bcrypt from 'bcrypt';
+import { ITeacherRepository } from './interfaces/teacher.repository.interface';
 
 @Injectable()
-export class TeacherRepository {
+export class TeacherRepository implements ITeacherRepository  {
   constructor(
     @InjectModel(Teacher.name) private teacherModel: Model<Teacher>,
     @InjectModel(User.name) private userModel: Model<User>
