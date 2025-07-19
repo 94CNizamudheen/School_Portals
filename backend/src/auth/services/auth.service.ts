@@ -33,4 +33,9 @@ export class AuthService {
   async resetPassword(email: string, newPassword: string) {
     await this.authRepository.updatePassword(email, newPassword);
   }
+
+  async fetchUser(id:string){
+   const user= await this.authRepository.fetchUser(id);
+   return user
+  }
 }

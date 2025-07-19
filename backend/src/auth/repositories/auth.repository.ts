@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from '../entities/user.schema';
 import { Otp, OtpDocument } from '../entities/otp.schema';
@@ -16,6 +16,9 @@ export class AuthRepository implements IAuthRepository {
 
   async findUserByEmail(email: string): Promise<User | null> {
     return this.userModel.findOne({ email }).exec();
+  }
+  async  fetchUser(id: string): Promise<User | null> {
+      return this.userModel.findById(new Types.ObjectId(id)).lean();
   }
 
   async createUser(data:User): Promise<User> {

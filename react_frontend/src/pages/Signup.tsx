@@ -3,12 +3,9 @@ import { Link, useNavigate } from "react-router-dom"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { Label } from "../components/ui/label"
-import {
-  Card, CardContent, CardDescription,
-  CardHeader, CardTitle
-} from "../components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 import { useDispatch } from "react-redux"
-import { registerUser } from "../store/authThunks"
+import { registerUser } from "../store/api"
 import { login } from "../store/authSlice"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -24,7 +21,7 @@ type SignUpFormData = {
 }
 
 const SignupPage = () => {
-  const {register, handleSubmit,formState: { errors, isSubmitting }, } = useForm<SignUpFormData>({
+  const { register, handleSubmit, formState: { errors, isSubmitting }, } = useForm<SignUpFormData>({
     resolver: yupResolver(signupSchema),
   })
 
@@ -32,11 +29,11 @@ const SignupPage = () => {
   const navigate = useNavigate()
 
   const onSubmit = async (data: SignUpFormData) => {
-    const { email, password } = data
+    const { name, email, password } = data
     const role = "GUEST"
 
     try {
-      const res = await registerUser(email, password, role)
+      const res = await registerUser(name, email, password, role)
       dispatch(login({ access_token: res.access_token, role: res.role, userId: res.userId }))
       navigate("/")
     } catch (error) {
