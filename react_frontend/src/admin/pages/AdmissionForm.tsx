@@ -3,7 +3,7 @@ import  { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { FormHeader } from "../../components/forms/FormHeader";
+import { FormHeader } from "../../components/forms/AdmissionFormHeader";
 import { ProgressBar } from "../../components/forms/ProgressBar";
 import { FormNavigation } from "../../components/forms/FormNavigation";
 import { PersonalInformationForm } from "../../components/forms/PersonalInformationForm";

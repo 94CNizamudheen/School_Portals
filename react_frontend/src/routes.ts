@@ -20,6 +20,9 @@ const StudentDetailPage= lazy(()=>import("./admin/pages/StudentDeatailsPage"))
 const TeachersPage= lazy(()=>import('./admin/pages/TeacherPage'))
 const AddTeachersPage= lazy(()=>import('./admin/pages/AddTeacherPage'))
 const ParentPage= lazy(()=>import('./admin/pages/ParentPage'))
+const GuestLogin= lazy(()=>import('./pages/Logins/GuestLogin'))
+const AdmissionPage=lazy(()=>import('./pages/AdmissionPage'));
+const Signup= lazy(()=>import('./pages/Signup'))
 
 
 
@@ -33,6 +36,9 @@ export const router = createBrowserRouter([
   { path: "/parent/login", element: React.createElement(ParentLogin) },
   { path: "/student/login", element: React.createElement(StudentLogin) },
   { path: "/teacher/login", element: React.createElement(TeacherLogin) },
+  { path: "/guest/login", element: React.createElement(GuestLogin) },
+  {path:'/admission',element:React.createElement(AdmissionPage)},
+  {path:'/signup',element:React.createElement(Signup)},
   { path: "*", element: React.createElement(NotFound) },
 {
   path: "/admin",

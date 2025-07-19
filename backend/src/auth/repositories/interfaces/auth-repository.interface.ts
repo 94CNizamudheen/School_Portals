@@ -3,7 +3,7 @@ import { Otp } from "src/auth/entities/otp.schema";
 
 export interface IAuthRepository {
   findUserByEmail(email: string): Promise<User | null>;
-  createUser(email: string, password: string, role: string): Promise<User>;
+  createUser(data:Partial<User>): Promise<User>;
   comparePasswords(plain: string, hash: string): Promise<boolean>;
   createOtp(email: string): Promise<string>;
   findOtp(email: string, code: string): Promise<Otp | null>;

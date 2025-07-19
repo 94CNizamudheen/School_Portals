@@ -1,11 +1,11 @@
-// src/pages/Login.tsx
+
 
 import axios from "axios"
-import  { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useLocation, useNavigate } from "react-router-dom"
 import { login } from "../store/authSlice"
-const API = import.meta.env.VITE_BACKEND_URL 
+const API = import.meta.env.VITE_BACKEND_URL
 
 const Login = () => {
   const [email, setEmail] = useState("")
@@ -18,11 +18,11 @@ const Login = () => {
   const navigate = useNavigate()
   const pathName = location.pathname
   const role = pathName.split("/")[1].toUpperCase()
-
+  const guesPathName = '/guest/login';
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const validRoles = ["ADMIN", "STUDENT", "TEACHER", "PARENT"]
+    const validRoles = ["ADMIN", "STUDENT", "TEACHER", "PARENT", "GUEST"]
     if (!validRoles.includes(role)) {
       setError("Invalid role in URL")
     }
@@ -70,6 +70,9 @@ const Login = () => {
           break
         case "PARENT":
           navigate("/parent/dashboard")
+          break
+        case "GUEST":
+          navigate('/') 
           break
         default:
           setError("Invalid role")
@@ -135,14 +138,24 @@ const Login = () => {
           </button>
         </div>
 
-        <div className="text-center mt-6">
+        <div className="text-center mt-6 space-y-3">
           <button
             onClick={() => navigate(`/${role.toLowerCase()}/forgot-password`)}
-            className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+            className="text-blue-400 hover:text-blue-300 font-medium transition-colors block"
           >
             Forgot Password?
           </button>
+
+          {pathName === guesPathName && (
+            <button
+              onClick={() => navigate(`/signup`)}
+              className="text-blue-400 hover:text-blue-300 font-medium transition-colors block"
+            >
+              Sign Up
+            </button>
+          )}
         </div>
+
       </div>
     </div>
   )

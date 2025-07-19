@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IAuthRepository } from '../repositories/interfaces/auth-repository.interface';
+import { RegisterDto } from '../dtos/register.dtos';
 
 @Injectable()
 export class AuthService {
@@ -8,8 +9,8 @@ export class AuthService {
     private readonly authRepository: IAuthRepository
   ) {}
 
-  async register(email: string, password: string, role: string) {
-    return this.authRepository.createUser(email, password, role);
+  async register(dto: RegisterDto) {
+    return this.authRepository.createUser(dto);
   }
 
   async login(email: string, password: string) {

@@ -1,6 +1,6 @@
 
-import { IsEmail, IsEnum, IsString } from "class-validator";
-export enum Role{
+import { IsEmail, IsEnum, IsOptional, IsString } from "class-validator";
+export enum Role {
     ADMIN = "ADMIN",
     STUDENT = "STUDENT",
     TEACHER = "TEACHER",
@@ -8,12 +8,17 @@ export enum Role{
     GUEST = 'GUEST'
 };
 
-export class RegisterDto{
-    @IsEmail()
-    email:string
+export class RegisterDto {
     @IsString()
-    password:string
+    name: string
+    @IsEmail()
+    email: string
+    @IsString()
+    password: string
     @IsEnum(Role)
-    role:Role
+    role: Role
+    @IsOptional()
+    @IsString()
+    profileId?: string;
 }
 

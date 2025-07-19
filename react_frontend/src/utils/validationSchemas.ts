@@ -179,3 +179,35 @@ export const teacherSchema = Yup.object({
     .required("Subjects are required"),
     profileImage: Yup.mixed().required('select image'),
 });
+
+
+export const admissionValidationSchema = Yup.object({
+  firstName: Yup.string().required('First name is required'),
+  lastName: Yup.string().required('Last name is required'),
+  dob: Yup.date().required('Date of birth is required'),
+  address: Yup.string().required('Address is required'),
+  profilePicture: Yup.string().required('Profile picture is required'),
+  bloodGroup: Yup.string().required('Blood group is required'),
+  aadharDocument: Yup.string().required('Aadhar document is required'),
+  birthCertificate: Yup.string().required('Birth certificate is required'),
+  previousSchool: Yup.string(),
+  transferCertificate: Yup.string(),
+  medicalInformation: Yup.string(),
+  parentName: Yup.string().required('Parent name is required'),
+  relationToStudent: Yup.string().required('Relation to student is required'),
+  email: Yup.string().email('Invalid email').required('Email is required'),
+  mobileNumber: Yup.string().matches(/^\d{10}$/, 'Mobile number must be 10 digits').required('Mobile number is required'),
+  emergencyContactName: Yup.string().required('Emergency contact name is required'),
+  emergencyContactNumber: Yup.string().matches(/^\d{10}$/, 'Emergency contact number must be 10 digits').required('Emergency contact number is required'),
+  parentOccupation: Yup.string(),
+  classApplied: Yup.string().required('Class applied is required'),
+});
+
+export const signupSchema = Yup.object({
+  name: Yup.string().required("Full name is required"),
+  email: Yup.string().email("Invalid email address").required("Email is required"),
+  password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "Passwords must match")
+    .required("Confirm Password is required"),
+});

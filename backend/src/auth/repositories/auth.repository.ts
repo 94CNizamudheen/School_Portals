@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from '../entities/user.schema';
 import { Otp, OtpDocument } from '../entities/otp.schema';
 import { IAuthRepository } from './interfaces/auth-repository.interface';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthRepository implements IAuthRepository {
@@ -17,9 +18,9 @@ export class AuthRepository implements IAuthRepository {
     return this.userModel.findOne({ email }).exec();
   }
 
-  async createUser(email: string, password: string, role: string): Promise<User> {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new this.userModel({ email, password: hashedPassword, role });
+  async createUser(data:User): Promise<User> {
+    const hashedPassword = await bcrypt.hash(data.password,10);
+    const newUser = new this.userModel({ ...data, password: hashedPassword, profileId: data.profileId || uuidv4(), });
     return newUser.save();
   }
 
