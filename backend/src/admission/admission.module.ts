@@ -18,6 +18,7 @@ import { AdmissionAdminController } from './controllers/admission-admin.controll
       provide: 'IAdmissionRepository',
       useClass: AdmissionRepository
     }
-  ]
+  ],
+  exports:[AdmissionService,'IAdmissionRepository']
 })
 export class AdmissionModule {}
