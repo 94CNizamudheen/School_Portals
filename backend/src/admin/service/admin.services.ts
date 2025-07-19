@@ -14,7 +14,7 @@ export class AdminService {
   constructor(
     private readonly adminRepository: AdminRepository,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   async create(createDto: CreateAdminDto): Promise<Admin> {
     const existing = await this.adminRepository.findByEmail(createDto.email);
@@ -22,7 +22,7 @@ export class AdminService {
 
     const password = Math.random().toString(36).slice(-8);
     const savedAdmin = await this.adminRepository.createAdmin(createDto);
-    await this.adminRepository.createUserAccount((savedAdmin._id as string) .toString(), createDto.name, createDto.email, password);
+    await this.adminRepository.createUserAccount((savedAdmin._id as string).toString(), createDto.name, createDto.email, password);
 
     this.logger.log(`Admin created: ${createDto.email}, Password: ${password}`);
     return savedAdmin;
@@ -52,7 +52,11 @@ export class AdminService {
   }
 
   async seedSuperAdmin(): Promise<void> {
-    const { SUPERADMIN_EMAIL, SUPERADMIN_PASSWORD, SUPERADMIN_NAME, SUPERADMIN_MOBILE } = this.configService.get<string>('') as any;
+    const SUPERADMIN_EMAIL = this.configService.get<string>('SUPERADMIN_EMAIL');
+    const SUPERADMIN_PASSWORD = this.configService.get<string>('SUPERADMIN_PASSWORD');
+    const SUPERADMIN_NAME = this.configService.get<string>('SUPERADMIN_NAME');
+    const SUPERADMIN_MOBILE = this.configService.get<string>('SUPERADMIN_MOBILE');
+
 
     if (!SUPERADMIN_EMAIL || !SUPERADMIN_PASSWORD || !SUPERADMIN_NAME || !SUPERADMIN_MOBILE) {
       this.logger.error('Missing environment variables');

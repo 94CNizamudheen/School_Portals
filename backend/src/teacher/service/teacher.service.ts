@@ -1,5 +1,6 @@
 import {
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,7 +11,7 @@ import { uploadImage } from 'src/shared/utils/upload.image';
 
 @Injectable()
 export class TeacherService {
-  constructor(private readonly repo: TeacherRepository) {}
+  constructor(@Inject('ITeacherRepository') private readonly repo: TeacherRepository) {}
 
   async create(dto: CreateTeacherDto,file:Express.Multer.File) {
 
