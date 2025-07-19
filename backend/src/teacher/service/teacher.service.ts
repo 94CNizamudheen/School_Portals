@@ -1,20 +1,18 @@
 import {
   ForbiddenException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { TeacherRepository } from '../domain/teacher.repository';
-import { CreateTeacherDto,UpdateTeacherDto } from '../infrastruture/dto/teacher.dto'; 
-import { uploadImage } from 'src/student/infrastructure/utils/upload.image';
+import { TeacherRepository } from '../repositories/teacher.repository';
+import { CreateTeacherDto } from '../dtos/create-teacher.dto'; 
+import { UpdateTeacherDto } from '../dtos/update-teacher.dto';
+import { uploadImage } from 'src/shared/utils/upload.image';
 
 @Injectable()
 export class TeacherService {
   constructor(private readonly repo: TeacherRepository) {}
 
   async create(dto: CreateTeacherDto,file:Express.Multer.File) {
-    console.log("invoked create")
-    console.log("datas from front end",dto)
 
     const existing = await this.repo.findByEmail(dto.email);
     if (existing) throw new ForbiddenException('Teacher with this email already exists');

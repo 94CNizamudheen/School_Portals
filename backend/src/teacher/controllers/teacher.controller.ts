@@ -1,11 +1,12 @@
 
 
 import { Put,Post,Get,Body,Param,Controller,UseGuards,Delete, UseInterceptors, UploadedFile } from "@nestjs/common";
-import { TeacherService } from "../application/teacher.service";
-import { CreateTeacherDto,UpdateTeacherDto } from "./dto/teacher.dto";
-import { JwtAuthGuard } from "src/auth/infrastrucure/jwt-auth.guard";
-import { Roles } from "src/auth/infrastrucure/roles.decorator";
-import { Role } from "src/auth/infrastrucure/dto/auth.dto";
+import { TeacherService } from "../service/teacher.service";
+import { CreateTeacherDto } from "../dtos/create-teacher.dto"; 
+import { UpdateTeacherDto } from "../dtos/update-teacher.dto";
+import { JwtAuthGuard } from "src/auth/jwt-auth.guard"; 
+import { Roles } from "src/auth/roles.decorator";
+import { Role } from "src/auth/dtos/register.dtos"; 
 import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller("teachers")

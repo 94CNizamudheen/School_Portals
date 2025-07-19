@@ -1,30 +1,5 @@
+import { IsString,IsEmail,IsDateString,IsArray,IsNumber, IsOptional, } from "class-validator";
 
-import { IsString,IsEmail,IsDateString,IsArray,IsNumber, IsOptional, isString, ArrayNotEmpty } from "class-validator";
-
-export class CreateTeacherDto{
-
-    @IsString() firstName:string;
-
-    @IsString() lastName:string;
-
-    @IsEmail() email:string;
-
-    @IsString() mobileNumber:string;
-
-    @IsDateString() dob:Date;
-
-    @IsString() address:string;
-
-    @IsString() degree:string;
-
-    @IsString() university: string;
-
-    @IsNumber() experienceYears:number;
-
-    @IsString() profileImage: string;
-
-    @IsArray() @ArrayNotEmpty() @IsString({each:true}) subjects?:string[];
-}
 export class UpdateTeacherDto{
 
     @IsOptional() @IsString() firstName:string;
