@@ -19,6 +19,9 @@ export interface AdmissionFormData {
   emergencyContactNumber: string;
   parentOccupation: string;
   classApplied: string;
+  nationality:string;
+  state:string;
+  pincode:string;
 }
 
 export type AdmissionFormErrors = Partial<Record<keyof AdmissionFormData, string>>;

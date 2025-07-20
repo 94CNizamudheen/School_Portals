@@ -9,12 +9,12 @@ interface AdmissionSubmitSectionProps{
 }
 
 const AdmissionSubmitSection:React.FC<AdmissionSubmitSectionProps> = ({ isSubmitting, handleSubmit }) => (
-  <Card className="shadow-lg p-0">
-    <CardContent className="p-6">
-      <div className="flex flex-col items-center space-y-4">
-        <Alert className="w-full">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
+  <Card className="shadow-lg p-0 ">
+    <CardContent className="p-6 ">
+      <div className="flex flex-col items-center space-y-4 ">
+        <Alert className="w-full bg-yellow-200 ">
+          <AlertCircle className="h-4 w-4 " />
+          <AlertDescription className="text-blue-700" >
             Please review all information carefully before submitting. Fields marked with * are required.
           </AlertDescription>
         </Alert>

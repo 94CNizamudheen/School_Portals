@@ -24,7 +24,11 @@ const useAdmissionForm = () => {
         emergencyContactName: '',
         emergencyContactNumber: '',
         parentOccupation: '',
-        classApplied: ''
+        classApplied: '',
+        nationality:'',
+        state:'',
+        pincode:''
+        
     });
 
     const [errors, setErrors] = useState<AdmissionFormErrors>({});

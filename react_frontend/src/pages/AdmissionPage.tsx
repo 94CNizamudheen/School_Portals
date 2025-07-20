@@ -28,7 +28,7 @@ const AdmissionPage: React.FC = () => {
 
   return (
     <div className=" min-h-screen bg-gradient-to-br from-purple-300 to-purple-950 py-8 px-4">
-      <div className="w-[70%] max-w-4xl mx-auto bg-white/30 backdrop-blur-lg border border-white/40 rounded-xl p-8 shadow-xl">
+      <div className="sm:w-[70%] md:w-[70%] max-w-4xl mx-auto bg-white/30 backdrop-blur-lg border border-white/40 rounded-xl p-8 shadow-xl">
 
         <AdmissionFormHeader />
 
