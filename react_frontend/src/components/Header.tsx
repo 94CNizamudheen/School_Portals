@@ -9,7 +9,7 @@ import { fetchUser } from "../store/api"
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
-  const { userId, isAuthenticated,role } = useSelector((state: RootState) => state.auth)
+  const { userId, isAuthenticated, role } = useSelector((state: RootState) => state.auth)
   const [userName, setUserName] = useState('')
   const [userEmail, setUserEmail] = useState('')
   const dispatch = useDispatch()
@@ -17,11 +17,11 @@ const Header = () => {
 
   useEffect(() => {
     const getUser = async () => {
-          console.log(isAuthenticated,userId,role)
+      console.log(isAuthenticated, userId, role)
       try {
         if (isAuthenticated && userId) {
           const user = await fetchUser(userId)
-          console.log("user",user)
+          console.log("user", user)
           setUserName(user.name)
           setUserEmail(user.email)
         }
@@ -30,7 +30,7 @@ const Header = () => {
       }
     }
     getUser()
-  }, [userId, isAuthenticated,role])
+  }, [userId, isAuthenticated, role])
 
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const Header = () => {
   }, [])
 
   const handleLogout = () => {
-    
+
     dispatch(logout())
     setIsUserMenuOpen(false)
   }
@@ -66,7 +66,7 @@ const Header = () => {
     return 'User'
   }
 
-   return (
+  return (
     <header className="relative bg-gradient-to-br from-purple-900 via-indigo-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
@@ -80,13 +80,13 @@ const Header = () => {
             <a href="#activities" className="hover:text-indigo-300 transition-colors font-medium">Activities</a>
             <a href="#about" className="hover:text-indigo-300 transition-colors font-medium">About</a>
             <a href="#contact" className="hover:text-indigo-300 transition-colors font-medium">Contact</a>
-            
+
             <Link to="/portals">
               <button className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-6 py-2 rounded-full font-semibold hover:from-yellow-300 hover:to-orange-400 transform hover:scale-105 transition-all duration-300 shadow-lg ml-4">
                 Portal
               </button>
             </Link>
-            
+
             {isAuthenticated && (
               <div className="relative ml-4" ref={userMenuRef}>
                 <button
@@ -99,8 +99,8 @@ const Header = () => {
                   <span className="text-sm font-medium hidden lg:block">
                     {getUserDisplayName()}
                   </span>
-                  <ChevronDown 
-                    size={16} 
+                  <ChevronDown
+                    size={16}
                     className={`transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`}
                   />
                 </button>
@@ -122,10 +122,10 @@ const Header = () => {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="py-1">
-                      <Link 
-                        to="/profile" 
+                      <Link
+                        to="/profile"
                         className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-100/50 transition-colors"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
@@ -144,6 +144,14 @@ const Header = () => {
                 )}
               </div>
             )}
+            {!isAuthenticated && (
+              <Link to="/guest/login">
+                <button className="bg-white text-black px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition duration-300 ml-4">
+                  Sign In
+                </button>
+              </Link>
+            )}
+
           </nav>
 
           <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -160,13 +168,13 @@ const Header = () => {
               <a href="#activities" className="text-white hover:text-indigo-300 py-2">Activities</a>
               <a href="#about" className="text-white hover:text-indigo-300 py-2">About</a>
               <a href="#contact" className="text-white hover:text-indigo-300 py-2">Contact</a>
-              
+
               <Link to="/portals">
                 <button className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-6 py-2 rounded-full font-semibold hover:from-yellow-300 hover:to-orange-400 transform hover:scale-105 transition-all duration-300 shadow-lg mt-4 self-start">
                   Portals
                 </button>
               </Link>
-              
+
               {isAuthenticated && (
                 <div className="pt-4 border-t border-white/20 mt-4">
                   <div className="flex items-center space-x-3 mb-4">
@@ -182,8 +190,8 @@ const Header = () => {
                       </p>
                     </div>
                   </div>
-                  <Link 
-                    to="/profile" 
+                  <Link
+                    to="/profile"
                     className="flex items-center text-white hover:text-indigo-300 py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
@@ -202,6 +210,14 @@ const Header = () => {
                   </button>
                 </div>
               )}
+              {!isAuthenticated && (
+                <Link to="/guest/login">
+                  <button className="bg-white text-black px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition duration-300 mt-2 self-start">
+                    Sign In
+                  </button>
+                </Link>
+              )}
+
             </nav>
           </div>
         )}

@@ -35,7 +35,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(`${API}/auth/signin`, {
+      const response = await axios.post(`${API}/auth/login`, {
         email,
         password,
         role,
@@ -49,7 +49,9 @@ const Login = () => {
       setIsLoggedIn(true)
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "Login failed. Please try again")
+
+        console.error(err.response?.data?.message)
+        setError("Login failed. Please try again")
       } else {
         setError("Login failed. Please try again")
       }
@@ -72,7 +74,7 @@ const Login = () => {
           navigate("/parent/dashboard")
           break
         case "GUEST":
-          navigate('/') 
+          navigate('/')
           break
         default:
           setError("Invalid role")
@@ -82,6 +84,12 @@ const Login = () => {
 
   return (
     <div className="flex justify-center items-center ">
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-white rounded-full animate-pulse "></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-white rounded-full"></div>
+        <div className="absolute bottom-20 left-20 w-40 h-40 bg-white rounded-full"></div>
+        <div className="absolute bottom-40 right-10 w-28 h-28 bg-white rounded-full animate-bounce "></div>
+      </div>
       <div className="w-full max-w-md bg-white/10 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-purple-700/30">
         {error && (
           <div className="bg-red-500/20 text-red-300 p-3 rounded-full mb-4 text-center">

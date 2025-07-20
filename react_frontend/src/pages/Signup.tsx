@@ -12,6 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import { signupSchema } from "../utils/validationSchemas"
 import { toast } from "react-toastify"
 import type { AxiosError } from "axios"
+import { useState } from "react"
 
 type SignUpFormData = {
   name: string
@@ -27,6 +28,9 @@ const SignupPage = () => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   const onSubmit = async (data: SignUpFormData) => {
     const { name, email, password } = data
@@ -34,6 +38,7 @@ const SignupPage = () => {
 
     try {
       const res = await registerUser(name, email, password, role)
+      toast.success("Registration Successfull")
       dispatch(login({ access_token: res.access_token, role: res.role, userId: res.userId }))
       navigate("/")
     } catch (error) {
@@ -44,7 +49,13 @@ const SignupPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center p-4">
-      <Card className="w-[40%] max-w-md bg-purple-800/20 border-purple-600/30 backdrop-blur-sm">
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-40 w-32 h-32 bg-white rounded-full animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-white rounded-full animate-fade-in-scale"></div>
+        <div className="absolute bottom-20 left-20 w-40 h-40 bg-white rounded-full"></div>
+        <div className="absolute bottom-40 right-80 w-28 h-28 bg-white rounded-full animate-bounce"></div>
+      </div>
+      <Card className=" max-w-md bg-purple-800/20 border-purple-600/30 backdrop-blur-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-white">Sign Up</CardTitle>
           <CardDescription className="text-purple-200">Create your account to get started</CardDescription>
@@ -78,33 +89,47 @@ const SignupPage = () => {
               )}
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 relative">
               <Label htmlFor="password" className="text-purple-200">Password</Label>
               <Input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 {...register("password")}
-                className="bg-purple-700/30 border-purple-600/50 text-white placeholder:text-purple-300"
+                className="bg-purple-700/30 border-purple-600/50 text-white placeholder:text-purple-300 pr-10"
                 placeholder="Enter your password"
               />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-9 right-3 text-purple-300 cursor-pointer"
+              >
+                {showPassword ? "👁️" : "🙈"}
+              </span>
               {errors.password && (
                 <p className="text-red-400 text-sm">{errors.password.message}</p>
               )}
             </div>
 
-            <div className="space-y-2">
+
+            <div className="space-y-2 relative ">
               <Label htmlFor="confirmPassword" className="text-purple-200">Confirm Password</Label>
               <Input
                 id="confirmPassword"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 {...register("confirmPassword")}
-                className="bg-purple-700/30 border-purple-600/50 text-white placeholder:text-purple-300"
+                className="bg-purple-700/30 border-purple-600/50 text-white placeholder:text-purple-300 pr-10 "
                 placeholder="Confirm your password"
               />
+              <span
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute top-9 right-3 text-purple-300 cursor-pointer "
+              >
+                {showConfirmPassword ? "👁️" : "🙈"}
+              </span>
               {errors.confirmPassword && (
                 <p className="text-red-400 text-sm">{errors.confirmPassword.message}</p>
               )}
             </div>
+
 
             <Button
               type="submit"
@@ -118,7 +143,7 @@ const SignupPage = () => {
           <div className="mt-6 text-center">
             <p className="text-purple-200">
               Already have an account?{" "}
-              <Link to="guest/login" className="text-amber-400 hover:text-amber-300 font-semibold">
+              <Link to="/guest/login" className="text-amber-400 hover:text-amber-300 font-semibold">
                 Sign In
               </Link>
             </p>

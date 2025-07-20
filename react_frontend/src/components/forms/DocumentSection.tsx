@@ -12,7 +12,7 @@ interface DocumentSectionProps{
 
 const DocumentsSection:React.FC<DocumentSectionProps> = ({ formData, handleFileChange, errors }) => {
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-lg p-0">
       <CardHeader className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-t-lg">
         <CardTitle className="flex items-center gap-2">
           <FileText className="h-5 w-5" />

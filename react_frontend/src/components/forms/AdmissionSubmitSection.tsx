@@ -9,7 +9,7 @@ interface AdmissionSubmitSectionProps{
 }
 
 const AdmissionSubmitSection:React.FC<AdmissionSubmitSectionProps> = ({ isSubmitting, handleSubmit }) => (
-  <Card className="shadow-lg">
+  <Card className="shadow-lg p-0">
     <CardContent className="p-6">
       <div className="flex flex-col items-center space-y-4">
         <Alert className="w-full">

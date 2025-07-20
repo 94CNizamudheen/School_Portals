@@ -21,8 +21,8 @@ const StudentInformationSection: React.FC<StudentInformationSectionProps> = ({ f
   const classes = ['LKG', 'UKG', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7',];
 
   return (
-    <Card className="shadow-lg">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg">
+    <Card className="shadow-lg p-0">
+      <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg ">
         <CardTitle className="flex items-center gap-2">
           <User className="h-5 w-5" />
           Student Information

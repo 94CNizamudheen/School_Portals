@@ -21,6 +21,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login(state, action: PayloadAction<{ access_token: string; role: string ;userId:string}>) {
+      console.log(action.payload.userId)
       state.token = action.payload.access_token;
       state.role = action.payload.role;
       state.userId= action.payload.userId;

@@ -4,13 +4,19 @@ import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/sel
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Heart } from "lucide-react";
 
+import type { AdmissionFormData,AdmissionFormErrors,HandleInputChange } from "../../types/admission.types";
 
+interface ParentInfoProps{
+  formData:AdmissionFormData;
+  handleInputChange:HandleInputChange;
+  errors:AdmissionFormErrors
+}
 
-const ParentInformationSection = ({ formData, handleInputChange, errors }) => {
+const ParentInformationSection:React.FC<ParentInfoProps> = ({ formData, handleInputChange, errors }) => {
   const relations = ['Father', 'Mother', 'Guardian', 'Grandfather', 'Grandmother', 'Uncle', 'Aunt', 'Other'];
 
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-lg p-0">
       <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-lg">
         <CardTitle className="flex items-center gap-2">
           <Heart className="h-5 w-5" />

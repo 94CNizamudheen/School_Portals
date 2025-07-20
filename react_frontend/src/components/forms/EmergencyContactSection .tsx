@@ -12,7 +12,7 @@ interface EmergencyContactProps{
 
 const EmergencyContactSection:React.FC<EmergencyContactProps> = ({ formData, handleInputChange, errors }) => {
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-lg p-0">
       <CardHeader className="bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-t-lg">
         <CardTitle className="flex items-center gap-2">
           <Phone className="h-5 w-5" />
