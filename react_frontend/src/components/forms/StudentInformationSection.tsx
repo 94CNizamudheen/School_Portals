@@ -10,7 +10,7 @@ import { User } from "lucide-react";
 
 interface StudentInformationSectionProps {
   formData: AdmissionFormData;
-  handleInputChange: HandleInputChange;
+  handleInputChange: HandleInputChange; 
   errors: AdmissionFormErrors;
 }
 

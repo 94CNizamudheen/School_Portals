@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Home, Users, GraduationCap, BookOpen, Calendar,DollarSign, TrendingUp, Settings, LogOut, X,} from 'lucide-react';
+import { Home, Users, GraduationCap, BookOpen, Calendar,DollarSign, TrendingUp, Settings, LogOut, X, Pen,} from 'lucide-react';
 import LogoutModal from '../../components/LogoutModal';
 
 interface SidebarProps {
@@ -16,6 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const sidebarItems = [
     { icon: Home, label: 'Dashboard', route: '/admin/dashboard' },
     { icon: Users, label: 'Students', route: '/admin/students' },
+    { icon: Pen, label: 'Admission', route: '/admin/admission' },
     { icon: GraduationCap, label: 'Teachers', route: '/admin/teachers' },
     { icon: Users, label: 'Parents', route: '/admin/parents' },
     { icon: BookOpen, label: 'Classes', route: '/admin/classes' },
