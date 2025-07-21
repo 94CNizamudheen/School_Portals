@@ -34,3 +34,9 @@ export type AdmissionFormErrors = Partial<Record<keyof AdmissionFormData, string
 export type HandleInputChange = (name: keyof AdmissionFormData, value: string) => void;
 export type HandleFileChange = (name: keyof AdmissionFormData, file: File | null) => void;
 export type FileFieldKeys =  | "profilePicture" | "aadharDocument" | "birthCertificate"  | "transferCertificate";
+
+export interface DocumentPreview {
+  url: string
+  type: string
+  name: string
+}

@@ -1,0 +1,68 @@
+
+
+import { Button } from "../../../components/ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../../components/ui/dialog"
+import { Label } from "../../../components/ui/label"
+import { Textarea } from "../../../components/ui/textarea"
+import { X, FileText } from "lucide-react"
+
+interface RejectionDialogProps {
+  isOpen: boolean
+  rejectionReason: string
+  onReasonChange: (reason: string) => void
+  onReject: () => void
+  onRequestRefill: () => void
+  onClose: () => void
+}
+
+export function RejectionDialog({
+  isOpen,
+  rejectionReason,
+  onReasonChange,
+  onReject,
+  onRequestRefill,
+  onClose,
+}: RejectionDialogProps) {
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Reject Application</DialogTitle>
+          <DialogDescription>
+            Please provide a reason for rejecting this application. The applicant will receive this feedback.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="rejection-reason" className="text-sm font-medium">
+              Rejection Reason *
+            </Label>
+            <Textarea
+              id="rejection-reason"
+              placeholder="Please specify the reason for rejection (e.g., incomplete documents, eligibility criteria not met, etc.)"
+              value={rejectionReason}
+              onChange={(e) => onReasonChange(e.target.value)}
+              className="mt-2"
+              required
+            />
+          </div>
+          <div className="flex justify-between">
+            <div className="flex space-x-2">
+              <Button variant="destructive" onClick={onReject} disabled={!rejectionReason.trim()}>
+                <X className="h-4 w-4 mr-2" />
+                Reject Application
+              </Button>
+              <Button variant="outline" onClick={onRequestRefill} disabled={!rejectionReason.trim()}>
+                <FileText className="h-4 w-4 mr-2" />
+                Request Refill
+              </Button>
+            </div>
+            <Button variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
