@@ -9,6 +9,9 @@ export class Admission {
   @Prop({ required: true }) lastName: string;
   @Prop({ required: true }) dob: Date;
   @Prop({ required: true }) address: string;
+  @Prop({ required: true }) state: string;
+  @Prop({ required: true }) nationality: string;
+  @Prop({ required: true }) pincode: string;
   @Prop({ required: true  }) profilePicture: string;
   @Prop({ required: true  }) bloodGroup: string;
   @Prop({ required: true  }) aadharDocument: string;

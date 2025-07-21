@@ -5,6 +5,9 @@ export class CreateAdmissionDto {
   @IsString() @IsNotEmpty() lastName: string;
   @IsDateString() dob: Date;
   @IsString() @IsNotEmpty() address: string;
+  @IsString() @IsNotEmpty() state: string;
+  @IsString() @IsNotEmpty() nationality: string;
+  @IsString() @IsNotEmpty() pincode: string;
   @IsString() @IsNotEmpty() profilePicture: string;
   @IsString() @IsNotEmpty() bloodGroup: string;
   @IsString() @IsNotEmpty() aadharDocument: string;
