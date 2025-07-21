@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException, Inject } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, Inject, Logger } from '@nestjs/common';
 import { CreateAdmissionDto } from '../dtos/create-admission.dto';
 import { IAdmissionRepository } from '../repositories/interfaces/admission.repositoriy.interface';
 import { uploadImage } from 'src/shared/utils/upload.image';
@@ -6,10 +6,11 @@ import { uploadDocument } from 'src/shared/utils/upload.document';
 
 @Injectable()
 export class AdmissionService {
-  
+  private readonly logger= new Logger(AdmissionService.name)
   constructor(@Inject('IAdmissionRepository') private readonly repo: IAdmissionRepository) {}
 
   async submitApplication(dto: Omit<CreateAdmissionDto, | 'profilePicture'| 'aadharDocument'| 'birthCertificate'| 'transferCertificate'>,files:Record<string,Express.Multer.File[]>) {
+    this.logger.log(`submit application invoked with ${JSON.stringify(dto)}`)
     const profilePictureUrl=await uploadImage(files.profilePicture![0])
     const aadharDocumentUrl= await uploadDocument(files.aadharDocument![0]);
     const birthCertificateUrl= await uploadDocument(files.birthCertificate![0]);
