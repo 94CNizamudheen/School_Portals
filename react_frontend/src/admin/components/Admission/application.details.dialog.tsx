@@ -207,7 +207,7 @@ export function ApplicationDetailsDialog({
               <div>
                 <Label className="text-sm font-medium">Current Status</Label>
                 <div className="mt-2">
-                  <StatusBadge status={admission.status.toLowerCase()} />
+                  <StatusBadge status={admission.status} />
                 </div>
               </div>
 

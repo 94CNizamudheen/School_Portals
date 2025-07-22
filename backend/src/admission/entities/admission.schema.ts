@@ -27,7 +27,7 @@ export class Admission {
   @Prop({ required: true  }) emergencyContactNumber: string;
   @Prop({ required: false }) parentOccupation: string;
   @Prop({ required: true }) classApplied: string;
-  @Prop({ default: 'Pending', enum: ['Pending', 'Approved', 'Rejected'] }) status: string;
+  @Prop({ default: 'pending', enum: ['pending', 'approved', 'rejected','refill_requested'] }) status: string;
 }
 
 export const AdmissionSchema = SchemaFactory.createForClass(Admission);

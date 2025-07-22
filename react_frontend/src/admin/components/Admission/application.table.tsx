@@ -55,7 +55,7 @@ export function ApplicationsTable({ admissions, totalCount, onViewDetails }: App
                 </TableCell>
                 <TableCell>{formatDate(admission.createdAt)}</TableCell>
                 <TableCell>
-                  <StatusBadge status={admission.status.toLowerCase() as AdmissionFormData['status']} />
+                  <StatusBadge status={admission.status} />
                 </TableCell>
                 <TableCell>
                   <Button variant="outline" size="sm" onClick={() => onViewDetails(admission)}>
