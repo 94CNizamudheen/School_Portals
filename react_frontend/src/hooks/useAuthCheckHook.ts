@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { login, logout } from '../store/authSlice';
-import type { RootState } from './store';
+import type { RootState } from '../store/store';
 import {jwtDecode} from 'jwt-decode';
 
 const API = import.meta.env.VITE_BACKEND_URL;

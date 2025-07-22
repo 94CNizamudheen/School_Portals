@@ -1,7 +1,7 @@
 // src/admin/pages/AdminLayout.tsx
 import React, { useState } from 'react';
 import { Outlet, useLocation, } from 'react-router-dom';
-import { useAuthCheck } from '../../store/hooks';
+import { useAuthCheck } from '../../hooks/useAuthCheckHook';
 import Header from '../../admin/components/Header';
 import Sidebar from '../../admin/components/Sidebar';
 

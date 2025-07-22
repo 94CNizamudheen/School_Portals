@@ -7,7 +7,7 @@ import { ApplicationsTable } from "../components/Admission/application.table"
 import { ApplicationDetailsDialog } from "../components/Admission/application.details.dialog" 
 import { DocumentViewer } from "../components/Admission/document.viewer" 
 import { RejectionDialog } from "../components/Admission/rejection.dialog"
-import { useAdmissionData } from "../../store/useAdmissionData" 
+import { useAdmissionData } from "../../hooks/useAdmissionData" 
 import { getStatusCounts,filterAdmissions } from "../../utils/admission.utils" 
 import type { AdmissionFormData, DocumentPreview, } from "../../types/admission.types" 
 

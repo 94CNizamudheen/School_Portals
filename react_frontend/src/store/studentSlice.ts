@@ -5,7 +5,7 @@ import { logout } from "./authSlice"
 import axios, { AxiosError } from "axios"
 import type { Student, StudentFormData } from "../types/student"
 import type { RootState } from "./store"
-import { createAdmissionData } from "../utils/formUtils"
+// import { createAdmissionData } from "../utils/formUtils"
 const API = import.meta.env.VITE_BACKEND_URL
 
 interface StudentState {

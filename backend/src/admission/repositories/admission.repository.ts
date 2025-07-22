@@ -17,8 +17,8 @@ export class AdmissionRepository implements IAdmissionRepository {
     return this.model.create(dto);
   }
 
-  async findAllPending(): Promise<Admission[]> {
-    return this.model.find({ status: 'Pending' }).exec();
+  async findAll(): Promise<Admission[]> {
+    return this.model.find().exec();
   }
 
   async findById(id: string): Promise<Admission | null> {

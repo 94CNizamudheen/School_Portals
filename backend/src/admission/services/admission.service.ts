@@ -28,8 +28,8 @@ export class AdmissionService {
     return this.repo.create(fullDto);
   }
 
-  async listPendingApplications() {
-    return this.repo.findAllPending();
+  async listAll() {
+    return this.repo.findAll();
   }
 
   async getApplicationStatus(id: string) {

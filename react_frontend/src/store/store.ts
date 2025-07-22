@@ -5,6 +5,8 @@ import authReducer from './authSlice';
 import studentReducer from './studentSlice'
 import parentReducer from './parentSlice'
 import teacherReducer from './teacherSlice'
+import admissionReducer from './admissionSlice';
+
 
 const persistConfig = {
   key: 'root',
@@ -16,7 +18,9 @@ const rootReducer = combineReducers({
   auth: authReducer,
   student: studentReducer,
   parent:parentReducer,
-  teacher:teacherReducer
+  teacher:teacherReducer,
+  admissions:admissionReducer
+
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -12,7 +12,7 @@ const API = axios.create({
 // Request interceptor
 API.interceptors.request.use(
   (config) => {
-    // Add auth token if available
+
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -24,9 +24,9 @@ API.interceptors.request.use(
       config.headers['X-User-Role'] = userRole;
     }
     
-    // Log request in development
+
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`);
+      console.log(` API Request: ${config.method?.toUpperCase()} ${config.url}`);
     }
     
     return config;
@@ -42,7 +42,7 @@ API.interceptors.response.use(
   (response) => {
     // Log response in development
     if (process.env.NODE_ENV === 'development') {
-      console.log(`✅ API Response: ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`);
+      console.log(` API Response: ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`);
     }
     
     return response;

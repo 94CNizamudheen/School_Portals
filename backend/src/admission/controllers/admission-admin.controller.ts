@@ -6,8 +6,8 @@ export class AdmissionAdminController {
   constructor(private readonly admissionService: AdmissionService) {}
 
   @Get()
-  findPending() {
-    return this.admissionService.listPendingApplications();
+  findAll() {
+    return this.admissionService.listAll();
   }
 
   @Patch(':id')
