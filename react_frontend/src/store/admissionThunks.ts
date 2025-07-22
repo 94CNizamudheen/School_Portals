@@ -17,7 +17,6 @@ export const fetchAdmissions = createAsyncThunk< AdmissionFormData[], void,{ rej
           Authorization: `Bearer ${token}`,
         },
       });
-
       return response.data as AdmissionFormData[];
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;

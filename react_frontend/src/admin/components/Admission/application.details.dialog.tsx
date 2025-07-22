@@ -17,9 +17,13 @@ interface ApplicationDetailsDialogProps {
   onVerificationNotesChange: (notes: string) => void
   onApprove: () => void
   onReject: () => void
-  onViewDocument: (docType: string, fileName: string) => void
+  onViewDocument: (docType: string, fileUrl: string, fileName: string) => void
   onClose: () => void
 }
+const getFileType = (url: string) => {
+  if (url.endsWith(".pdf")) return "pdf";
+  return "image";
+};
 
 export function ApplicationDetailsDialog({
   admission,
@@ -178,7 +182,11 @@ export function ApplicationDetailsDialog({
                       </Badge>
                       {admission[doc.key as keyof AdmissionFormData] && (
                         <>
-                          <Button variant="outline" size="sm" onClick={() => onViewDocument(doc.name, doc.fileName)}>
+                          <Button variant="outline" size="sm" onClick={() => onViewDocument(
+                            getFileType(admission[doc.key as keyof AdmissionFormData] as string),
+                            admission[doc.key as keyof AdmissionFormData] as string,
+                            doc.fileName
+                          )}>
                             <Eye className="h-4 w-4 mr-1" />
                             View
                           </Button>
@@ -199,7 +207,7 @@ export function ApplicationDetailsDialog({
               <div>
                 <Label className="text-sm font-medium">Current Status</Label>
                 <div className="mt-2">
-                  <StatusBadge status={admission.status} />
+                  <StatusBadge status={admission.status.toLowerCase()} />
                 </div>
               </div>
 

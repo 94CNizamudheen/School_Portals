@@ -1,5 +1,5 @@
 export interface AdmissionFormData {
-  id: string
+  _id: string
   firstName: string
   lastName: string
   dob: string
@@ -23,7 +23,7 @@ export interface AdmissionFormData {
   state: string
   pincode: string
   status: "pending" | "approved" | "rejected" | "refill_requested"
-  submittedAt: string
+  createdAt: string
   verificationNotes?: string
   rejectionReason?: string
   refillRequestedAt?: string

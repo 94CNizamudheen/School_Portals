@@ -1,19 +1,23 @@
 
 
 import { useState } from "react"
-import { StatsCards } from "../components/Admission/stats.cards" 
-import { Filters } from "../components/Admission/filters" 
-import { ApplicationsTable } from "../components/Admission/application.table" 
-import { ApplicationDetailsDialog } from "../components/Admission/application.details.dialog" 
-import { DocumentViewer } from "../components/Admission/document.viewer" 
+import { StatsCards } from "../components/Admission/stats.cards"
+import { Filters } from "../components/Admission/filters"
+import { ApplicationsTable } from "../components/Admission/application.table"
+import { ApplicationDetailsDialog } from "../components/Admission/application.details.dialog"
+import { DocumentViewer } from "../components/Admission/document.viewer"
 import { RejectionDialog } from "../components/Admission/rejection.dialog"
-import { useAdmissionData } from "../../hooks/useAdmissionData" 
-import { getStatusCounts,filterAdmissions } from "../../utils/admission.utils" 
-import type { AdmissionFormData, DocumentPreview, } from "../../types/admission.types" 
+import { useAdmissionData } from "../../hooks/useAdmissionData"
+import { getStatusCounts, filterAdmissions } from "../../utils/admission.utils"
+import type { AdmissionFormData, DocumentPreview, } from "../../types/admission.types"
+// import { useSelector } from "react-redux"
+// import type { RootState } from "../../store/store"
+
 
 export default function AdmissionInfoPage() {
-  const { admissions, updateAdmissionStatus } = useAdmissionData()
+  // const { data } = useSelector((state: RootState) => state.admissions.data)
 
+  const { admissions, updateAdmissionStatus } = useAdmissionData()
   // Filter states
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
@@ -45,14 +49,14 @@ export default function AdmissionInfoPage() {
 
   const handleApprove = () => {
     if (selectedAdmission) {
-      updateAdmissionStatus(selectedAdmission.id, "approved", verificationNotes)
+      updateAdmissionStatus(selectedAdmission._id, "approved", verificationNotes)
       handleCloseDetailsDialog()
     }
   }
 
   const handleRejectClick = () => {
     if (selectedAdmission) {
-      setApplicationToReject(selectedAdmission.id)
+      setApplicationToReject(selectedAdmission._id)
       setShowRejectionDialog(true)
     }
   }
@@ -79,14 +83,14 @@ export default function AdmissionInfoPage() {
     setRejectionReason("")
   }
 
-  const handleViewDocument = (docType: string, fileName: string) => {
-    const mockDocUrl = `/placeholder.svg?height=600&width=800&text=${docType}`
+  const handleViewDocument = (docType: string, fileUrl: string, fileName: string) => {
     setDocumentPreview({
-      url: mockDocUrl,
+      url: fileUrl,
       type: docType,
       name: fileName,
-    })
-  }
+    });
+  };
+
 
   return (
     <div className="container mx-auto p-6 space-y-6">

@@ -31,10 +31,13 @@ export function DocumentViewer({ document, onClose }: DocumentViewerProps) {
           <Button variant="outline" onClick={onClose}>
             Close
           </Button>
-          <Button>
-            <Download className="h-4 w-4 mr-2" />
-            Download
+          <Button asChild>
+            <a href={document?.url} download target="_blank" rel="noopener noreferrer">
+              <Download className="h-4 w-4 mr-2" />
+              Download
+            </a>
           </Button>
+
         </div>
       </DialogContent>
     </Dialog>

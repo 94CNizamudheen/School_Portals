@@ -37,7 +37,7 @@ export function ApplicationsTable({ admissions, totalCount, onViewDetails }: App
           </TableHeader>
           <TableBody>
             {admissions.map((admission) => (
-              <TableRow key={admission.id}>
+              <TableRow key={admission._id}>
                 <TableCell>
                   <div>
                     <div className="font-medium">
@@ -53,9 +53,9 @@ export function ApplicationsTable({ admissions, totalCount, onViewDetails }: App
                     <div className="text-sm text-muted-foreground">{admission.mobileNumber}</div>
                   </div>
                 </TableCell>
-                <TableCell>{formatDate(admission.submittedAt)}</TableCell>
+                <TableCell>{formatDate(admission.createdAt)}</TableCell>
                 <TableCell>
-                  <StatusBadge status={admission.status} />
+                  <StatusBadge status={admission.status.toLowerCase() as AdmissionFormData['status']} />
                 </TableCell>
                 <TableCell>
                   <Button variant="outline" size="sm" onClick={() => onViewDetails(admission)}>
