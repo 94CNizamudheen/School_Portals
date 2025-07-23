@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import { Admission, AdmissionDocument } from '../entities/admission.schema';
 import { CreateAdmissionDto } from '../dtos/create-admission.dto';
 import { IAdmissionRepository } from './interfaces/admission.repositoriy.interface';
-import { UpdateAdminDto } from 'src/admin/dtos/update-admin.dto';
 import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
 
 @Injectable()
@@ -15,16 +14,20 @@ export class AdmissionRepository implements IAdmissionRepository {
     private readonly model: Model<AdmissionDocument>
   ) { }
 
-  async create(dto: CreateAdmissionDto): Promise<Admission> {
+   findById(id: string): Promise<Admission | null> {
+    return this.model.findById(id).exec()
+  }
+
+   create(dto: CreateAdmissionDto): Promise<Admission> {
     return this.model.create(dto);
   }
 
-  async findAll(): Promise<Admission[]> {
+   findAll(): Promise<Admission[]> {
     return this.model.find().exec();
   }
 
-  async findById(id: string): Promise<Admission | null> {
-    return this.model.findById(id).exec();
+   findByEmail(email: string): Promise<Admission | null> {
+    return this.model.findOne({email:email}).exec();
   }
 
   async updateStatus(id: string, dto: UpdateAdmissionDto): Promise<Admission> {
@@ -32,6 +35,7 @@ export class AdmissionRepository implements IAdmissionRepository {
     if (!admission) throw new Error('Admission not found');
     admission.status = dto.status;
     admission.verificationNotes = dto.verificationNotes || "";
+    
 
     if (dto.status === 'rejected') {
       admission.rejectionReason = dto.rejectionReason || "No reson provided";

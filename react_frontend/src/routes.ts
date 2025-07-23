@@ -23,7 +23,7 @@ const GuestLogin= lazy(()=>import('./pages/Logins/GuestLogin'))
 const AdmissionPage=lazy(()=>import('./pages/AdmissionPage'));
 const Signup= lazy(()=>import('./pages/Signup'))
 const AdmissionInfoPage= lazy(()=>import('./admin/pages/AdmissionInfoPage'))
-
+const MyApplications=lazy(()=>import('./pages/MyApplications'))
 
 
 
@@ -39,6 +39,7 @@ export const router = createBrowserRouter([
   { path: "/guest/login", element: React.createElement(GuestLogin) },
   {path:'/admission',element:React.createElement(AdmissionPage)},
   {path:'/signup',element:React.createElement(Signup)},
+  {path:'/my-applications',element:React.createElement(MyApplications)},
   { path: "*", element: React.createElement(NotFound) },
 {
   path: "/admin",

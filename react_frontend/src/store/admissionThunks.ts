@@ -51,3 +51,18 @@ export const handleStatusChange = async (id: string, data: StatusChangeData, tok
     toast.error(err.response?.data?.message || 'Failed to update status');
   }
 }
+export const fetchApplicationsByEmail = async (email: string,token:string): Promise<AdmissionFormData[]|undefined> => {
+    try {
+        const response = await axios.get(`${API}/admissions/${email}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+        })
+        console.log("response in fetch applications",response)
+        return Array.isArray(response.data) ? response.data : [response.data]
+    } catch (error) {
+        const err= error as AxiosError<{message:string}>
+        console.error(err.response?.data.message||'Failed to fetch data')
+        return undefined
+    }
+}

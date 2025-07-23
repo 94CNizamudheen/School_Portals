@@ -33,10 +33,10 @@ export class AdmissionService {
     return this.repo.findAll();
   }
 
-  async getApplicationStatus(id: string) {
-    const admission = await this.repo.findById(id);
+  async fetchAdmissionDetails(email: string) {
+    const admission = await this.repo.findByEmail(email);
     if (!admission) throw new NotFoundException('Application not found');
-    return { status: admission.status };
+    return  admission ;
   }
 
   async updateApplicationStatus(id:string,dto:UpdateAdmissionDto) {

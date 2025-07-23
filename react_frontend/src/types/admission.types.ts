@@ -27,6 +27,7 @@ export interface AdmissionFormData {
   verificationNotes?: string
   rejectionReason?: string
   refillRequestedAt?: string
+  updatedAt?:string
 }
 
 export type AdmissionFormErrors = Partial<Record<keyof AdmissionFormData, string>>;

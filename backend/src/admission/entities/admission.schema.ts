@@ -30,6 +30,7 @@ export class Admission {
   @Prop({ default: 'pending', enum: ['pending', 'approved', 'rejected'] }) status: string;
   @Prop()verificationNotes?:string;
   @Prop() rejectionReason?:string;
+  
 }
 
 export const AdmissionSchema = SchemaFactory.createForClass(Admission);

@@ -4,7 +4,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useLocation, useNavigate } from "react-router-dom"
-import { login } from "../store/authSlice"
+import { login, userInfo } from "../store/authSlice"
 const API = import.meta.env.VITE_BACKEND_URL
 
 const Login = () => {
@@ -41,15 +41,13 @@ const Login = () => {
         role,
       })
 
-      const { access_token, userId } = response.data
-
-      console.log(access_token, userId, role)
+      const { access_token, userId, } = response.data
 
       dispatch(login({ access_token, role, userId }))
+      dispatch(userInfo({name:response.data.user.name,email:response.data.user.email}))
       setIsLoggedIn(true)
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-
         console.error(err.response?.data?.message)
         setError("Login failed. Please try again")
       } else {

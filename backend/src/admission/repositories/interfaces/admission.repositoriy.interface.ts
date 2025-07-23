@@ -8,4 +8,5 @@ export interface IAdmissionRepository {
   findAll(): Promise<Admission[]>;
   findById(id: string): Promise<Admission | null>;
   updateStatus(id: string, dto: UpdateAdmissionDto): Promise<Admission>;
+  findByEmail(email: string): Promise<Admission | null>;
 }

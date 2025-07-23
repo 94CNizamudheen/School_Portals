@@ -6,6 +6,7 @@ import { AuthRepository } from '../repositories/auth.repository';
 import { RegisterDto } from '../dtos/register.dtos';
 import { SignInDto } from '../dtos/signin.dto';
 import { ForgotPasswordDto, ResetPasswordDto, VerifyOtpDto } from '../dtos/password.dtos';
+import { User } from '../entities/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) {}
 
-  async register(dto: RegisterDto): Promise<{ access_token: string }> {
+  async register(dto: RegisterDto): Promise<{ access_token: string,user:User }> {
     this.logger.log(`DTO received: ${JSON.stringify(dto)}`);
     const existing = await this.repo.findUserByEmail(dto.email);
     if (existing) throw new BadRequestException('Email already exists');
@@ -24,10 +25,10 @@ export class AuthService {
 
     this.logger.log(`User registered successfully: ${user.email} (ID: ${user._id}) `);
     const payload = { sub: user._id, email: user.email, role: user.role };
-    return { access_token: this.jwtService.sign(payload) };
+   return { access_token: this.jwtService.sign(payload), user };
   }
 
-  async signIn(dto: SignInDto): Promise<{ access_token: string; userId: string }> {
+  async signIn(dto: SignInDto): Promise<{ access_token: string; userId: string ,user:User}> {
    
     const user = await this.repo.findUserByEmail(dto.email);
      this.logger.log(`user ${user}`)
@@ -36,7 +37,7 @@ export class AuthService {
     }
 
     const payload = { sub: user._id, email: user.email, role: user.role };
-    return { access_token: this.jwtService.sign(payload), userId: user.id };
+    return { access_token: this.jwtService.sign(payload), userId: user.id,user };
   }
 
   async sendOtp(email: string): Promise<void> {

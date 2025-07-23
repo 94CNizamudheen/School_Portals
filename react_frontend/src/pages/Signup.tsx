@@ -6,7 +6,7 @@ import { Label } from "../components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 import { useDispatch } from "react-redux"
 import { registerUser } from "../store/api"
-import { login } from "../store/authSlice"
+import { login, userInfo } from "../store/authSlice"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { signupSchema } from "../utils/validationSchemas"
@@ -38,8 +38,10 @@ const SignupPage = () => {
 
     try {
       const res = await registerUser(name, email, password, role)
+      console.log("response signup",res.user.name,res.user.email)
       toast.success("Registration Successfull")
-      dispatch(login({ access_token: res.access_token, role: res.role, userId: res.userId }))
+       dispatch(login({ access_token: res.access_token, role: res.role, userId: res.userId }))
+       dispatch(userInfo({name:res.user.name, email:res.user.email})) 
       navigate("/")
     } catch (error) {
       const err = error as AxiosError<{ message: string }>

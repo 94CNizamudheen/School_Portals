@@ -30,8 +30,8 @@ export class AdmissionController {
     return this.admissionService.submitApplication(body, files);
   }
 
-  @Get(':id/status')
-  async checkStatus(@Param('id') id: string) {
-    return this.admissionService.getApplicationStatus(id);
+  @Get(':email')
+  async fetchAdmissionDetails(@Param('email') email: string) {
+    return this.admissionService.fetchAdmissionDetails(email);
   }
 }
