@@ -5,7 +5,7 @@ import type { RootState, AppDispatch } from '../store/store'
 import { updateAdmissionStatus,} from '../store/admissionSlice'
 import { fetchAdmissions } from '../store/admissionThunks'
 
-export const useAdmissionData = () => {
+export const useAdmissionData = () => { 
   const dispatch = useDispatch<AppDispatch>()
   const { data: admissions, loading, error } = useSelector( (state: RootState) => state.admissions)
 

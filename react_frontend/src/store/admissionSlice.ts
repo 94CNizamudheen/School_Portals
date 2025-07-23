@@ -25,7 +25,7 @@ const admissionSlice = createSlice({
                 rejectionReason?: string
             }>) => {
             const { id, status, notes, rejectionReason } = action.payload;
-            const index = state.data.findIndex((adm) => adm.id == id)
+            const index = state.data.findIndex((adm) => adm._id == id)
 
             if (index !== -1) {
                 state.data[index] = {

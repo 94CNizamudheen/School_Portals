@@ -10,12 +10,15 @@ import { RejectionDialog } from "../components/Admission/rejection.dialog"
 import { useAdmissionData } from "../../hooks/useAdmissionData"
 import { getStatusCounts, filterAdmissions } from "../../utils/admission.utils"
 import type { AdmissionFormData, DocumentPreview, } from "../../types/admission.types"
-// import { useSelector } from "react-redux"
-// import type { RootState } from "../../store/store"
+import { handleStatusChange } from "../../store/admissionThunks"
+import { useSelector } from "react-redux"
+import type { RootState } from "../../store/store"
+import { toast } from "react-toastify"
+import type { AxiosError } from "axios"
 
 
 export default function AdmissionInfoPage() {
-  // const { data } = useSelector((state: RootState) => state.admissions.data)
+  const token = useSelector((state: RootState) => state.auth.token)
 
   const { admissions, updateAdmissionStatus } = useAdmissionData()
   // Filter states
@@ -47,15 +50,37 @@ export default function AdmissionInfoPage() {
     setVerificationNotes("")
   }
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
     if (selectedAdmission) {
-      updateAdmissionStatus(selectedAdmission._id, "approved", verificationNotes)
-      handleCloseDetailsDialog()
+      try {
+        await handleStatusChange(selectedAdmission._id, {
+          status: 'approved',
+          verificationNotes: verificationNotes||'verified and approved',
+        }, token as string)
+        updateAdmissionStatus(selectedAdmission._id, "approved", verificationNotes)
+        handleCloseDetailsDialog()
+      } catch (error) {
+        const err = error as AxiosError<{ message: string }>
+        toast.error(err.response?.data.message || 'failed to approve application')
+      }
+
     }
   }
 
-  const handleRejectClick = () => {
+  const handleRejectClick = async() => {
     if (selectedAdmission) {
+       try {
+        await handleStatusChange(selectedAdmission._id, {
+          status: 'rejected',
+          verificationNotes:verificationNotes|| 'verification  rejected',
+          rejectionReason:rejectionReason || 'Invalid details'
+        }, token as string)
+        updateAdmissionStatus(selectedAdmission._id, "rejected", verificationNotes,rejectionReason)
+        handleCloseDetailsDialog()
+      } catch (error) {
+        const err = error as AxiosError<{ message: string }>
+        toast.error(err.response?.data.message || 'failed to reject application')
+      }
       setApplicationToReject(selectedAdmission._id)
       setShowRejectionDialog(true)
     }

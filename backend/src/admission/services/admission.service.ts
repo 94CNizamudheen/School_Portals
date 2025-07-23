@@ -3,6 +3,7 @@ import { CreateAdmissionDto } from '../dtos/create-admission.dto';
 import { IAdmissionRepository } from '../repositories/interfaces/admission.repositoriy.interface';
 import { uploadImage } from 'src/shared/utils/upload.image';
 import { uploadDocument } from 'src/shared/utils/upload.document';
+import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
 
 @Injectable()
 export class AdmissionService {
@@ -38,9 +39,9 @@ export class AdmissionService {
     return { status: admission.status };
   }
 
-  async updateApplicationStatus(id: string, status: string) {
+  async updateApplicationStatus(id:string,dto:UpdateAdmissionDto) {
     const admission = await this.repo.findById(id);
     if (!admission) throw new NotFoundException('Application not found');
-    await this.repo.updateStatus(id, status);
+    await this.repo.updateStatus(id, dto);
   }
 }
