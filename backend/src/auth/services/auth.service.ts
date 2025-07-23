@@ -28,7 +28,9 @@ export class AuthService {
   }
 
   async signIn(dto: SignInDto): Promise<{ access_token: string; userId: string }> {
+   
     const user = await this.repo.findUserByEmail(dto.email);
+     this.logger.log(`user ${user}`)
     if (!user || !(await this.repo.comparePasswords(dto.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
     }

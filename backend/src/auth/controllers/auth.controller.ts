@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
 import { AuthService } from '../services/auth.service'; 
 import { RegisterDto } from '../dtos/register.dtos'; 
 import { SignInDto } from '../dtos/signin.dto';
@@ -6,6 +6,8 @@ import { ResetPasswordDto, VerifyOtpDto } from '../dtos/password.dtos';
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger= new Logger(AuthService.name)
+
   constructor(private readonly authService: AuthService) {}
 
 
@@ -16,7 +18,9 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() dto: SignInDto) {
+     this.logger.log(`login invoked with ${JSON.stringify(dto)}`)
     return this.authService.signIn(dto);
+   
   }
 
   @Post('otp/generate')
