@@ -9,7 +9,7 @@ import type { RootState } from "../store/store"
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
-  const {  isAuthenticated, role } = useSelector((state: RootState) => state.auth)
+  const {  isAuthenticated } = useSelector((state: RootState) => state.auth)
   const [userName, setUserName] = useState('')
   const [userEmail, setUserEmail] = useState('')
   const dispatch = useDispatch()
@@ -121,9 +121,6 @@ const Header = () => {
                           <p className="text-xs text-gray-600 truncate">
                             {userEmail || 'user@example.com'}
                           </p>
-                          <p className="text-xs text-purple-600 font-medium capitalize">
-                            {role || 'Student'}
-                          </p>
                         </div>
                       </div>
                     </div>
@@ -204,9 +201,7 @@ const Header = () => {
                       <p className="text-xs text-indigo-300">
                         {userEmail || 'user@example.com'}
                       </p>
-                      <p className="text-xs text-yellow-300 font-medium capitalize">
-                        {role || 'Student'}
-                      </p>
+
                     </div>
                   </div>
 

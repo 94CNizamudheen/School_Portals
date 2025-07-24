@@ -1,4 +1,4 @@
-import { AlertCircle, BookOpen, Calendar, CheckCircle, ChevronDown, ChevronUp, Clock, Eye, FileText, MapPin, Phone, User, Users, XCircle } from "lucide-react";
+import { AlertCircle, BookOpen, Calendar, CheckCircle, ChevronDown, ChevronUp, Clock, Eye, FileText, MapPin, Phone, Smile, User, Users, XCircle } from "lucide-react";
 import type { AdmissionFormData } from "../types/admission.types";
 
 
@@ -7,6 +7,7 @@ interface ApplicationCardProps {
     application: AdmissionFormData
     isExpanded: boolean
     onToggle: () => void
+    onPayment:(id:string)=>void
 }
 interface StatusConfig {
     icon: React.ComponentType<{ className?: string; size?: number }>
@@ -34,6 +35,14 @@ const getStatusConfig = (status: AdmissionFormData['status']): StatusConfig => {
                 borderColor: 'border-red-200',
                 label: 'Rejected'
             }
+        case 'completed':
+            return {
+                icon: Smile,
+                color: 'text-green-600',
+                bgColor: 'bg-green-300',
+                borderColor: 'border-yellow-200',
+                label: 'completed'
+            }
         default:
             return {
                 icon: Clock,
@@ -46,7 +55,7 @@ const getStatusConfig = (status: AdmissionFormData['status']): StatusConfig => {
 }
 
 
-const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpanded, onToggle }) => {
+const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpanded, onToggle ,onPayment}) => {
     const statusConfig = getStatusConfig(application.status)
     const StatusIcon = statusConfig.icon
 
@@ -67,6 +76,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
             minute: '2-digit'
         })
     }
+
 
     return (
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow duration-300">
@@ -106,10 +116,11 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
 
             {/* Status Notes - Always Visible if Present */}
             {(application.verificationNotes || application.rejectionReason) && (
-                <div className="p-4 bg-gray-50 border-b">
-                    <div className="flex items-start space-x-2">
-                        <AlertCircle className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
+                <div className="p-4 bg-gray-50 border-b ">
+                    <div className="flex justify-between space-x-2">
+                        
                         <div>
+                            <AlertCircle />
                             <h4 className="font-medium text-gray-900 text-sm mb-1">
                                 {application.status === 'rejected' ? 'Rejection Reason' : 'Admin Notes'}
                             </h4>
@@ -117,7 +128,19 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
                                 {application.rejectionReason || application.verificationNotes}
                             </p>
                         </div>
+                        {application.status === "approved" && (
+                            <div className=" ml-12 sm:ml-16">
+                                <button
+                                    className="bg-green-600 text-white px-4 py-2 rounded-md shadow hover:bg-green-700 transition duration-200"
+                                    onClick={(e) =>{e.stopPropagation(); onPayment(application._id)}}
+                                >
+                                    Pay Admission Fee
+                                </button>
+                                <p className="text-sm text-gray-500 mt-1">Note: Complete the admission process</p>
+                            </div>
+                        )}
                     </div>
+
                 </div>
             )}
 
@@ -295,11 +318,9 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
                         </h4>
                         <div className="pl-7">
                             <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Submitted:</span>
-                                    <span className="font-medium">{formatDateTime(application.createdAt)}</span>
-                                </div>
-                              
+                                <span className="text-gray-600">Submitted:</span>
+                                <span className="font-medium">{formatDateTime(application.createdAt)}</span>
+
                             </div>
                         </div>
                     </div>

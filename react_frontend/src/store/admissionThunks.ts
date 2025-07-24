@@ -8,8 +8,8 @@ import type { RootState } from "./store";
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
-interface StatusChangeData {
-  status: 'approved' | 'rejected';
+export interface StatusChangeData {
+  status: 'approved' | 'rejected'|'completed';
   verificationNotes?: string;
   rejectionReason?: string;
 }
@@ -22,7 +22,7 @@ export const fetchAdmissions = createAsyncThunk<AdmissionFormData[], void, { rej
     const token = getState().auth.token;
 
     try {
-      const response = await axios.get(`${API}/admin/admissions`, {
+      const response = await axios.get(`${API}/admissions`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -39,7 +39,7 @@ export const fetchAdmissions = createAsyncThunk<AdmissionFormData[], void, { rej
 
 export const handleStatusChange = async (id: string, data: StatusChangeData, token: string): Promise<void> => {
   try {
-    const response = await axios.patch(`${API}/admin/admissions/${id}`, data, {
+    const response = await axios.patch(`${API}/admissions/${id}`, data, {
       headers: {
         Authorization: `Bearer ${token}`
       }

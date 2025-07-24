@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Get, Param, UseInterceptors, UploadedFiles, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseInterceptors, UploadedFiles, BadRequestException, Patch } from '@nestjs/common';
 import { AdmissionService } from '../services/admission.service';
 import { CreateAdmissionDto } from '../dtos/create-admission.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
 
 @Controller('admissions')
 export class AdmissionController {
@@ -33,5 +34,14 @@ export class AdmissionController {
   @Get(':email')
   async fetchAdmissionDetails(@Param('email') email: string) {
     return this.admissionService.fetchAdmissionDetails(email);
+  }
+  @Get()
+  findAll() {
+    return this.admissionService.listAll();
+  }
+
+  @Patch(':id')
+  changeStatus(@Param('id') id: string, @Body() body: UpdateAdmissionDto) {
+    return this.admissionService.updateApplicationStatus(id, body);
   }
 }

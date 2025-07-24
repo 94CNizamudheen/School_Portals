@@ -20,7 +20,7 @@ const admissionSlice = createSlice({
         updateAdmissionStatus: (state,
             action: PayloadAction<{
                 id: string
-                status: 'approved' | 'rejected' | 'refill_requested'
+                status: 'approved' | 'rejected' | 'completed'
                 notes?: string
                 rejectionReason?: string
             }>) => {
@@ -33,7 +33,7 @@ const admissionSlice = createSlice({
                     status,
                     verificationNotes: notes,
                     rejectionReason,
-                    ...(status === 'refill_requested' && {
+                    ...(status === 'completed' && {
                         refillRequestedAt: new Date().toISOString(),
                     }),
                 }

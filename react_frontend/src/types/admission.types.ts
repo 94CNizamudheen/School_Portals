@@ -22,7 +22,7 @@ export interface AdmissionFormData {
   nationality: string
   state: string
   pincode: string
-  status: "pending" | "approved" | "rejected" | "refill_requested"
+  status: "pending" | "approved" | "rejected" | "completed"
   createdAt: string
   verificationNotes?: string
   rejectionReason?: string

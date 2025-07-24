@@ -27,7 +27,7 @@ export class Admission {
   @Prop({ required: true  }) emergencyContactNumber: string;
   @Prop({ required: false }) parentOccupation: string;
   @Prop({ required: true }) classApplied: string;
-  @Prop({ default: 'pending', enum: ['pending', 'approved', 'rejected'] }) status: string;
+  @Prop({ default: 'pending', enum: ['pending', 'approved', 'rejected','completed'] }) status: string;
   @Prop()verificationNotes?:string;
   @Prop() rejectionReason?:string;
   

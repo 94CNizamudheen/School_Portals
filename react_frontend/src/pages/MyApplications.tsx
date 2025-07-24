@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import type { RootState } from "../store/store"
 import type { AdmissionFormData } from "../types/admission.types"
 import { FileText, AlertCircle, } from "lucide-react"
-import { fetchApplicationsByEmail } from "../store/admissionThunks"
+import { fetchApplicationsByEmail, handleStatusChange } from "../store/admissionThunks"
 import ApplicationCard from "../components/ApplicationCard"
+import { AxiosError } from "axios"
+import { toast } from "react-toastify"
+import { updateAdmissionStatus } from "../store/admissionSlice"
 
 
 
@@ -14,6 +17,7 @@ interface StatusCounts {
     pending: number
     approved: number
     rejected: number
+    completed:number
 }
 
 
@@ -22,11 +26,12 @@ const MyApplications: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
     const [expandedApplications, setExpandedApplications] = useState<Set<string>>(new Set())
-
-    // Get user email from Redux auth state
     const {token, isAuthenticated } = useSelector((state: RootState) => state.auth);
     const userEmail= useSelector((state:RootState)=>state.auth.userEmail)
-    
+    const dispatch= useDispatch()
+
+
+
     useEffect(() => {
         const loadApplications = async (): Promise<void> => {
             if (!isAuthenticated || !userEmail) {
@@ -40,7 +45,6 @@ const MyApplications: React.FC = () => {
                 const data = await fetchApplicationsByEmail(userEmail,token as string)
                 setApplications(data ?? [])
 
-                // If there's only one application, expand it by default
                 if (data && data.length === 1 && data[0]?._id) {
                     setExpandedApplications(new Set([data[0]._id]))
                 }
@@ -54,6 +58,18 @@ const MyApplications: React.FC = () => {
 
         loadApplications()
     }, [userEmail, isAuthenticated,token])
+
+    const handlePayment= async(id:string,)=>{
+        try {
+            await handleStatusChange(id,{ status: 'completed' },token as string)
+             dispatch(updateAdmissionStatus({id,status:'completed',notes:"Student admission process compleated "}))
+            toast.success("payment success")
+            location.reload()
+        } catch (error) {
+            const err= error as AxiosError<{message:string}>
+            toast.error(err.response?.data.message||"Failed payment")
+        }
+    }
 
     const toggleApplicationExpansion = (applicationId: string): void => {
         const newExpanded = new Set(expandedApplications)
@@ -71,6 +87,7 @@ const MyApplications: React.FC = () => {
             pending: applications.filter(app => app.status === 'pending').length,
             approved: applications.filter(app => app.status === 'approved').length,
             rejected: applications.filter(app => app.status === 'rejected').length,
+            completed: applications.filter(app => app.status === 'completed').length,
         }
         return counts
     }
@@ -142,7 +159,7 @@ const MyApplications: React.FC = () => {
     const statusCounts = getStatusCounts()
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 p-4 sm:p-6 lg:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-purple-100 via-indigo-50 to-purple-800 p-4 sm:p-6 lg:p-8">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
@@ -151,7 +168,7 @@ const MyApplications: React.FC = () => {
                 </div>
 
                 {/* Status Summary */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                     <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
                         <div className="text-2xl font-bold text-gray-900">{statusCounts.total}</div>
                         <div className="text-sm text-gray-600">Total Applications</div>
@@ -168,6 +185,10 @@ const MyApplications: React.FC = () => {
                         <div className="text-2xl font-bold text-red-700">{statusCounts.rejected}</div>
                         <div className="text-sm text-red-600">Rejected</div>
                     </div>
+                      <div className="bg-green-200 rounded-xl p-4 shadow-sm border border-green-300">
+                        <div className="text-2xl font-bold text-green-800">{statusCounts.completed}</div>
+                        <div className="text-sm text-green-800">completed</div>
+                    </div>
                 </div>
 
                 {/* Applications List */}
@@ -176,6 +197,7 @@ const MyApplications: React.FC = () => {
                         <ApplicationCard
                             key={application._id}
                             application={application}
+                            onPayment={handlePayment}
                             isExpanded={expandedApplications.has(application._id)}
                             onToggle={() => toggleApplicationExpansion(application._id)}
                         />
