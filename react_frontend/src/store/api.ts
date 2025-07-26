@@ -24,7 +24,7 @@ export const googleLogin = async (email: string, name: string, role: string) => 
 
 export const generateOtp = async (email: string) => {
     try {
-        const response = await API.post("/auth/otp-generate", { email });
+        const response = await API.post("/auth/generate-otp", { email });
         console.log(response.data)
         return response.data
         
@@ -35,7 +35,7 @@ export const generateOtp = async (email: string) => {
 }
 export const verifyOtp = async (code: string, email: string) => {
     try {
-        const response = await API.post("/otp/verify", { code, email });
+        const response = await API.post("auth/verify-otp", { code, email });
         return response.data;
     } catch (error) {
         const err = error as AxiosError<{ message: string }>;
@@ -44,9 +44,9 @@ export const verifyOtp = async (code: string, email: string) => {
 };
 
 
-export const resetPassword = async (email: string,otp: string,newPassword: string) => {
+export const resetPassword = async (email: string,password: string) => {
   try {
-    const response = await API.post("/reset-password", { email,otp,newPassword});
+    const response = await API.post("auth/reset-password", { email,password});
     return response.data;
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;

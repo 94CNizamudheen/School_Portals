@@ -87,7 +87,7 @@ const ForgotPasswordPage = () => {
 
         try {
 
-            await resetPassword(email, newPassword, confirmPassword)
+            await resetPassword(email, newPassword,)
             toast.success("Password reset successful! Redirecting to login...")
             setTimeout(() => navigate("/guest/login"), 2000)
         } catch (err) {

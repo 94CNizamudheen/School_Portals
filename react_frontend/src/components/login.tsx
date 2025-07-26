@@ -163,7 +163,7 @@ const Login = () => {
             Sign In
           </button>
 
-          <div className="flex items-center my-6">
+          <div className="flex items-center ">
             <div className="flex-1 border-t border-gray-400"></div>
             <span className="px-4 text-gray-300 text-sm">or</span>
             <div className="flex-1 border-t border-gray-400"></div>

@@ -7,7 +7,7 @@ export class Otp extends Document{
     @Prop({required:true})
     email:string
     @Prop({required:true})
-    password:string
+    code:string
     @Prop({required:true})
     expireAt:Date
 };
