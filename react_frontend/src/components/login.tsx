@@ -28,7 +28,6 @@ const Login = () => {
     if (!validRoles.includes(role)) {
       setError("Invalid role in URL")
     }
-
     // Handle Google OAuth callback
     const urlParams = new URLSearchParams(window.location.search)
     const token = urlParams.get('token')
@@ -178,9 +177,7 @@ const Login = () => {
               <div className="flex justify-center ">
                 <GoogleLogin 
                   onSuccess={handleGoogleLogin}
-                  onError={() => {
-                    toast.error("Google Sign-in Failed");
-                  }}
+                  onError={() => { toast.error("Google Sign-in Failed"); }}
                 />
               </div>
             </>

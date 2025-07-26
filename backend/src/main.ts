@@ -4,11 +4,16 @@ import { AdminService } from "./admin/service/admin.services";
 import { NocacheInreceptor } from "./interceptor";
 const url = process.env.FRONTEND_URL
 import * as express from 'express';
+import helmet from "helmet";
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-    
+    app.use(helmet({
+        crossOriginOpenerPolicy:false,
+        crossOriginEmbedderPolicy:false
+    }))
+
     app.enableCors({
         origin: [`${url}`],
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
