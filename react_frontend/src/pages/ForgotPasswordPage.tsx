@@ -67,7 +67,7 @@ const ForgotPasswordPage = () => {
                 <div className="absolute bottom-20 left-20 w-40 h-40 bg-white rounded-full"></div>
                 <div className="absolute bottom-40 right-80 w-28 h-28 bg-white rounded-full animate-bounce"></div>
             </div>
-            <Card className="max-w-md bg-purple-800/20 border-purple-600/30 backdrop-blur-sm">
+            <Card className=" bg-purple-800/20 border-purple-600/30 backdrop-blur-sm">
                 <CardHeader className="text-center">
                     <CardTitle className="text-2xl font-bold text-white">Reset Password</CardTitle>
                     <CardDescription className="text-purple-200">

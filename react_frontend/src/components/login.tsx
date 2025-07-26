@@ -1,10 +1,12 @@
-
-
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useLocation, useNavigate } from "react-router-dom"
 import { login, userInfo } from "../store/authSlice"
+import { GoogleLogin, type CredentialResponse } from "@react-oauth/google"
+import { toast } from "react-toastify"
+import { jwtDecode } from "jwt-decode"
+import { googleLogin } from "../store/api"
 const API = import.meta.env.VITE_BACKEND_URL
 
 const Login = () => {
@@ -18,7 +20,7 @@ const Login = () => {
   const navigate = useNavigate()
   const pathName = location.pathname
   const role = pathName.split("/")[1].toUpperCase()
-  const guesPathName = '/guest/login';
+  const guestPathName = '/guest/login'
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -26,7 +28,20 @@ const Login = () => {
     if (!validRoles.includes(role)) {
       setError("Invalid role in URL")
     }
-  }, [role])
+
+    // Handle Google OAuth callback
+    const urlParams = new URLSearchParams(window.location.search)
+    const token = urlParams.get('token')
+    const userId = urlParams.get('userId')
+    const userName = urlParams.get('name')
+    const userEmail = urlParams.get('email')
+
+    if (token && userId && userName && userEmail) {
+      dispatch(login({ access_token: token, role, userId }))
+      dispatch(userInfo({ name: userName, email: userEmail }))
+      setIsLoggedIn(true)
+    }
+  }, [role, dispatch])
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -41,19 +56,39 @@ const Login = () => {
         role,
       })
 
-      const { access_token, userId, } = response.data
-
+      const { access_token, userId } = response.data
       dispatch(login({ access_token, role, userId }))
-      dispatch(userInfo({name:response.data.user.name,email:response.data.user.email}))
+      dispatch(userInfo({ name: response.data.user.name, email: response.data.user.email }))
       setIsLoggedIn(true)
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        console.error(err.response?.data?.message)
-        setError("Login failed. Please try again")
+        setError(err.response?.data?.message || "Login failed. Please try again")
       } else {
         setError("Login failed. Please try again")
       }
     }
+  }
+
+  const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
+    if (!credentialResponse.credential) {
+      toast.error("Google login failed")
+      return;
+    }
+    const decoded = jwtDecode<{ email: string; name: string; sub: string }>(credentialResponse.credential)
+    try {
+      const { access_token, userId, user } = await googleLogin(
+        decoded.email,
+        decoded.name,
+        role
+      );
+      dispatch(login({ access_token, role: user.role, userId }))
+      dispatch(userInfo({ name: user.name, email: user.email }))
+      navigate('/')
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>
+      toast.error(err.response?.data.message || "Google login failed")
+    }
+
   }
 
   useEffect(() => {
@@ -80,13 +115,16 @@ const Login = () => {
     }
   }, [isLoggedIn, role, navigate])
 
+  const googleAllowedRoles = ["PARENT", "ADMIN", "TEACHER", "GUEST"];
+  const isGoogleAllowed = googleAllowedRoles.includes(role);
+
   return (
-    <div className="flex justify-center items-center ">
+    <div className="flex justify-center items-center">
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-white rounded-full animate-pulse "></div>
+        <div className="absolute top-20 left-10 w-32 h-32 bg-white rounded-full animate-pulse"></div>
         <div className="absolute top-40 right-20 w-24 h-24 bg-white rounded-full"></div>
         <div className="absolute bottom-20 left-20 w-40 h-40 bg-white rounded-full"></div>
-        <div className="absolute bottom-40 right-10 w-28 h-28 bg-white rounded-full animate-bounce "></div>
+        <div className="absolute bottom-40 right-10 w-28 h-28 bg-white rounded-full animate-bounce"></div>
       </div>
       <div className="w-full max-w-md bg-white/10 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-purple-700/30">
         {error && (
@@ -125,16 +163,31 @@ const Login = () => {
           >
             Sign In
           </button>
+
+          <div className="flex items-center my-6">
+            <div className="flex-1 border-t border-gray-400"></div>
+            <span className="px-4 text-gray-300 text-sm">or</span>
+            <div className="flex-1 border-t border-gray-400"></div>
+          </div>
+
+          {isGoogleAllowed && (
+            <>
+              <div className="flex items-center my-6">
+              </div>
+
+              <div className="flex justify-center ">
+                <GoogleLogin 
+                  onSuccess={handleGoogleLogin}
+                  onError={() => {
+                    toast.error("Google Sign-in Failed");
+                  }}
+                />
+              </div>
+            </>
+          )}
         </div>
 
-        {/* Divider */}
-        <div className="flex items-center my-6">
-          <div className="flex-1 border-t border-gray-400"></div>
-          <span className="px-4 text-gray-300 text-sm">or</span>
-          <div className="flex-1 border-t border-gray-400"></div>
-        </div>
-
-        <div className="text-center">
+        <div className="text-center mt-6">
           <span className="text-gray-300">Need any help? </span>
           <button
             onClick={() => navigate(`/${role.toLowerCase()}/register`)}
@@ -146,13 +199,13 @@ const Login = () => {
 
         <div className="text-center mt-6 space-y-3">
           <button
-            onClick={() => navigate(`/${role.toLowerCase()}/forgot-password`)}
+            onClick={() => navigate(`/forgot-password`)}
             className="text-blue-400 hover:text-blue-300 font-medium transition-colors block"
           >
             Forgot Password?
           </button>
 
-          {pathName === guesPathName && (
+          {pathName === guestPathName && (
             <button
               onClick={() => navigate(`/signup`)}
               className="text-blue-400 hover:text-blue-300 font-medium transition-colors block"
@@ -161,7 +214,6 @@ const Login = () => {
             </button>
           )}
         </div>
-
       </div>
     </div>
   )

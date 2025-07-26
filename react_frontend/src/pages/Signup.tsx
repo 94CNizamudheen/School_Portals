@@ -24,6 +24,7 @@ type SignUpFormData = {
   confirmPassword: string
 }
 
+
 const SignupPage = () => {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignUpFormData>({
     resolver: yupResolver(signupSchema),
@@ -58,8 +59,6 @@ const SignupPage = () => {
     }
 
     const decoded = jwtDecode<{ email: string; name: string; sub: string }>(credentialResponse.credential)
-    console.log("Decoded:", decoded)
-
     try {
       const { access_token, userId, user } = await googleLogin(
         decoded.email,
