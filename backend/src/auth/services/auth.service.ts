@@ -45,7 +45,7 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('User not found');
 
     const code = await this.repo.createOtp(email);
-    console.log(`OTP sent to ${email}: ${code}`);
+    this.logger.log(`OTP sent to ${email}: ${code}`);
   }
 
   async verifyOtp(dto: VerifyOtpDto): Promise<boolean> {

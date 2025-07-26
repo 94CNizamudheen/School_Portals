@@ -23,7 +23,7 @@ export class AuthController {
    
   }
 
-  @Post('otp/generate')
+  @Post('otp-generate')
   async generateOtp(@Body() body: { email: string }) {
     return this.authService.sendOtp(body.email);
   }

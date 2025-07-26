@@ -1,5 +1,5 @@
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const API = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -15,9 +15,41 @@ export const fetchUser = async (id: string) => {
     console.log("fetch user Response", response)
     return response.data
 }
-export const googleLogin = async (email: string, name: string,role:string) => {
+export const googleLogin = async (email: string, name: string, role: string) => {
     const response = await API.post("/auth/google-login", {
-        email, name,role
+        email, name, role
     });
     return response.data;
+};
+
+export const generateOtp = async (email: string) => {
+    try {
+        const response = await API.post("/auth/otp-generate", { email });
+        console.log(response.data)
+        return response.data
+        
+    } catch (error) {
+        const err = error as AxiosError<{ message: string }>
+        throw new Error(err.response?.data.message||"Failed to generate OTP" ) 
+    }
+}
+export const verifyOtp = async (code: string, email: string) => {
+    try {
+        const response = await API.post("/otp/verify", { code, email });
+        return response.data;
+    } catch (error) {
+        const err = error as AxiosError<{ message: string }>;
+        throw new Error(err.response?.data.message || "Failed to verify OTP");
+    }
+};
+
+
+export const resetPassword = async (email: string,otp: string,newPassword: string) => {
+  try {
+    const response = await API.post("/reset-password", { email,otp,newPassword});
+    return response.data;
+  } catch (error) {
+    const err = error as AxiosError<{ message: string }>;
+    throw new Error(err.response?.data.message || "Failed to reset password");
+  }
 };
