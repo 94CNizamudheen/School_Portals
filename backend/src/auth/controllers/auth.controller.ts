@@ -42,4 +42,8 @@ export class AuthController {
   async fetchUser(@Param('id')id:string){
     return await this.authService.fetchUser(id)
   }
+  @Post('google-login')
+  async googleLogin(@Body()body:{email:string,name:string,role:string}){
+    return this.authService.handleGoogleLogin(body);
+  }
 }

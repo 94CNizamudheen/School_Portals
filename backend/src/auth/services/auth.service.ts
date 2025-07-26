@@ -81,5 +81,17 @@ export class AuthService {
     if(!user) throw new NotFoundException('User not found')
     return user
   }
+  async handleGoogleLogin(body:{name:string,email:string,role:string}){
+    let user= await this.repo.findUserByEmail(body.email);
+    if(!user){
+      user= await this.repo.createUser(body.name,body.email,'google-oauth',body.role);
+    }
+    const payload={sub:user.id,email:user.email,role:user.role};
+    return{
+      access_token:this.jwtService.sign(payload),
+      userId:user._id,
+      user
+    }
+  }
 
 }

@@ -9,6 +9,9 @@ import { isTokenExpired } from './utils/token';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './routes';
 import type { RootState } from './store/store';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const TokenChecker: React.FC = () => {
   const dispatch = useDispatch();
@@ -24,12 +27,14 @@ const TokenChecker: React.FC = () => {
 };
 
 const Root: React.FC = () => (
+  <GoogleOAuthProvider clientId={clientId}>
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <TokenChecker />
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar newestOnTop />
     </PersistGate>
   </Provider>
+  </GoogleOAuthProvider>
 );
 
 export default Root;
