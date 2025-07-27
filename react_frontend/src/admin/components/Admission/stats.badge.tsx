@@ -8,13 +8,13 @@ export function StatusBadge({ status }: StatusBadgeProps) {
   switch (status) {
     case "pending":
       return (
-        <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+        <Badge variant="outline" className="bg-yellow-50 text-orange-700 border-yellow-200">
           Pending
         </Badge>
       )
     case "approved":
       return (
-        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+        <Badge variant="outline" className="bg-yellow-200 text-yellow-500 border-green-200">
           Approved
         </Badge>
       )
@@ -28,6 +28,12 @@ export function StatusBadge({ status }: StatusBadgeProps) {
       return (
         <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
           Refill Requested
+        </Badge>
+      )
+      case "completed":
+      return (
+        <Badge variant="outline" className="bg-blue-50 text-green-700 border-blue-200">
+          completed
         </Badge>
       )
     default:

@@ -30,9 +30,10 @@ export function Filters({ searchTerm, statusFilter, onSearchChange, onStatusFilt
         <SelectContent>
           <SelectItem value="all">All Status</SelectItem>
           <SelectItem value="pending">Pending</SelectItem>
-          <SelectItem value="refill_requested">Refill Requested</SelectItem>
+          <SelectItem value="completed">Completed</SelectItem>
           <SelectItem value="approved">Approved</SelectItem>
           <SelectItem value="rejected">Rejected</SelectItem>
+
         </SelectContent>
       </Select>
     </div>

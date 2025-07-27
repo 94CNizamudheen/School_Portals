@@ -15,6 +15,7 @@ export const getStatusCounts = (admissions: any[]) => {
     refillRequested: admissions.filter((a) => a.status === "refill_requested").length,
     approved: admissions.filter((a) => a.status === "approved").length,
     rejected: admissions.filter((a) => a.status === "rejected").length,
+    completed: admissions.filter((a) => a.status === "completed").length,
   }
 }
 

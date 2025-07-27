@@ -15,6 +15,7 @@ import { useSelector } from "react-redux"
 import type { RootState } from "../../store/store"
 import { toast } from "react-toastify"
 import type { AxiosError } from "axios"
+import { Pagination } from "../../components/shared/Pagination"
 
 
 export default function AdmissionInfoPage() {
@@ -36,8 +37,17 @@ export default function AdmissionInfoPage() {
   const [rejectionReason, setRejectionReason] = useState("")
   const [applicationToReject, setApplicationToReject] = useState<string | null>(null)
 
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10;
+
+
   const filteredAdmissions = filterAdmissions(admissions, searchTerm, statusFilter)
+  const paginatedAdmissions = filteredAdmissions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
   const stats = getStatusCounts(admissions)
+
 
   const handleViewDetails = (admission: AdmissionFormData) => {
     setSelectedAdmission(admission)
@@ -55,7 +65,7 @@ export default function AdmissionInfoPage() {
       try {
         await handleStatusChange(selectedAdmission._id, {
           status: 'approved',
-          verificationNotes: verificationNotes||'verified and approved',
+          verificationNotes: verificationNotes || 'verified and approved',
         }, token as string)
         updateAdmissionStatus(selectedAdmission._id, "approved", verificationNotes)
         handleCloseDetailsDialog()
@@ -67,15 +77,15 @@ export default function AdmissionInfoPage() {
     }
   }
 
-  const handleRejectClick = async() => {
+  const handleRejectClick = async () => {
     if (selectedAdmission) {
-       try {
+      try {
         await handleStatusChange(selectedAdmission._id, {
           status: 'rejected',
-          verificationNotes:verificationNotes|| 'verification  rejected',
-          rejectionReason:rejectionReason || 'Invalid details'
+          verificationNotes: verificationNotes || 'verification  rejected',
+          rejectionReason: rejectionReason || 'Invalid details'
         }, token as string)
-        updateAdmissionStatus(selectedAdmission._id, "rejected", verificationNotes,rejectionReason)
+        updateAdmissionStatus(selectedAdmission._id, "rejected", verificationNotes, rejectionReason)
         handleCloseDetailsDialog()
       } catch (error) {
         const err = error as AxiosError<{ message: string }>
@@ -120,10 +130,10 @@ export default function AdmissionInfoPage() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex flex-col space-y-4">
-        <div>
+        {/* <div>
           <h1 className="text-3xl font-bold">Admission Management</h1>
           <p className="text-muted-foreground">Review and manage student admission requests</p>
-        </div>
+        </div> */}
 
         <StatsCards stats={stats} />
 
@@ -136,10 +146,17 @@ export default function AdmissionInfoPage() {
       </div>
 
       <ApplicationsTable
-        admissions={filteredAdmissions}
+        admissions={paginatedAdmissions}
         totalCount={admissions.length}
         onViewDetails={handleViewDetails}
       />
+      {filteredAdmissions.length > itemsPerPage && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(filteredAdmissions.length / itemsPerPage)}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      )}
 
       <ApplicationDetailsDialog
         admission={selectedAdmission}

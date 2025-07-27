@@ -26,7 +26,7 @@ export function ApplicationsTable({ admissions, totalCount, onViewDetails }: App
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="" >
               <TableHead>Student Name</TableHead>
               <TableHead>Class Applied</TableHead>
               <TableHead>Parent Contact</TableHead>
@@ -35,7 +35,7 @@ export function ApplicationsTable({ admissions, totalCount, onViewDetails }: App
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="bg-gray-200 border-none rounded-full">
             {admissions.map((admission) => (
               <TableRow key={admission._id}>
                 <TableCell>
@@ -56,6 +56,7 @@ export function ApplicationsTable({ admissions, totalCount, onViewDetails }: App
                 <TableCell>{formatDate(admission.createdAt)}</TableCell>
                 <TableCell>
                   <StatusBadge status={admission.status} />
+
                 </TableCell>
                 <TableCell>
                   <Button variant="outline" size="sm" onClick={() => onViewDetails(admission)}>
