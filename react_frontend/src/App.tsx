@@ -36,7 +36,7 @@ const App = () => {
           <Suspense fallback={<Spinner />}>
             <RouterProvider router={router} />
           </Suspense>
-          <ToastContainer position="top-right" autoClose={3000} hideProgressBar newestOnTop />
+          <ToastContainer position="top-right" autoClose={2000} hideProgressBar newestOnTop />
         </PersistGate>
       </Provider>
     </GoogleOAuthProvider>

@@ -45,7 +45,7 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ notifications }
   };
 
   return (
-    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 mt-2">
       <h3 className="text-lg font-semibold mb-6">Recent Notifications</h3>
       <div className="space-y-4">
         {notifications.map((notification) => (
