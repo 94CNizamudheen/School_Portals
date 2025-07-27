@@ -7,8 +7,7 @@ export class ForgotPasswordDto{
 
 export class ResetPasswordDto{
     @IsEmail()email:string
-    @IsString()otp:string
-    @IsString()newPassword:string
+    @IsString()password:string
 }
 
 export class VerifyOtpDto{

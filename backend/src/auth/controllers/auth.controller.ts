@@ -23,12 +23,12 @@ export class AuthController {
    
   }
 
-  @Post('otp/generate')
+  @Post('generate-otp')
   async generateOtp(@Body() body: { email: string }) {
     return this.authService.sendOtp(body.email);
   }
 
-  @Post('otp/verify')
+  @Post('verify-otp')
   async verifyOtp(@Body() dto:VerifyOtpDto) {
     return this.authService.verifyOtp(dto);
   }

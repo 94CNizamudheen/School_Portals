@@ -45,7 +45,7 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('User not found');
 
     const code = await this.repo.createOtp(email);
-    console.log(`OTP sent to ${email}: ${code}`);
+    this.logger.log(`OTP sent to ${email}: ${code}`);
   }
 
   async verifyOtp(dto: VerifyOtpDto): Promise<boolean> {
@@ -70,11 +70,8 @@ export class AuthService {
   async resetPassword(dto: ResetPasswordDto): Promise<void> {
     const user = await this.repo.findUserByEmail(dto.email);
     if (!user) throw new NotFoundException('User not found');
-
-    const valid = await this.verifyOtp({ email: dto.email, code: dto.otp });
-    if (!valid) throw new BadRequestException('Invalid OTP');
-
-    await this.repo.updatePassword(dto.email, dto.newPassword);
+    this.logger.log(`new password is ${dto.password}`)
+    await this.repo.updatePassword(dto.email, dto.password);
   }
   async fetchUser(id:string){
     const user= await this.repo.findUserById(id);

@@ -1,12 +1,13 @@
 import axios, { AxiosError } from "axios"
 import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useLocation, useNavigate } from "react-router-dom"
 import { login, userInfo } from "../store/authSlice"
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google"
 import { toast } from "react-toastify"
 import { jwtDecode } from "jwt-decode"
 import { googleLogin } from "../store/api"
+import type { RootState } from "../store/store"
 const API = import.meta.env.VITE_BACKEND_URL
 
 const Login = () => {
@@ -14,7 +15,6 @@ const Login = () => {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -22,7 +22,7 @@ const Login = () => {
   const role = pathName.split("/")[1].toUpperCase()
   const guestPathName = '/guest/login'
   const dispatch = useDispatch()
-
+  const access_token= useSelector((state:RootState)=>state.auth.token)
   useEffect(() => {
     const validRoles = ["ADMIN", "STUDENT", "TEACHER", "PARENT", "GUEST"]
     if (!validRoles.includes(role)) {
@@ -38,7 +38,6 @@ const Login = () => {
     if (token && userId && userName && userEmail) {
       dispatch(login({ access_token: token, role, userId }))
       dispatch(userInfo({ name: userName, email: userEmail }))
-      setIsLoggedIn(true)
     }
   }, [role, dispatch])
 
@@ -58,7 +57,6 @@ const Login = () => {
       const { access_token, userId } = response.data
       dispatch(login({ access_token, role, userId }))
       dispatch(userInfo({ name: response.data.user.name, email: response.data.user.email }))
-      setIsLoggedIn(true)
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message || "Login failed. Please try again")
@@ -89,37 +87,20 @@ const Login = () => {
     }
 
   }
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      switch (role) {
-        case "ADMIN":
-          navigate("/admin/dashboard")
-          break
-        case "STUDENT":
-          navigate("/student/dashboard")
-          break
-        case "TEACHER":
-          navigate("/teacher/dashboard")
-          break
-        case "PARENT":
-          navigate("/parent/dashboard")
-          break
-        case "GUEST":
-          navigate('/')
-          break
-        default:
-          setError("Invalid role")
-      }
+  useEffect(()=>{
+    if(access_token){
+      navigate(`/${role.toLowerCase()}/dashboard`)
     }
-  }, [isLoggedIn, role, navigate])
+  },[access_token,role,navigate])
 
   const googleAllowedRoles = ["PARENT", "ADMIN", "TEACHER", "GUEST"];
   const isGoogleAllowed = googleAllowedRoles.includes(role);
 
   return (
+
     <div className="flex justify-center items-center">
-      <div className="absolute inset-0 opacity-10">
+      
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-white rounded-full animate-pulse"></div>
         <div className="absolute top-40 right-20 w-24 h-24 bg-white rounded-full"></div>
         <div className="absolute bottom-20 left-20 w-40 h-40 bg-white rounded-full"></div>
@@ -131,7 +112,13 @@ const Login = () => {
             {error}
           </div>
         )}
-        <div className="space-y-6">
+        <form
+          className="space-y-6"
+          onSubmit={(e) => {
+            e.preventDefault()
+            handleSubmit()
+          }}
+        >
           <input
             type="email"
             placeholder="Your email"
@@ -145,6 +132,7 @@ const Login = () => {
               placeholder="Your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password" 
               className="w-full px-6 py-4 rounded-full bg-white/90 placeholder-gray-500 text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
             />
             <button
@@ -155,34 +143,30 @@ const Login = () => {
               {showPassword ? "🙈" : "👁️"}
             </button>
           </div>
-
           <button
-            onClick={handleSubmit}
+            type="submit"
             className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
           >
             Sign In
           </button>
+        </form>
 
-          <div className="flex items-center my-6">
-            <div className="flex-1 border-t border-gray-400"></div>
-            <span className="px-4 text-gray-300 text-sm">or</span>
-            <div className="flex-1 border-t border-gray-400"></div>
-          </div>
-
-          {isGoogleAllowed && (
-            <>
-              <div className="flex items-center my-6">
-              </div>
-
-              <div className="flex justify-center ">
-                <GoogleLogin 
-                  onSuccess={handleGoogleLogin}
-                  onError={() => { toast.error("Google Sign-in Failed"); }}
-                />
-              </div>
-            </>
-          )}
+        <div className="flex items-center my-6">
+          <div className="flex-1 border-t border-gray-400"></div>
+          <span className="px-4 text-gray-300 text-sm">or</span>
+          <div className="flex-1 border-t border-gray-400"></div>
         </div>
+
+        {isGoogleAllowed && (
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleLogin}
+              onError={() => {
+                toast.error("Google Sign-in Failed")
+              }}
+            />
+          </div>
+        )}
 
         <div className="text-center mt-6">
           <span className="text-gray-300">Need any help? </span>
@@ -214,6 +198,7 @@ const Login = () => {
       </div>
     </div>
   )
+
 }
 
 export default Login

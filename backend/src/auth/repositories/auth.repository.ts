@@ -31,7 +31,7 @@ export class AuthRepository implements IAuthRepository {
 
   async createOtp(email: string): Promise<string> {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expireAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
+    const expireAt = new Date(Date.now() + 10 * 60 * 1000); 
 
     await this.otpModel.create({ email, code, expireAt });
     return code;
@@ -46,6 +46,7 @@ export class AuthRepository implements IAuthRepository {
   }
 
   async updatePassword(email: string, newPassword: string): Promise<void> {
+    if (!newPassword) throw new Error("New password is required");
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await this.userModel.updateOne({ email }, { password: hashedPassword });
   }
