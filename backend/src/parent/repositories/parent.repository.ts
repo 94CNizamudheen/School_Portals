@@ -21,15 +21,14 @@ export class ParentRepository implements IParentRepository {
     return this.parentModel.findOne({ email }).lean();
   }
 
-  async createParent(dto: CreateParentDto) {
-    const payload = {
-      ...dto,
-      studentIds: dto.studentIds?.map(id => new Types.ObjectId(id))
-    };
-    const parent = new this.parentModel(payload);
-    const saved = await parent.save();
-    return saved.toObject({ getters: true }); 
-  }
+async createParent(dto: CreateParentDto) {
+  const payload = {
+    ...dto,
+    studentIds: dto.studentIds?.map(id => new Types.ObjectId(id))
+  };
+  const parent = new this.parentModel(payload);
+  return await parent.save(); 
+}
 
   async createUser(email: string, password: string, parentId: string) {
     const hashed = await bcrypt.hash(password, 10);

@@ -7,7 +7,7 @@ import {
 import { TeacherRepository } from '../repositories/teacher.repository';
 import { CreateTeacherDto } from '../dtos/create-teacher.dto'; 
 import { UpdateTeacherDto } from '../dtos/update-teacher.dto';
-import { uploadImage } from 'src/shared/utils/upload.image';
+import { uploadImage } from 'src/utils/upload.image';
 
 @Injectable()
 export class TeacherService {

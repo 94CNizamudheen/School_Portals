@@ -227,7 +227,7 @@ export function ApplicationDetailsDialog({
                 </div>
               )}
 
-              {(admission.status === "pending" || admission.status === "refill_requested") && (
+              {(admission.status === "pending" ) && (
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="notes" className="text-sm font-medium">

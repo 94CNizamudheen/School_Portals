@@ -1,7 +1,12 @@
-import { IsString } from "class-validator";
+import { IsString, IsNumber } from 'class-validator';
 
-export class CreatePaymentDto{
-    @IsString()studentId:string
-    @IsString()amount:string
-    @IsString()transactionId:string
+export class CreatePaymentDto {
+  @IsString()
+  admissionId: string;
+
+  @IsNumber()
+  amount: number;
+
+  @IsString()
+  transactionId: string;
 }

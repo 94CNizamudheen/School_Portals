@@ -16,8 +16,8 @@ export class StudentController {
 
   @Roles(Role.ADMIN)
   @Post()
-  async create(@Body() dto: CreateStudentDto) {
-    return this.studentService.create(dto);
+  async create(@Body() studentCreateDto: CreateStudentDto) {
+    return this.studentService.create(studentCreateDto);
   }
 
   @Roles(Role.ADMIN)

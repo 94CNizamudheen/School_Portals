@@ -4,6 +4,7 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { ParentRepository } from '../repositories/parent.repository';
 import { CreateParentDto,  } from '../dtos/create-parent.dto';
 import { UpdateParentDto } from '../dtos/update-parent.dto';
+import { Parent } from '../entities/parent.schema';
 
 @Injectable()
 export class ParentService {
@@ -78,4 +79,15 @@ export class ParentService {
     if (!parent) throw new NotFoundException('Parent not found');
     return this.repo.findChildrens(parent.studentIds);
   }
+
+  async findOrCreateParent(dto:CreateParentDto){
+    let parent: Parent | null = await this.repo.findByEmail(dto.email)
+    if(!parent){
+      parent= await this.repo.createParent(dto)
+    }
+    
+    return  parent
+  
+  }
+  
 }

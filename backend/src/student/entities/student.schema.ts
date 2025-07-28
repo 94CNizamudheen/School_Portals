@@ -12,10 +12,15 @@ export class Student extends Document {
   lastName: string;
 
   @Prop({ required: true })
-  age: number;
+  dob: Date;
 
   @Prop({ required: true })
   classLevel: string;
+
+  @Prop({required:true})
+  identity:string
+
+  @Prop({type:Types.ObjectId,ref:"Admission",required:true})admissionId:string 
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Parent' }], default: [] })
   parentIds: Types.ObjectId[];

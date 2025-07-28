@@ -6,17 +6,23 @@ import { Model, Types } from 'mongoose';
 import { Student } from '../entities/student.schema'; 
 import { CreateStudentDto } from '../dtos/create-student.dto';
 import { UpdateStudentDto } from '../dtos/update-student.dto';
+import { IStudentRepository } from './interfaces/student-repositories.interface';
 
 @Injectable()
-export class StudentRepository {
+export class StudentRepository implements IStudentRepository{
   constructor(@InjectModel(Student.name) private studentModel: Model<Student>) {}
 
   async createStudent(dto: CreateStudentDto) {
-    const payload = {
-      ...dto,
-      parentIds: dto.parentIds?.map(id => new Types.ObjectId(id)) || []
-    };
-    return new this.studentModel(payload).save();
+
+    return  new this.studentModel({
+      firstName:dto.firstName,
+      lastName:dto.lastName,
+      classLevel:dto.classLevel,
+      admissionId:dto.admissionId,
+      identity:dto.identity,
+    })
+
+
   }
 
   async findAll() {

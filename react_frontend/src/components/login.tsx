@@ -22,7 +22,7 @@ const Login = () => {
   const role = pathName.split("/")[1].toUpperCase()
   const guestPathName = '/guest/login'
   const dispatch = useDispatch()
-  const access_token= useSelector((state:RootState)=>state.auth.token)
+  const isAuthenticated= useSelector((state:RootState)=>state.auth.isAuthenticated)
   useEffect(() => {
     const validRoles = ["ADMIN", "STUDENT", "TEACHER", "PARENT", "GUEST"]
     if (!validRoles.includes(role)) {
@@ -88,10 +88,15 @@ const Login = () => {
 
   }
   useEffect(()=>{
-    if(access_token){
-      navigate(`/${role.toLowerCase()}/dashboard`)
+    if(isAuthenticated){
+      if(role==="GUEST"){
+         navigate(`/`)
+      }else{
+        navigate(`/${role.toLowerCase()}/dashboard`)
+      }
+      
     }
-  },[access_token,role,navigate])
+  },[isAuthenticated,role,navigate])
 
   const googleAllowedRoles = ["PARENT", "ADMIN", "TEACHER", "GUEST"];
   const isGoogleAllowed = googleAllowedRoles.includes(role);

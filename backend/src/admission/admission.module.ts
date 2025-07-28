@@ -6,6 +6,7 @@ import { AdmissionService } from './services/admission.service';
 import { AdmissionRepository } from './repositories/admission.repository';
 import { AdmissionController } from './controllers/admission.controller';
 import { TeacherModule } from 'src/teacher/teacher.module'; 
+import { CreateAdmissionDto } from './dtos/create-admission.dto';
 
 @Module({
   imports: [
@@ -20,6 +21,6 @@ import { TeacherModule } from 'src/teacher/teacher.module';
       useClass: AdmissionRepository
     }
   ],
-  exports:[AdmissionService,'IAdmissionRepository']
+  exports:[AdmissionService,'IAdmissionRepository',CreateAdmissionDto]
 })
 export class AdmissionModule {}

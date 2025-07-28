@@ -1,8 +1,8 @@
 import { Injectable, BadRequestException, NotFoundException, Inject, Logger } from '@nestjs/common';
 import { CreateAdmissionDto } from '../dtos/create-admission.dto';
 import { IAdmissionRepository } from '../repositories/interfaces/admission.repositoriy.interface';
-import { uploadImage } from 'src/shared/utils/upload.image';
-import { uploadDocument } from 'src/shared/utils/upload.document';
+import { uploadImage } from 'src/utils/upload.image';
+import { uploadDocument } from 'src/utils/upload.document';
 import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
 
 @Injectable()
@@ -43,5 +43,9 @@ export class AdmissionService {
     const admission = await this.repo.findById(id);
     if (!admission) throw new NotFoundException('Application not found');
     await this.repo.updateStatus(id, dto);
+  }
+  async getAdmissionById(id:string){
+    const admission= await this.repo.findById(id)
+    return admission
   }
 }

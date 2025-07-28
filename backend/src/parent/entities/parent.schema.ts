@@ -16,6 +16,7 @@ export class Parent extends Document {
   @Prop() emergencyContactPhone?: string;
   @Prop() emergencyContactRelationship?: string;
 
+  @Prop({type:Types.ObjectId,ref:"Admission",required:true})admissionId:string 
   @Prop({ type: [{ type: Types.ObjectId, ref: "Student" }], default: [] })
   studentIds: Types.ObjectId[];
 }
