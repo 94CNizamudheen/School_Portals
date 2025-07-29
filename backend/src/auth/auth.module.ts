@@ -9,6 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { BlacklistedToken, BlacklistedTokenSchema } from './entities/blacklist.schema';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Module({
   imports: [
@@ -34,8 +35,9 @@ import { BlacklistedToken, BlacklistedTokenSchema } from './entities/blacklist.s
       provide: 'IAuthRepository',
       useClass: AuthRepository,
     },
-    JwtStrategy
+    JwtStrategy,
+    JwtAuthGuard
   ],
-  exports: [AuthService,JwtModule,JwtStrategy],
+  exports: [AuthService,JwtModule,JwtStrategy,JwtAuthGuard,'IAuthRepository'],
 })
 export class AuthModule { }

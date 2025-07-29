@@ -22,7 +22,7 @@ export class Student extends Document {
 
   @Prop({type:Types.ObjectId,ref:"Admission",required:true})admissionId:string 
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Parent' }], default: [] })
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Parent' ,}], default: [] })
   parentIds: Types.ObjectId[];
 }
 

@@ -13,3 +13,5 @@ export class BlacklistedToken extends Document {
 }
 
 export const BlacklistedTokenSchema = SchemaFactory.createForClass(BlacklistedToken);
+
+BlacklistedTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });

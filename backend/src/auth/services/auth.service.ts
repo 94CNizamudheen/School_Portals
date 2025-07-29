@@ -15,7 +15,7 @@ export class AuthService {
   private readonly logger = new Logger(AuthService.name)
   constructor(
     @Inject('IAuthRepository') private readonly repo: AuthRepository,
-    private config:ConfigService,
+    private config: ConfigService,
     private readonly jwtService: JwtService
   ) { }
 
@@ -42,29 +42,43 @@ export class AuthService {
       expiresIn: this.config.get('JWT_EXPIRES_IN'),
     });
     const refresh_token = this.jwtService.sign(payload, {
-      expiresIn: this.config.get('JWT_REFRESH_EXPIRES_IN'), // e.g., "7d"
+      expiresIn: this.config.get('JWT_REFRESH_EXPIRES_IN'),
     })
 
-    return { access_token: this.jwtService.sign(payload),refresh_token, userId: user.id, user };
+    return { access_token, refresh_token, userId: user.id, user };
   };
-  async refreshToken(refresh_token:string):Promise<{access_token:string}>{
+  async refreshToken(refresh_token: string): Promise<{ access_token: string, refresh_token: string }> {
     try {
-      const payload= this.jwtService.verify(refresh_token,{secret:this.config.get('JWT_SECRET')});
-      const newAccessToken= this.jwtService.sign(
-        {sub:payload.sub,email:payload.email,role:payload.role},
-        {expiresIn:this.config.get('JWT_EXPIRES_IN')}
+      const payload = this.jwtService.verify(refresh_token, { secret: this.config.get('JWT_SECRET') });
+      const newAccessToken = this.jwtService.sign(
+        { sub: payload.sub, email: payload.email, role: payload.role },
+        { expiresIn: this.config.get('JWT_EXPIRES_IN') }
       );
-      return {access_token:newAccessToken}
+      const newRefreshToken = this.jwtService.sign(
+        { sub: payload.sub, email: payload.email, role: payload.role },
+        { expiresIn: this.config.get('JWT_REFRESH_EXPIRES_IN') }
+      );
+      const decoded: any = this.jwtService.decode(refresh_token) as JwtPayload | null;
+      if (decoded && decoded.exp) {
+        const expiredAt = new Date(decoded.exp * 1000);
+        await this.repo.createBlacklist(refresh_token, expiredAt);
+      }
+      return { access_token: newAccessToken, refresh_token: newRefreshToken };
     } catch (error) {
-      throw new UnauthorizedException('Invalid or expired refresh token')
+      throw new UnauthorizedException('Invalid or expired refresh token');
     }
   }
 
   async logout(token: string): Promise<void> {
-    const decoded: any = this.jwtService.decode(token) as JwtPayload | null;
-    if (!decoded || !decoded.exp) throw new BadRequestException("Invalid token")
-    const expiredAt = new Date(decoded.exp * 1000);
-    await this.repo.createBlacklist(token, expiredAt)
+    try {
+      this.jwtService.verify(token, { secret: this.config.get('JWT_SECRET') });
+      const decoded: any = this.jwtService.decode(token) as JwtPayload | null;
+      if (!decoded || !decoded.exp) throw new BadRequestException("Invalid token");
+      const expiredAt = new Date(decoded.exp * 1000);
+      await this.repo.createBlacklist(token, expiredAt);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 
   async sendOtp(email: string): Promise<void> {
@@ -117,5 +131,4 @@ export class AuthService {
       user
     }
   }
-
 }

@@ -1,6 +1,6 @@
 
 
-import { ExecutionContext, Injectable, UnauthorizedException,} from '@nestjs/common';
+import { ExecutionContext, Injectable, Logger, UnauthorizedException,} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -24,7 +24,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (!token) {
       throw new UnauthorizedException('Missing token');
     }
-
     const isBlacklisted = await this.blacklistedModel.exists({ token });
     if (isBlacklisted) {
       throw new UnauthorizedException('Token has been revoked');

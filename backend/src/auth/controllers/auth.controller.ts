@@ -24,6 +24,7 @@ export class AuthController {
   };
   @Post('refresh')
   refresh(@Body('refresh_token')token:string){
+    this.logger.log("refresh invoked")
     return this.authService.refreshToken(token)
   }
 

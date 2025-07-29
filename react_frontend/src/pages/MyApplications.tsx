@@ -1,23 +1,20 @@
 import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import type { RootState } from "../store/store"
 import type { AdmissionFormData } from "../types/admission.types"
 import { FileText, AlertCircle, } from "lucide-react"
-import { fetchApplicationsByEmail, handleStatusChange } from "../store/admissionThunks"
+import { completeAdmissionPayment, fetchApplicationsByEmail } from "../store/admissionThunks"
 import ApplicationCard from "../components/ApplicationCard"
 import { AxiosError } from "axios"
 import { toast } from "react-toastify"
-import { updateAdmissionStatus } from "../store/admissionSlice"
-
-
-
+// import type { AppDispatch } from "recharts/types/state/store"
 
 interface StatusCounts {
     total: number
     pending: number
     approved: number
     rejected: number
-    completed:number
+    completed: number
 }
 
 
@@ -26,9 +23,9 @@ const MyApplications: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
     const [expandedApplications, setExpandedApplications] = useState<Set<string>>(new Set())
-    const {token, isAuthenticated } = useSelector((state: RootState) => state.auth);
-    const userEmail= useSelector((state:RootState)=>state.auth.userEmail)
-    const dispatch= useDispatch()
+    const { token, isAuthenticated } = useSelector((state: RootState) => state.auth);
+    const userEmail = useSelector((state: RootState) => state.auth.userEmail)
+    // const dispatch= useDispatch<AppDispatch>()
 
 
 
@@ -42,7 +39,7 @@ const MyApplications: React.FC = () => {
 
             try {
                 setLoading(true)
-                const data = await fetchApplicationsByEmail(userEmail,token as string)
+                const data = await fetchApplicationsByEmail(userEmail)
                 setApplications(data ?? [])
 
                 if (data && data.length === 1 && data[0]?._id) {
@@ -57,17 +54,19 @@ const MyApplications: React.FC = () => {
         }
 
         loadApplications()
-    }, [userEmail, isAuthenticated,token])
+    }, [userEmail, isAuthenticated, token])
 
-    const handlePayment= async(id:string,)=>{
+    const handlePayment = async (id: string) => {
         try {
-            await handleStatusChange(id,{ status: 'completed' },token as string)
-             dispatch(updateAdmissionStatus({id,status:'completed',notes:"Student admission process compleated "}))
-            toast.success("payment success")
-            location.reload()
+            const amount = 1000;
+            const transactionId = 'its_sample_transaction_id'
+            await completeAdmissionPayment(id, amount, transactionId);
+
+
         } catch (error) {
             const err= error as AxiosError<{message:string}>
-            toast.error(err.response?.data.message||"Failed payment")
+            console.error("Payment failed:", err);
+            toast.error(`Payment error: ${err.response?.data.message || "Something went wrong"}`);
         }
     }
 
@@ -185,7 +184,7 @@ const MyApplications: React.FC = () => {
                         <div className="text-2xl font-bold text-red-700">{statusCounts.rejected}</div>
                         <div className="text-sm text-red-600">Rejected</div>
                     </div>
-                      <div className="bg-green-200 rounded-xl p-4 shadow-sm border border-green-300">
+                    <div className="bg-green-200 rounded-xl p-4 shadow-sm border border-green-300">
                         <div className="text-2xl font-bold text-green-800">{statusCounts.completed}</div>
                         <div className="text-sm text-green-800">completed</div>
                     </div>

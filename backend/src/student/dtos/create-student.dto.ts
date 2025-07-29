@@ -8,5 +8,5 @@ export class CreateStudentDto {
   @IsString() classLevel: string;
   @IsString()identity:string;
   @IsMongoId()admissionId:string
-  @IsOptional() @IsArray() @IsMongoId({ each: true }) parentIds?: string[];
+   @IsArray() @IsMongoId({ each: true }) parentIds?: string[];
 }

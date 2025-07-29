@@ -20,8 +20,7 @@ export class StudentRepository implements IStudentRepository{
       classLevel:dto.classLevel,
       admissionId:dto.admissionId,
       identity:dto.identity,
-    })
-
+    }).save()
 
   }
 

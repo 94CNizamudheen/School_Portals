@@ -15,14 +15,10 @@ export interface StatusChangeData {
 
 export const fetchAdmissions = createAsyncThunk<AdmissionFormData[], void, { rejectValue: string; state: RootState }>(
   'admissions/fetchAll',
-  async (_, { rejectWithValue, getState }) => {
-    const token = getState().auth.token;
+  async (_, { rejectWithValue, }) => {
 
     try {
       const response = await API.get(`/admissions`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
       return response.data as AdmissionFormData[];
     } catch (error) {
@@ -34,12 +30,9 @@ export const fetchAdmissions = createAsyncThunk<AdmissionFormData[], void, { rej
   }
 );
 
-export const handleStatusChange = async (id: string, data: StatusChangeData, token: string): Promise<void> => {
+export const handleStatusChange = async (id: string, data: StatusChangeData,): Promise<void> => {
   try {
     const response = await API.patch(`/admissions/${id}`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
     })
     console.log("response of status change",response)
     toast.success(`Application status ${data.status}`)
@@ -48,12 +41,10 @@ export const handleStatusChange = async (id: string, data: StatusChangeData, tok
     toast.error(err.response?.data?.message || 'Failed to update status');
   }
 }
-export const fetchApplicationsByEmail = async (email: string,token:string): Promise<AdmissionFormData[]|undefined> => {
+export const fetchApplicationsByEmail = async (email: string,): Promise<AdmissionFormData[]|undefined> => {
     try {
         const response = await API.get(`/admissions/${email}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
+
         })
         console.log("response in fetch applications",response)
         return Array.isArray(response.data) ? response.data : [response.data]
@@ -62,4 +53,14 @@ export const fetchApplicationsByEmail = async (email: string,token:string): Prom
         console.error(err.response?.data.message||'Failed to fetch data')
         return undefined
     }
+};
+export const completeAdmissionPayment= async (admissionId:string,amount:number,transactionId:string):Promise<void>=>{
+  try {
+    const response= await API.post(`/payments/admission-payment`,{admissionId,amount,transactionId});
+    return response.data
+  } catch (error) {
+    const err= error as AxiosError<{message:string}>;
+    
+    throw new Error(err.response?.data.message);
+  }
 }

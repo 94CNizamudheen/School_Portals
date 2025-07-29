@@ -12,4 +12,5 @@ export class CreateParentDto {
   @IsOptional() @IsString() emergencyContactPhone?: string;
   @IsOptional() @IsString() emergencyContactRelationship?: string;
   @IsOptional() @IsArray() @IsMongoId({ each: true }) studentIds?: string[];
+  @IsMongoId()admissionId:string
 }

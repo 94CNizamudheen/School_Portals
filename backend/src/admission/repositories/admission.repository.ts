@@ -14,7 +14,7 @@ export class AdmissionRepository implements IAdmissionRepository {
     private readonly model: Model<AdmissionDocument>
   ) { }
 
-   findById(id: string): Promise<Admission | null> {
+   findById(id: string): Promise<AdmissionDocument | null> {
     return this.model.findById(id).exec()
   }
 

@@ -2,8 +2,8 @@ import { useEffect, useState, useRef } from "react"
 import { X, Menu, User, LogOut, ChevronDown, Settings, FileText, Bell, GraduationCap } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
-import {  logout } from "../store/authSlice"
-import type { RootState } from "../store/store"
+import type { AppDispatch, RootState } from "../store/store"
+import { logoutThunk } from "../store/api"
 
 
 const Header = () => {
@@ -12,7 +12,7 @@ const Header = () => {
   const {  isAuthenticated } = useSelector((state: RootState) => state.auth)
   const [userName, setUserName] = useState('')
   const [userEmail, setUserEmail] = useState('')
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
   const userMenuRef = useRef<HTMLDivElement>(null)
   const name= useSelector((state:RootState)=>state.auth.userName)
   const email= useSelector((state:RootState)=>state.auth.userEmail)
@@ -37,7 +37,7 @@ const Header = () => {
   }, [])
 
   const handleLogout = () => {
-    dispatch(logout())
+    dispatch(logoutThunk())
     setIsUserMenuOpen(false)
   }
 
