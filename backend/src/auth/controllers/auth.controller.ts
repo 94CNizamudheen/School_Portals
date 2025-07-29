@@ -27,10 +27,9 @@ export class AuthController {
     return this.authService.refreshToken(token)
   }
 
-
-
   @Post('logout')
   async logout(@Req() req: Request) {
+    this.logger.log("Logout invoked")
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) throw new BadRequestException("No token provided");

@@ -2,7 +2,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { logout } from '../store/authSlice'
+import { logoutThunk } from '../store/api'
+import type { AppDispatch } from '../store/store'
 
 type LogoutModalProps = {
   trigger: React.ReactNode
@@ -12,12 +13,16 @@ type LogoutModalProps = {
 const LogoutModal: React.FC<LogoutModalProps> = ({ trigger }) => {
   const [show, setShow] = useState(false)
   const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
 
-  const handleLogout = () => {
-    dispatch(logout())
-    navigate('/admin/login')
-  }
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutThunk()).unwrap(); 
+      navigate('/admin/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   return (
     <>

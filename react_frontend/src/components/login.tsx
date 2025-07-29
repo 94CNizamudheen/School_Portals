@@ -56,6 +56,7 @@ const Login = () => {
       })
 
       const { access_token, userId,refresh_token } = response.data
+      console.log(response.data)
       dispatch(login({ access_token, role, userId ,refresh_token }))
       dispatch(userInfo({ name: response.data.user.name, email: response.data.user.email }))
     } catch (err: unknown) {

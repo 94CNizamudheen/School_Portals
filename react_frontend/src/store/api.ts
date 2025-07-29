@@ -1,7 +1,8 @@
 
 import { AxiosError } from "axios";
-
+import { logout  } from "./authSlice";
 import API from "../axios.config";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 
 
 export const registerUser = async (name: string, email: string, password: string, role: string) => {
@@ -51,3 +52,18 @@ export const resetPassword = async (email: string,password: string) => {
     throw new Error(err.response?.data.message || "Failed to reset password");
   }
 };
+
+export const logoutThunk = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
+  try {
+    console.log("logut thun invoked",)
+    const response= await API.post('/auth/logout');
+    console.log("logout response",response)
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+
+    thunkAPI.dispatch(logout()); 
+  } catch (error) {
+    const err= error as AxiosError<{message:string}>
+    return thunkAPI.rejectWithValue(err.response?.data.message || err.message);
+  }
+});
