@@ -31,12 +31,13 @@ const Login = () => {
     // Handle Google OAuth callback
     const urlParams = new URLSearchParams(window.location.search)
     const token = urlParams.get('token')
+    const refresh_token = urlParams.get('refreshToken')
     const userId = urlParams.get('userId')
     const userName = urlParams.get('name')
     const userEmail = urlParams.get('email')
 
-    if (token && userId && userName && userEmail) {
-      dispatch(login({ access_token: token, role, userId }))
+    if (token && userId && userName && userEmail && refresh_token) {
+      dispatch(login({ access_token: token, role, userId ,refresh_token}))
       dispatch(userInfo({ name: userName, email: userEmail }))
     }
   }, [role, dispatch])
@@ -54,8 +55,8 @@ const Login = () => {
         role,
       })
 
-      const { access_token, userId } = response.data
-      dispatch(login({ access_token, role, userId }))
+      const { access_token, userId,refresh_token } = response.data
+      dispatch(login({ access_token, role, userId ,refresh_token }))
       dispatch(userInfo({ name: response.data.user.name, email: response.data.user.email }))
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -73,12 +74,12 @@ const Login = () => {
     }
     const decoded = jwtDecode<{ email: string; name: string; sub: string }>(credentialResponse.credential)
     try {
-      const { access_token, userId, user } = await googleLogin(
+      const { access_token, userId, user ,refresh_token} = await googleLogin(
         decoded.email,
         decoded.name,
         role
       );
-      dispatch(login({ access_token, role: user.role, userId }))
+      dispatch(login({ access_token, role: user.role, userId ,refresh_token}))
       dispatch(userInfo({ name: user.name, email: user.email }))
       navigate('/')
     } catch (error) {

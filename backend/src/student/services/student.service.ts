@@ -1,12 +1,13 @@
 
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { StudentRepository } from '../repositories/student.repository';
 import { CreateStudentDto } from '../dtos/create-student.dto';
 import { UpdateStudentDto } from '../dtos/update-student.dto';
 @Injectable()
 export class StudentService {
-  constructor(private readonly repo: StudentRepository) {}
+
+  constructor(   @Inject("IStudentRepository") private readonly repo: StudentRepository) {}
 
   async create(dto: CreateStudentDto) {
     return this.repo.createStudent(dto);

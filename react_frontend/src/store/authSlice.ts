@@ -5,6 +5,7 @@ import type { PayloadAction, } from '@reduxjs/toolkit';
 
 interface AuthState {
   role: string | null;
+  refreshToken:string|null;
   token: string | null;
   userId: string | null;
   isAuthenticated: boolean;
@@ -14,6 +15,7 @@ interface AuthState {
 
 const initialState: AuthState = {
   token: null,
+  refreshToken:null,
   role: null,
   userId: null,
   isAuthenticated: false,
@@ -25,8 +27,9 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login(state, action: PayloadAction<{ access_token: string; role: string; userId: string }>) {
+    login(state, action: PayloadAction<{ access_token: string; role: string; userId: string; refresh_token:string|null }>) {
       state.token = action.payload.access_token;
+      state.refreshToken=action.payload.refresh_token;
       state.role = action.payload.role;
       state.userId = action.payload.userId;
       state.isAuthenticated = true;
@@ -34,6 +37,7 @@ const authSlice = createSlice({
     },
     logout(state) {
       state.token = null;
+      state.refreshToken=null;
       state.role = null;
       state.userId = null;
       state.isAuthenticated = false;

@@ -1,12 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { AdmissionFormData } from "../types/admission.types";
-import axios, { AxiosError } from "axios";
+import  { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import type { RootState } from "./store";
-
-
-
-const API = import.meta.env.VITE_BACKEND_URL;
+import API from "../axios.config";
 
 export interface StatusChangeData {
   status: 'approved' | 'rejected'|'completed';
@@ -22,7 +19,7 @@ export const fetchAdmissions = createAsyncThunk<AdmissionFormData[], void, { rej
     const token = getState().auth.token;
 
     try {
-      const response = await axios.get(`${API}/admissions`, {
+      const response = await API.get(`/admissions`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -39,7 +36,7 @@ export const fetchAdmissions = createAsyncThunk<AdmissionFormData[], void, { rej
 
 export const handleStatusChange = async (id: string, data: StatusChangeData, token: string): Promise<void> => {
   try {
-    const response = await axios.patch(`${API}/admissions/${id}`, data, {
+    const response = await API.patch(`/admissions/${id}`, data, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -53,7 +50,7 @@ export const handleStatusChange = async (id: string, data: StatusChangeData, tok
 }
 export const fetchApplicationsByEmail = async (email: string,token:string): Promise<AdmissionFormData[]|undefined> => {
     try {
-        const response = await axios.get(`${API}/admissions/${email}`, {
+        const response = await API.get(`/admissions/${email}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             },

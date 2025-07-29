@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException, Type } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, Type } from "@nestjs/common";
 import { IPaymentRepository } from "../repositories/interfaces/payment.interface.repository";
 import { CreatePaymentDto } from "../dtos/create.payment.dto";
 import { StudentService } from "src/student/services/student.service";
@@ -9,6 +9,7 @@ import { generateStudentId } from "src/utils/genarate.studentId";
 
 @Injectable()
 export class PaymentService {
+    private readonly logger= new Logger();
     constructor(
         @Inject('IPaymentRepository')
         private readonly repo: IPaymentRepository,
@@ -18,6 +19,7 @@ export class PaymentService {
     ) { };
 
     async createAdmissionPayment(dto: CreatePaymentDto) {
+        this.logger.log(`admission payment invoked with dto ${JSON.stringify(dto)}`)
         const admission = await this.admissionService.getAdmissionById(dto.admissionId);
         if (!admission) throw new NotFoundException("Admission not found");
         if (admission.status !== "approved") throw new BadRequestException('Admission not approved');

@@ -7,12 +7,15 @@ import { User, UserSchema } from './entities/user.schema';
 import { Otp, OtpSchema } from './entities/otp.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { BlacklistedToken, BlacklistedTokenSchema } from './entities/blacklist.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
-      { name: Otp.name, schema: OtpSchema }
+      { name: Otp.name, schema: OtpSchema },
+      {name:BlacklistedToken.name,schema:BlacklistedTokenSchema}
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -31,7 +34,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       provide: 'IAuthRepository',
       useClass: AuthRepository,
     },
+    JwtStrategy
   ],
-  exports: [AuthService,],
+  exports: [AuthService,JwtModule,JwtStrategy],
 })
 export class AuthModule { }

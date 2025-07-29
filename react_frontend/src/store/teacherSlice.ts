@@ -1,5 +1,4 @@
 
-// src/store/teacherSlice.ts
 import { createSlice, } from '@reduxjs/toolkit';
 import { fetchTeachers } from './teacherThunks';
 

@@ -7,10 +7,13 @@ import * as bcrypt from 'bcrypt';
 import { User } from '../entities/user.schema';
 import { Otp } from '../entities/otp.schema'; 
 import { IAuthRepository } from './interfaces/auth-repository.interface';
+import { BlacklistedToken } from '../entities/blacklist.schema';
 
 @Injectable()
 export class AuthRepository implements IAuthRepository {
   constructor(
+     @InjectModel(BlacklistedToken.name)
+      private readonly blacklistedModel:Model<BlacklistedToken>,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Otp.name) private otpModel: Model<Otp>
   ) {}
@@ -52,5 +55,8 @@ export class AuthRepository implements IAuthRepository {
   }
   async findUserById(id:string):Promise<User|null>{
     return await this.userModel.findById(id);
+  }
+  async createBlacklist(token: string, expiresAt: Date): Promise<void> {
+      await this.blacklistedModel.create({token,expiresAt})
   }
 }

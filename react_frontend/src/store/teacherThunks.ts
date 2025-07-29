@@ -1,11 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-import axios, { AxiosError } from "axios";
+import  { AxiosError } from "axios";
 import { isTokenExpired } from "../utils/token";
 import { logout } from "./authSlice";
 import { toast } from "react-toastify";
-
-const API = import.meta.env.VITE_BACKEND_URL;
+import API from "../axios.config";
 
 
 export const fetchTeachers = createAsyncThunk(
@@ -15,7 +14,7 @@ export const fetchTeachers = createAsyncThunk(
         const token = state.auth.token;
         if (!token || isTokenExpired(token)) return dispatch(logout());
         try {
-            const res = await axios.get(`${API}/teachers`, {
+            const res = await API.get(`/teachers`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             console.log("response of teacher fetcAll",res.data)
@@ -34,7 +33,7 @@ export const addTeacher= createAsyncThunk(
         const token= (getState() as RootState).auth.token;
                 console.log("fotm data",formData)
         try {
-            const response= await axios.post(`${API}/teachers`,formData,{
+            const response= await API.post(`/teachers`,formData,{
                 headers:{
                     Authorization:`Bearer ${token}`,
                     "Content-Type":"multipart/form-data"

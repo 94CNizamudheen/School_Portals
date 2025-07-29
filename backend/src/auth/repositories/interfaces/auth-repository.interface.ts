@@ -12,4 +12,5 @@ export interface IAuthRepository {
   deleteOtp(email: string): Promise<void>;
   updatePassword(email: string, newPassword: string): Promise<void>;
   findUserById(id:string) :Promise<User|null>;
+  createBlacklist(token:string,expiredAt:Date) :Promise<void>
 }

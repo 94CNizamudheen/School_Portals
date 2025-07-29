@@ -21,6 +21,6 @@ import { CreateAdmissionDto } from './dtos/create-admission.dto';
       useClass: AdmissionRepository
     }
   ],
-  exports:[AdmissionService,'IAdmissionRepository',CreateAdmissionDto]
+  exports:[AdmissionService,'IAdmissionRepository']
 })
 export class AdmissionModule {}
