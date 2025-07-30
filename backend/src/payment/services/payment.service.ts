@@ -6,6 +6,7 @@ import { ParentService } from "src/parent/services/parent.service";
 import { AdmissionService } from "src/admission/services/admission.service";
 import { generateStudentId } from "src/utils/genarate.studentId";
 import { AuthRepository } from "src/auth/repositories/auth.repository";
+import { Types } from "mongoose";
 
 
 @Injectable()
@@ -43,6 +44,7 @@ export class PaymentService {
 
         });
         if(!student)throw new ForbiddenException("Cant create student")
+
         const parent = await this.ParentService.findOrCreateParent({
             email: admission.email,
             mobileNumber: admission.mobileNumber,
@@ -50,6 +52,7 @@ export class PaymentService {
             studentIds: [student._id as string],
             admissionId:dto.admissionId
         })
+        if (!parent) throw new InternalServerErrorException("Can't create parent");
         this.logger.log("Student",student)
 
         const updatedPayment= await this.repo.updatePayment({
@@ -57,15 +60,15 @@ export class PaymentService {
             parentId:parent._id as string,
             studentId:student._id as string,
             status:"success"
-
         })
 
         if(!updatedPayment) throw new InternalServerErrorException("Failed to update payment");
         if(user.role==="GUEST")user.role="PARENT";
-
+        student.parentIds = [parent._id as Types.ObjectId] ;
         admission.status= 'completed';
         await user.save();
         await admission.save()
+        await student.save()
         return {
             message:"Payment completed, student and parent created successfully",
             payment:updatedPayment,

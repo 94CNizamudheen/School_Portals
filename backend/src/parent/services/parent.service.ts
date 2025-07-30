@@ -4,40 +4,16 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { ParentRepository } from '../repositories/parent.repository';
 import { CreateParentDto,  } from '../dtos/create-parent.dto';
 import { UpdateParentDto } from '../dtos/update-parent.dto';
-import { Parent } from '../entities/parent.schema';
 
 @Injectable()
 export class ParentService {
   constructor(private readonly repo: ParentRepository) {}
 
-  async create(dto: CreateParentDto) {
-    const exists = await this.repo.findByEmail(dto.email);
-    if (exists) throw new ForbiddenException('Parent with this email already exists');
-
-    const randomPassword = Math.random().toString(36).slice(-8);
-    const newParent = await this.repo.createParent(dto);
-
-    if (dto.studentIds?.length) {
-      for (const studentId of dto.studentIds) {
-        const student = await this.repo.addParentToStudent(studentId, newParent.id);
-        if (!student) throw new NotFoundException('Student not found');
-      }
-    }
-
-    await this.repo.createUser(dto.email, randomPassword, newParent.id);
-    return newParent;
-  }
-
-  async findAll() {
-    return this.repo.findAllParents();
-  }
-
   async findOne(id: string) {
     const parent = await this.repo.findParentById(id);
     if (!parent) throw new NotFoundException('Parent not found');
     return parent;
-  }
-
+  };
   async update(id: string, dto: UpdateParentDto) {
     const parent = await this.repo.findParentById(id);
     if (!parent) throw new NotFoundException('Parent not found');
@@ -81,13 +57,13 @@ export class ParentService {
   }
 
   async findOrCreateParent(dto:CreateParentDto){
-    let parent: Parent | null = await this.repo.findByEmail(dto.email)
+    let parent= await this.repo.findByEmail(dto.email);
     if(!parent){
-      parent= await this.repo.createParent(dto)
+      parent= await this.repo.createParent(dto);
+    }else{
+      await this.repo.pushStudentIds(parent._id as string,dto.studentIds??[])
     }
-    
     return  parent
-  
   }
   
 }

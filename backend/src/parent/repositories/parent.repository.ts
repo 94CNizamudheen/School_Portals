@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { IParentRepository } from "./interfaces/parent.repository.interface";
 import { Parent } from "../entities/parent.schema";
@@ -7,7 +7,6 @@ import { Student } from "src/student/entities/student.schema";
 import { Model, Types } from "mongoose";
 import { CreateParentDto } from "../dtos/create-parent.dto";
 import { UpdateParentDto } from "../dtos/update-parent.dto";
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ParentRepository implements IParentRepository {
@@ -18,28 +17,14 @@ export class ParentRepository implements IParentRepository {
   ) {}
 
   async findByEmail(email: string) {
-    return this.parentModel.findOne({ email }).lean();
+    return this.parentModel.findOne({ email }).exec();
   }
 
 async createParent(dto: CreateParentDto) {
-  const payload = {
-    ...dto,
-    studentIds: dto.studentIds?.map(id => new Types.ObjectId(id))
-  };
+  const payload = {...dto,studentIds: dto.studentIds?.map(id => new Types.ObjectId(id))};
   const parent = new this.parentModel(payload);
   return await parent.save(); 
 }
-
-  async createUser(email: string, password: string, parentId: string) {
-    const hashed = await bcrypt.hash(password, 10);
-    const user = new this.userModel({
-      email,
-      password: hashed,
-      role: 'PARENT',
-      profileId: new Types.ObjectId(parentId) 
-    });
-    return user.save();
-  }
 
   async findAllParents() {
     return this.parentModel.find().lean();
@@ -102,5 +87,10 @@ async createParent(dto: CreateParentDto) {
       { _id: { $in: ids } },
       'firstName lastName' 
     ).lean();
+  }
+  async pushStudentIds(parentId: string, studentIds: string[]){
+    const updated= await this.parentModel.findByIdAndUpdate(parentId,{$addToSet:{studentIds:{$each:studentIds.map(id=>new Types.ObjectId(id))}}},{new:true});
+    if(!updated) throw new NotFoundException("Parent Not found with this id")
+    return updated
   }
 }
