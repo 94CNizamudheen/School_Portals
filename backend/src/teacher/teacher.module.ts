@@ -1,6 +1,6 @@
 
 import { Teacher ,TeacherSchema} from "./entities/teacher.schema"; 
-import { User ,UserSchema} from "src/auth/entities/user.schema"; 
+import { User ,UserSchema} from "src/user/entities/user.schema"; 
 import { TeacherService } from "./service/teacher.service"; 
 import { TeacherController } from "./controllers/teacher.controller";
 import { Module } from "@nestjs/common";

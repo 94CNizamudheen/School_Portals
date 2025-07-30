@@ -7,16 +7,23 @@ import { AdmissionService } from "src/admission/services/admission.service";
 import { generateStudentId } from "src/utils/genarate.studentId";
 import { AuthRepository } from "src/auth/repositories/auth.repository";
 import { Types } from "mongoose";
+import { UserRepository } from "src/user/repositories/user.repository";
+import { IAuthRepository } from "src/auth/repositories/interfaces/auth-repository.interface";
+import { IUserRepository } from "src/user/repositories/interfaces/user.repositoriy.interface";
+import { IAdminRepository } from "src/admin/repositories/interfaces/admin-repository.interface";
+import { IAdmissionRepository } from "src/admission/repositories/interfaces/admission.repositoriy.interface";
+import { IStudentRepository } from "src/student/repositories/interfaces/student-repositories.interface";
 
 
 @Injectable()
 export class PaymentService {
     private readonly logger= new Logger();
     constructor(
-        @Inject('IPaymentRepository')
-        private readonly repo: IPaymentRepository,
-        @Inject('IAuthRepository')
-        private readonly authRepo:AuthRepository,
+        @Inject('IPaymentRepository') private readonly repo: IPaymentRepository,
+        @Inject('IAuthRepository') private readonly authRepo:IAuthRepository,
+        @Inject ("IUserRepository") private readonly userRepo:IUserRepository,
+        @Inject('IAdmissionRepository') private readonly admissionRepo:IAdmissionRepository,
+        @Inject("IStudentRepository") private readonly studentRepo:IStudentRepository,
         private readonly studentService: StudentService,
         private readonly ParentService: ParentService,
         private readonly admissionService: AdmissionService,
@@ -28,7 +35,7 @@ export class PaymentService {
         const admission = await this.admissionService.getAdmissionById(dto.admissionId);
         if (!admission) throw new NotFoundException("Admission not found");
         if (admission.status !== "approved") throw new BadRequestException('Admission not approved');
-        const user= await this.authRepo.findUserByEmail(admission.email);
+        const user= await this.userRepo.findUserByEmail(admission.email);
         if(!user) throw new NotFoundException("User not found for register parent")
 
         const initilizePayment = await this.repo.createPayment(dto);
@@ -66,9 +73,9 @@ export class PaymentService {
         if(user.role==="GUEST")user.role="PARENT";
         student.parentIds = [parent._id as Types.ObjectId] ;
         admission.status= 'completed';
-        await user.save();
-        await admission.save()
-        await student.save()
+        await this.userRepo.saveUser(user)
+        await this.admissionRepo.saveAdmission(admission)
+        await this.studentRepo.saveStudent(student)
         return {
             message:"Payment completed, student and parent created successfully",
             payment:updatedPayment,

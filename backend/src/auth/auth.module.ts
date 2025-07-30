@@ -3,19 +3,20 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
 import { AuthRepository } from './repositories/auth.repository';
-import { User, UserSchema } from './entities/user.schema';
 import { Otp, OtpSchema } from './entities/otp.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { BlacklistedToken, BlacklistedTokenSchema } from './entities/blacklist.schema';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { UserModule } from 'src/user/user.module';
+import { User, UserSchema } from 'src/user/entities/user.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: User.name, schema: UserSchema },
       { name: Otp.name, schema: OtpSchema },
+      { name: User.name, schema: UserSchema },
       {name:BlacklistedToken.name,schema:BlacklistedTokenSchema}
     ]),
     JwtModule.registerAsync({
@@ -25,7 +26,8 @@ import { JwtAuthGuard } from './jwt-auth.guard';
         signOptions: { expiresIn: configService.get<string>('JWT_EXPIRES_IN') }
       }),
       inject: [ConfigService]
-    })
+    }),
+    UserModule
   ],
   controllers: [AuthController],
   providers: [

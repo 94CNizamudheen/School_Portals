@@ -1,6 +1,7 @@
 import { Admin } from '../../entities/admin.schema';
 import { CreateAdminDto } from 'src/admin/dtos/create-admin.dto';
 import { UpdateAdminDto } from 'src/admin/dtos/update-admin.dto';
+import { Admission } from 'src/admission/entities/admission.schema';
 
 
 export interface IAdminRepository {

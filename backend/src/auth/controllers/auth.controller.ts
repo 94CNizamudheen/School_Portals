@@ -53,10 +53,7 @@ export class AuthController {
     await this.authService.resetPassword(dto);
     return { message: 'Password updated successfully' };
   }
-  @Get(":id")
-  async fetchUser(@Param('id') id: string) {
-    return await this.authService.fetchUser(id)
-  }
+
   @Post('google-login')
   googleLogin(@Body() body: { email: string, name: string, role: string }) {
     return this.authService.handleGoogleLogin(body);

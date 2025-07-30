@@ -14,9 +14,9 @@ export class ParentController {
 
   @Roles(Role.ADMIN)
   @Post()
-  create(@Body() createParentDto: CreateParentDto) {
-    return this.parentService.create(createParentDto);
-  }
+  // create(@Body() createParentDto: CreateParentDto) {
+  //   return this.parentService.create(createParentDto);
+  // }
 
   @Roles(Role.ADMIN)
   @Patch(':id')
@@ -26,9 +26,9 @@ export class ParentController {
 
   @Roles(Role.ADMIN, Role.PARENT)
   @Get()
-  findAll() {
-    return this.parentService.findAll();
-  }
+  // findAll() {
+  //   return this.parentService.findAll();
+  // }
 
   @Roles(Role.ADMIN, Role.PARENT)
   @Get(':id')

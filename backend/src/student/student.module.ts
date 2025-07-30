@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Student, StudentSchema } from './entities/student.schema';
 import { Parent, ParentSchema } from 'src/parent/entities/parent.schema';
 import { Otp, OtpSchema } from 'src/auth/entities/otp.schema';
-import { User, UserSchema } from 'src/auth/entities/user.schema';
+import { User, UserSchema } from 'src/user/entities/user.schema';
 import { StudentController } from './controllers/student.controller';
 import { StudentService } from './services/student.service';
 import { StudentRepository } from './repositories/student.repository';

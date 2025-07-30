@@ -9,6 +9,7 @@ import { ParentModule } from './parent/parent.module';
 import { v2 as cloudinary } from 'cloudinary';
 import { AdmissionModule } from './admission/admission.module';
 import { PaymentModule } from './payment/payment.module';
+import { UserModule } from './user/user.module';
 
 @Module({
     imports:[
@@ -26,7 +27,8 @@ import { PaymentModule } from './payment/payment.module';
         AdminModule,
         ParentModule,
         AdmissionModule,
-        PaymentModule
+        PaymentModule,
+        UserModule,
     ],
 })
 export class AppModule{

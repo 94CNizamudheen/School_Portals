@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { User } from '../entities/user.schema';
+import { User } from 'src/user/entities/user.schema';
 import { Otp } from '../entities/otp.schema'; 
 import { IAuthRepository } from './interfaces/auth-repository.interface';
 import { BlacklistedToken } from '../entities/blacklist.schema';
@@ -18,15 +18,6 @@ export class AuthRepository implements IAuthRepository {
     @InjectModel(Otp.name) private otpModel: Model<Otp>
   ) {}
 
-  async findUserByEmail(email: string): Promise<User | null> {
-    return this.userModel.findOne({ email }).exec();
-  }
-
-  async createUser(name:string ,email: string, password: string, role: string): Promise<User> {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new this.userModel({name, email, password: hashedPassword, role });
-    return user.save();
-  }
 
   async comparePasswords(plain: string, hash: string): Promise<boolean> {
     return bcrypt.compare(plain, hash);
@@ -53,9 +44,7 @@ export class AuthRepository implements IAuthRepository {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await this.userModel.updateOne({ email }, { password: hashedPassword });
   }
-  async findUserById(id:string):Promise<User|null>{
-    return await this.userModel.findById(id);
-  }
+
   async createBlacklist(token: string, expiresAt: Date): Promise<void> {
       await this.blacklistedModel.create({token,expiresAt})
   }

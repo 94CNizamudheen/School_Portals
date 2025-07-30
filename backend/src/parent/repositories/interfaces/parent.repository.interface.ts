@@ -3,7 +3,7 @@ import { CreateParentDto, } from '../../dtos/create-parent.dto';
 import { UpdateParentDto } from 'src/parent/dtos/update-parent.dto';
 import { Parent } from '../../entities/parent.schema';
 import { DeleteResult, Types } from 'mongoose';
-import { User } from 'src/auth/entities/user.schema';
+import { User } from 'src/user/entities/user.schema';
 
 export interface IParentRepository {
   findByEmail(email: string): Promise<Parent | null>;

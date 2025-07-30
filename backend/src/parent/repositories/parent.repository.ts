@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { IParentRepository } from "./interfaces/parent.repository.interface";
 import { Parent } from "../entities/parent.schema";
-import { User } from "src/auth/entities/user.schema";
+import { User } from "src/user/entities/user.schema";
 import { Student } from "src/student/entities/student.schema"; 
 import { Model, Types } from "mongoose";
 import { CreateParentDto } from "../dtos/create-parent.dto";

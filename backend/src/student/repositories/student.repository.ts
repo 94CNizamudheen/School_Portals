@@ -43,4 +43,7 @@ export class StudentRepository implements IStudentRepository{
   async deleteStudent(id: string) {
     await this.studentModel.deleteOne({ _id: new Types.ObjectId(id) });
   }
+  async saveStudent(student: Student){
+      return await student.save()
+  }
 }

@@ -2,7 +2,7 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
-import { Admission, AdmissionDocument } from '../entities/admission.schema';
+import { Admission, } from '../entities/admission.schema';
 import { CreateAdmissionDto } from '../dtos/create-admission.dto';
 import { IAdmissionRepository } from './interfaces/admission.repositoriy.interface';
 import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
@@ -11,10 +11,10 @@ import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
 export class AdmissionRepository implements IAdmissionRepository {
   constructor(
     @InjectModel(Admission.name)
-    private readonly model: Model<AdmissionDocument>
+    private readonly model: Model<Admission>
   ) { }
 
-   findById(id: string): Promise<AdmissionDocument | null> {
+   findById(id: string): Promise<Admission | null> {
     return this.model.findById(id).exec()
   }
 
@@ -44,4 +44,8 @@ export class AdmissionRepository implements IAdmissionRepository {
     }
     return await admission?.save()
   }
+  async saveAdmission(admission: Admission): Promise<Admission> {
+      return await admission.save()
+  }
+  
 }

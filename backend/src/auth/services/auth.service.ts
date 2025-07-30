@@ -6,25 +6,37 @@ import { AuthRepository } from '../repositories/auth.repository';
 import { RegisterDto } from '../dtos/register.dtos';
 import { SignInDto } from '../dtos/signin.dto';
 import { ForgotPasswordDto, ResetPasswordDto, VerifyOtpDto } from '../dtos/password.dtos';
-import { User } from '../entities/user.schema';
+import { User } from '../../user/entities/user.schema';
 import { JwtPayload } from 'jwt-decode';
 import { ConfigService } from '@nestjs/config';
+import { UserRepository } from 'src/user/repositories/user.repository';
+import { CreateUserDto } from 'src/user/dto/create.user.dto';
+import { IUserRepository } from 'src/user/repositories/interfaces/user.repositoriy.interface';
+import { IAuthRepository } from '../repositories/interfaces/auth-repository.interface';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name)
   constructor(
-    @Inject('IAuthRepository') private readonly repo: AuthRepository,
+    @Inject('IAuthRepository') private readonly repo: IAuthRepository,
+    @Inject("IUserRepository") private readonly userRepo: IUserRepository,
     private config: ConfigService,
     private readonly jwtService: JwtService
   ) { }
 
   async register(dto: RegisterDto): Promise<{ access_token: string, user: User }> {
     this.logger.log(`DTO received: ${JSON.stringify(dto)}`);
-    const existing = await this.repo.findUserByEmail(dto.email);
+    const existing = await this.userRepo.findUserByEmail(dto.email);
     if (existing) throw new BadRequestException('Email already exists');
 
-    const user = await this.repo.createUser(dto.name, dto.email, dto.password, dto.role);
+    const createUserDto: CreateUserDto = {
+      name: dto.name,
+      email: dto.email,
+      password: dto.password,
+      role: dto.role
+    };
+
+    const user = await this.userRepo.createUser(createUserDto);
 
     this.logger.log(`User registered successfully: ${user.email} (ID: ${user._id}) `);
     const payload = { sub: user._id, email: user.email, role: user.role };
@@ -32,7 +44,7 @@ export class AuthService {
   }
 
   async signIn(dto: SignInDto): Promise<{ access_token: string; refresh_token: string; userId: string, user: User }> {
-    const user = await this.repo.findUserByEmail(dto.email);
+    const user = await this.userRepo.findUserByEmail(dto.email);
     this.logger.log(`user ${user}`)
     if (!user || !(await this.repo.comparePasswords(dto.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
@@ -82,7 +94,7 @@ export class AuthService {
   }
 
   async sendOtp(email: string): Promise<void> {
-    const user = await this.repo.findUserByEmail(email);
+    const user = await this.userRepo.findUserByEmail(email);
     if (!user) throw new UnauthorizedException('User not found');
 
     const code = await this.repo.createOtp(email);
@@ -109,20 +121,21 @@ export class AuthService {
   }
 
   async resetPassword(dto: ResetPasswordDto): Promise<void> {
-    const user = await this.repo.findUserByEmail(dto.email);
+    const user = await this.userRepo.findUserByEmail(dto.email);
     if (!user) throw new NotFoundException('User not found');
     this.logger.log(`new password is ${dto.password}`)
     await this.repo.updatePassword(dto.email, dto.password);
   }
-  async fetchUser(id: string) {
-    const user = await this.repo.findUserById(id);
-    if (!user) throw new NotFoundException('User not found')
-    return user
-  }
   async handleGoogleLogin(body: { name: string, email: string, role: string }) {
-    let user = await this.repo.findUserByEmail(body.email);
+    let user = await this.userRepo.findUserByEmail(body.email);
     if (!user) {
-      user = await this.repo.createUser(body.name, body.email, 'google-oauth', body.role);
+         const createUserDto: CreateUserDto = {
+      name: body.name,
+      email: body.email,
+      password: 'google-oauth',
+      role: body.role
+    };
+      user = await this.userRepo.createUser(createUserDto);
     }
     const payload = { sub: user.id, email: user.email, role: user.role };
     return {
