@@ -9,6 +9,9 @@ import { AuthModule } from "src/auth/auth.module";
 import { ParentController } from "./controllers/parent.controller";
 import { ParentService } from "./services/parent.service";
 import { ParentRepository } from "./repositories/parent.repository";
+import { MailService } from "src/mailer/services/mail.service";
+import { MailerModule } from "src/mailer/mailer.module";
+import { StudentModule } from "src/student/student.module";
 
 @Module({
   imports: [
@@ -18,9 +21,12 @@ import { ParentRepository } from "./repositories/parent.repository";
       { name: Parent.name, schema: ParentSchema },
     ]),
     AuthModule,
+    MailerModule,
+    StudentModule
+
   ],
   controllers: [ParentController],
-  providers: [ParentService, ParentRepository],
+  providers: [ParentService, ParentRepository,MailService],
   exports: [ParentService],
 })
 export class ParentModule {}

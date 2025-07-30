@@ -1,13 +1,25 @@
 
 
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Inject, Logger } from '@nestjs/common';
 import { ParentRepository } from '../repositories/parent.repository';
-import { CreateParentDto,  } from '../dtos/create-parent.dto';
+import { CreateParentDto, } from '../dtos/create-parent.dto';
 import { UpdateParentDto } from '../dtos/update-parent.dto';
+import { IStudentRepository } from 'src/student/repositories/interfaces/student-repositories.interface';
+import { MailService } from 'src/mailer/services/mail.service';
+import { SendStudentLoginDetailsDto } from 'src/mailer/dtos/send.mail.dto';
+import * as path from 'path';
+import * as fs from 'fs';
+import { studentLoginTemplate } from 'src/mailer/utils/templates/student.login.template';
 
 @Injectable()
 export class ParentService {
-  constructor(private readonly repo: ParentRepository) {}
+  private readonly logger = new Logger(ParentService.name)
+  constructor(
+    @Inject("IStudentRepository") private readonly studentRepo: IStudentRepository,
+    private readonly repo: ParentRepository,
+    private readonly mailService: MailService
+
+  ) { }
 
   async findOne(id: string) {
     const parent = await this.repo.findParentById(id);
@@ -56,14 +68,28 @@ export class ParentService {
     return this.repo.findChildrens(parent.studentIds);
   }
 
-  async findOrCreateParent(dto:CreateParentDto){
-    let parent= await this.repo.findByEmail(dto.email);
-    if(!parent){
-      parent= await this.repo.createParent(dto);
-    }else{
-      await this.repo.pushStudentIds(parent._id as string,dto.studentIds??[])
+  async findOrCreateParent(dto: CreateParentDto) {
+    let parent = await this.repo.findByEmail(dto.email);
+    if (!parent) {
+      parent = await this.repo.createParent(dto);
+    } else {
+      await this.repo.pushStudentIds(parent._id as string, dto.studentIds ?? [])
     }
-    return  parent
+    return parent
+  };
+  async sendStudentLoginDetailsMail(dto: SendStudentLoginDetailsDto): Promise<boolean> {
+    const { toEmail, studentIdentity, password } = dto;
+    const subject = 'Your Student Login Details';
+    const text = `Student ID: ${studentIdentity}, Password: ${password}`;
+    const html = studentLoginTemplate(studentIdentity, password);
+    try {
+      await this.mailService.sendMail({ to: toEmail, subject, text, html });
+      return true;
+    } catch (err) {
+      this.logger.error(`Failed to send login email to ${dto.toEmail}`, err);
+      return false;
+    }
   }
-  
+
+
 }

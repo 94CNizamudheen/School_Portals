@@ -10,6 +10,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { AdmissionModule } from './admission/admission.module';
 import { PaymentModule } from './payment/payment.module';
 import { UserModule } from './user/user.module';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
     imports:[
@@ -29,6 +30,7 @@ import { UserModule } from './user/user.module';
         AdmissionModule,
         PaymentModule,
         UserModule,
+        MailerModule
     ],
 })
 export class AppModule{

@@ -38,8 +38,8 @@ import { User, UserSchema } from 'src/user/entities/user.schema';
       useClass: AuthRepository,
     },
     JwtStrategy,
-    JwtAuthGuard
+    JwtAuthGuard,
   ],
-  exports: [AuthService,JwtModule,JwtStrategy,JwtAuthGuard,'IAuthRepository'],
+  exports: [AuthService,JwtModule,JwtStrategy,JwtAuthGuard,'IAuthRepository',],
 })
 export class AuthModule { }
