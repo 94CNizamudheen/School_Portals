@@ -22,10 +22,12 @@ API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    console.log("response in axios intercepter",error)
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       const state = store.getState();
+      console.log("state refresh_token",state.auth.refreshToken)
       const refreshToken = state.auth.refreshToken;
 
       try {

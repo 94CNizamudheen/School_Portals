@@ -23,8 +23,8 @@ export class AuthController {
     return this.authService.signIn(dto);
   };
   @Post('refresh')
-  refresh(@Body('refresh_token')token:string){
-    this.logger.log("refresh invoked")
+  refresh(@Body('refreshToken')token:string){
+    this.logger.log("refresh invoked with token",token)
     return this.authService.refreshToken(token)
   }
 

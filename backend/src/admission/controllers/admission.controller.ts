@@ -1,10 +1,12 @@
-import { Controller, Post, Body, Get, Param, UseInterceptors, UploadedFiles, BadRequestException, Patch } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseInterceptors, UploadedFiles, BadRequestException, Patch, UseGuards } from '@nestjs/common';
 import { AdmissionService } from '../services/admission.service';
 import { CreateAdmissionDto } from '../dtos/create-admission.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('admissions')
+@UseGuards(AuthGuard('jwt'))
 export class AdmissionController {
   constructor(private readonly admissionService: AdmissionService) { }
 

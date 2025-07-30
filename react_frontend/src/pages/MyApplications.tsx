@@ -16,8 +16,6 @@ interface StatusCounts {
     rejected: number
     completed: number
 }
-
-
 const MyApplications: React.FC = () => {
     const [applications, setApplications] = useState<AdmissionFormData[]>([])
     const [loading, setLoading] = useState<boolean>(true)
@@ -41,10 +39,7 @@ const MyApplications: React.FC = () => {
                 setLoading(true)
                 const data = await fetchApplicationsByEmail(userEmail)
                 setApplications(data ?? [])
-
-                if (data && data.length === 1 && data[0]?._id) {
-                    setExpandedApplications(new Set([data[0]._id]))
-                }
+                setExpandedApplications(new Set())
             } catch (err) {
                 setError("Failed to load applications. Please try again later.")
                 console.error('Error loading applications:', err)
@@ -61,10 +56,11 @@ const MyApplications: React.FC = () => {
             const amount = 1000;
             const transactionId = 'its_sample_transaction_id'
             await completeAdmissionPayment(id, amount, transactionId);
-
-
+            toast.success("Admission payment success, Student registerd")
+            const updatedData = await fetchApplicationsByEmail(userEmail as string);
+            setApplications(updatedData ?? []);
         } catch (error) {
-            const err= error as AxiosError<{message:string}>
+            const err = error as AxiosError<{ message: string }>
             console.error("Payment failed:", err);
             toast.error(`Payment error: ${err.response?.data.message || "Something went wrong"}`);
         }

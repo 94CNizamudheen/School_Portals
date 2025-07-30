@@ -73,6 +73,8 @@ export class PaymentService {
         if(user.role==="GUEST")user.role="PARENT";
         student.parentIds = [parent._id as Types.ObjectId] ;
         admission.status= 'completed';
+        admission.verificationNotes="Admission process compleated. Student Login details will get registerd Parent email."
+        admission.rejectionReason="";
         await this.userRepo.saveUser(user)
         await this.admissionRepo.saveAdmission(admission)
         await this.studentRepo.saveStudent(student)

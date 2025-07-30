@@ -77,6 +77,7 @@ export class AuthService {
       }
       return { access_token: newAccessToken, refresh_token: newRefreshToken };
     } catch (error) {
+      console.error(error)
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
   }

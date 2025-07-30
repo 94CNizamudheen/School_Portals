@@ -44,7 +44,6 @@ export const handleStatusChange = async (id: string, data: StatusChangeData,): P
 export const fetchApplicationsByEmail = async (email: string,): Promise<AdmissionFormData[]|undefined> => {
     try {
         const response = await API.get(`/admissions/${email}`, {
-
         })
         console.log("response in fetch applications",response)
         return Array.isArray(response.data) ? response.data : [response.data]

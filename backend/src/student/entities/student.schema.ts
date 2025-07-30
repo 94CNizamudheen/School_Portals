@@ -11,8 +11,6 @@ export class Student extends Document {
   @Prop({ required: true })
   lastName: string;
 
-  @Prop({ required: true })
-  dob: Date;
 
   @Prop({ required: true })
   classLevel: string;
