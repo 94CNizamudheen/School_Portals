@@ -6,7 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './routes';
-import Spinner from './components/Spinner';
+import Loading from './components/Loading';
 import { store, persistor } from './store/store';
 
 
@@ -18,7 +18,7 @@ const App = () => {
     <GoogleOAuthProvider clientId={clientId}>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <Suspense fallback={<Spinner />}>
+          <Suspense fallback={<Loading />}>
             <RouterProvider router={router} />
           </Suspense>
           <ToastContainer position="top-right" autoClose={2000} hideProgressBar newestOnTop />

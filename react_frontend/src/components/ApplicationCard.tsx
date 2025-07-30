@@ -1,7 +1,6 @@
-import { AlertCircle, BookOpen, Calendar, CheckCircle, ChevronDown, ChevronUp, Clock, Eye, FileText, MapPin, Phone, Smile, User, Users, XCircle } from "lucide-react";
+import { AlertCircle, BookOpen, Calendar, CheckCircle, ChevronDown, ChevronUp, Clock, Eye, FileText, MapPin, Phone, Smile, User, Users, XCircle, Loader2 } from "lucide-react";
+import { useState } from "react";
 import type { AdmissionFormData } from "../types/admission.types";
-
-
 
 interface ApplicationCardProps {
     application: AdmissionFormData
@@ -9,6 +8,7 @@ interface ApplicationCardProps {
     onToggle: () => void
     onPayment:(id:string)=>void
 }
+
 interface StatusConfig {
     icon: React.ComponentType<{ className?: string; size?: number }>
     color: string
@@ -22,9 +22,9 @@ const getStatusConfig = (status: AdmissionFormData['status']): StatusConfig => {
         case 'approved':
             return {
                 icon: CheckCircle,
-                color: 'text-green-600',
-                bgColor: 'bg-green-50',
-                borderColor: 'border-green-200',
+                color: 'text-blue-600',
+                bgColor: 'bg-blue-200',
+                borderColor: 'border-blue-500',
                 label: 'Approved'
             }
         case 'rejected':
@@ -54,8 +54,8 @@ const getStatusConfig = (status: AdmissionFormData['status']): StatusConfig => {
     }
 }
 
-
-const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpanded, onToggle ,onPayment}) => {
+const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpanded, onToggle, onPayment }) => {
+    const [isPaymentLoading, setIsPaymentLoading] = useState(false);
     const statusConfig = getStatusConfig(application.status)
     const StatusIcon = statusConfig.icon
 
@@ -77,6 +77,18 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
         })
     }
 
+    const handlePayment = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsPaymentLoading(true);
+        
+        try {
+            await onPayment(application._id);
+        } catch (error) {
+            console.error('Payment error:', error);
+        } finally {
+            setIsPaymentLoading(false);
+        }
+    }
 
     return (
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow duration-300">
@@ -129,18 +141,31 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
                             </p>
                         </div>
                         {application.status === "approved" && (
-                            <div className=" ml-12 sm:ml-16">
+                            <div className="ml-12 sm:ml-16">
                                 <button
-                                    className="bg-green-600 text-white px-4 py-2 rounded-md shadow hover:bg-green-700 transition duration-200"
-                                    onClick={(e) =>{e.stopPropagation(); onPayment(application._id)}}
+                                    className={`relative flex items-center justify-center px-4 py-2 rounded-md shadow text-white transition duration-200 min-w-[140px] ${
+                                        isPaymentLoading 
+                                            ? 'bg-gray-400 cursor-not-allowed' 
+                                            : 'bg-blue-600 hover:bg-blue-700'
+                                    }`}
+                                    onClick={handlePayment}
+                                    disabled={isPaymentLoading}
                                 >
-                                    Pay Admission Fee
+                                    {isPaymentLoading ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        'Pay Admission Fee'
+                                    )}
                                 </button>
-                                <p className="text-sm text-gray-500 mt-1">Note: Complete the admission process</p>
+                                <p className="text-sm text-gray-500 mt-1">
+                                    {isPaymentLoading ? 'Please wait...' : 'Note: Complete the admission process'}
+                                </p>
                             </div>
                         )}
                     </div>
-
                 </div>
             )}
 
@@ -303,7 +328,6 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
                                         >
                                             <Eye className="w-4 h-4" />
                                         </button>
-
                                     </div>
                                 </div>
                             ))}
@@ -320,7 +344,6 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
                             <div className="space-y-2 text-sm">
                                 <span className="text-gray-600">Submitted:</span>
                                 <span className="font-medium">{formatDateTime(application.createdAt)}</span>
-
                             </div>
                         </div>
                     </div>
@@ -329,4 +352,5 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
         </div>
     )
 };
-export default ApplicationCard
+
+export default ApplicationCard;

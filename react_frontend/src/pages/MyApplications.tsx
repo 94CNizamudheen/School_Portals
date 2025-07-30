@@ -7,7 +7,8 @@ import { completeAdmissionPayment, fetchApplicationsByEmail } from "../store/adm
 import ApplicationCard from "../components/ApplicationCard"
 import { AxiosError } from "axios"
 import { toast } from "react-toastify"
-// import type { AppDispatch } from "recharts/types/state/store"
+import ComponentLoader from "../components/shared/ComponentLoader"
+
 
 interface StatusCounts {
     total: number
@@ -23,7 +24,6 @@ const MyApplications: React.FC = () => {
     const [expandedApplications, setExpandedApplications] = useState<Set<string>>(new Set())
     const { token, isAuthenticated } = useSelector((state: RootState) => state.auth);
     const userEmail = useSelector((state: RootState) => state.auth.userEmail)
-    // const dispatch= useDispatch<AppDispatch>()
 
 
 
@@ -89,28 +89,7 @@ const MyApplications: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 p-4 sm:p-6 lg:p-8">
-                <div className="max-w-6xl mx-auto">
-                    <div className="mb-8">
-                        <div className="h-8 bg-gray-200 rounded w-64 mb-2 animate-pulse"></div>
-                        <div className="h-4 bg-gray-200 rounded w-96 animate-pulse"></div>
-                    </div>
-
-                    <div className="space-y-6">
-                        {[...Array(3)].map((_, i) => (
-                            <div key={i} className="bg-white rounded-2xl shadow-xl p-8 animate-pulse">
-                                <div className="flex items-center space-x-4 mb-4">
-                                    <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
-                                    <div className="space-y-2">
-                                        <div className="h-6 bg-gray-200 rounded w-48"></div>
-                                        <div className="h-4 bg-gray-200 rounded w-32"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+        <ComponentLoader/>
         )
     }
 
@@ -164,23 +143,23 @@ const MyApplications: React.FC = () => {
 
                 {/* Status Summary */}
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-                    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-400">
                         <div className="text-2xl font-bold text-gray-900">{statusCounts.total}</div>
                         <div className="text-sm text-gray-600">Total Applications</div>
                     </div>
-                    <div className="bg-yellow-50 rounded-xl p-4 shadow-sm border border-yellow-200">
+                    <div className="bg-yellow-50 rounded-xl p-4 shadow-sm border border-yellow-400">
                         <div className="text-2xl font-bold text-yellow-700">{statusCounts.pending}</div>
                         <div className="text-sm text-yellow-600">Pending</div>
                     </div>
-                    <div className="bg-green-50 rounded-xl p-4 shadow-sm border border-green-200">
-                        <div className="text-2xl font-bold text-green-700">{statusCounts.approved}</div>
-                        <div className="text-sm text-green-600">Approved</div>
+                    <div className="bg-blue-200 rounded-xl p-4 shadow-sm border border-blue-400">
+                        <div className="text-2xl font-bold text-blue-700">{statusCounts.approved}</div>
+                        <div className="text-sm text-blue-600">Approved</div>
                     </div>
-                    <div className="bg-red-50 rounded-xl p-4 shadow-sm border border-red-200">
+                    <div className="bg-red-50 rounded-xl p-4 shadow-sm border border-red-400">
                         <div className="text-2xl font-bold text-red-700">{statusCounts.rejected}</div>
                         <div className="text-sm text-red-600">Rejected</div>
                     </div>
-                    <div className="bg-green-200 rounded-xl p-4 shadow-sm border border-green-300">
+                    <div className="bg-green-200 rounded-xl p-4 shadow-sm border border-green-400">
                         <div className="text-2xl font-bold text-green-800">{statusCounts.completed}</div>
                         <div className="text-sm text-green-800">completed</div>
                     </div>

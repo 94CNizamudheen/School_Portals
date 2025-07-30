@@ -5,7 +5,6 @@ import AdminLayout from "./admin/pages/AdminLayout"
 import  ProtectedRoute from "../src/utils/protected/AdminProtection" 
 
 
-// Lazy-loaded components
 const Home = lazy(() => import("./pages/Home"))
 const PortalsPage = lazy(() => import("./pages/PortalsPage"))
 const AdminLogin = lazy(() => import("./pages/Logins/AdminLogin"))
