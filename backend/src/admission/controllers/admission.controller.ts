@@ -1,36 +1,31 @@
-import { Controller, Post, Body, Get, Param, UseInterceptors, UploadedFiles, BadRequestException, Patch, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseInterceptors, UploadedFiles, BadRequestException, Patch, UseGuards, Logger } from '@nestjs/common';
 import { AdmissionService } from '../services/admission.service';
 import { CreateAdmissionDto } from '../dtos/create-admission.dto';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('admissions')
 @UseGuards(AuthGuard('jwt'))
 export class AdmissionController {
+  private readonly logger = new Logger(AdmissionController.name)
   constructor(private readonly admissionService: AdmissionService) { }
 
   @Post()
-  @UseInterceptors(FileFieldsInterceptor([
-    { name: 'profilePicture', maxCount: 1 },
-    { name: 'aadharDocument', maxCount: 1 },
-    { name: 'birthCertificate', maxCount: 1 },
-    { name: 'transferCertificate', maxCount: 1 },
-  ]))
-  async apply(
-    @UploadedFiles()
-    files: {
-      profilePicture?: Express.Multer.File[];
-      aadharDocument?: Express.Multer.File[];
-      birthCertificate?: Express.Multer.File[];
-      transferCertificate?: Express.Multer.File[];
+  @UseInterceptors(AnyFilesInterceptor())
+  async apply( @Body() body: CreateAdmissionDto,@UploadedFiles() files: Array<Express.Multer.File>,) {
+    this.logger.log('controller invoked with ', body);
+    this.logger.log('received files: ', files);
 
-    },
-    @Body() body: Omit<CreateAdmissionDto, | 'profilePicture' | 'aadharDocument' | 'birthCertificate' | 'transferCertificate'>,) {
-    if (body.previousSchool && !files.transferCertificate) {
-      throw new BadRequestException('Transfer Certificate required with previous school.')
+    const fileMap: Record<string, Express.Multer.File[]> = {};
+    for (const file of files) {
+      if (!fileMap[file.fieldname]) {
+        fileMap[file.fieldname] = [];
+      }
+      fileMap[file.fieldname].push(file);
     }
-    return this.admissionService.submitApplication(body, files);
+
+    await this.admissionService.submitApplication(body, fileMap);
   }
 
   @Get(':email')

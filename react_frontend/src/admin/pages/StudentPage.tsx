@@ -12,14 +12,13 @@ const StudentsPage = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const dispatch = useDispatch<AppDispatch>()
   const { students, error } = useSelector((state: RootState) => state.student)
-  const {token,isAuthenticated}= useSelector((state:RootState)=>state.auth);
+  const {token}= useSelector((state:RootState)=>state.auth);
   
   console.log("token in student page",token)
   useEffect(() => {
-      if (token && isAuthenticated) {
       dispatch(fetchAllStudents());
-    }
-  }, [dispatch,token,isAuthenticated])
+      
+  }, [dispatch,])
 
   useEffect(() => {
     if (error) toast.error(error)

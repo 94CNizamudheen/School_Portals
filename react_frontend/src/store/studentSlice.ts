@@ -38,10 +38,8 @@ export const fetchAllStudents = createAsyncThunk(
 
     try {
       const response = await API.get(`/students`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       })
+      console.log(" response.data in fetch all student",response.data)
       return response.data
     } catch (error) {
       const err = error as AxiosError<{ message: string }>

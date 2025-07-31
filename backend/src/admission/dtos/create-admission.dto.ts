@@ -17,10 +17,14 @@ export class CreateAdmissionDto {
   @IsOptional() medicalInformation?: string;
   @IsString() @IsNotEmpty() parentName: string;
   @IsString() @IsNotEmpty() relationToStudent: string;
-  @IsEmail()  email: string;
+  @IsEmail() email: string;
   @IsString() @IsNotEmpty() mobileNumber: string;
   @IsString() @IsNotEmpty() emergencyContactName: string;
   @IsString() @IsNotEmpty() emergencyContactNumber: string;
-  @IsOptional() parentOccupation?: string;
+  @IsOptional() @IsString() parentOccupation?: string;
   @IsString() @IsNotEmpty() classApplied: string;
+  @IsString() @IsNotEmpty() religion: string;
+  @IsString() @IsNotEmpty() cast: string;
+  @IsString() @IsNotEmpty() gender: string;
+  @IsString() @IsOptional() status?: string;
 }

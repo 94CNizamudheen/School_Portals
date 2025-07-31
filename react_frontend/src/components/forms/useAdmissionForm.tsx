@@ -3,8 +3,15 @@ import type { AdmissionFormData, AdmissionFormErrors, HandleFileChange, HandleIn
 import { ValidationError } from "yup";
 
 import { admissionValidationSchema } from "../../utils/validationSchemas";
+import { toast } from "react-toastify";
+import { createAdmission } from "../../store/admissionThunks";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 const useAdmissionForm = () => {
+    const userEmail= useSelector((state:RootState)=>state.auth.userEmail);
+    const userName= useSelector((state:RootState)=>state.auth.userName);
+
     const [formData, setFormData] = useState<AdmissionFormData>({
         firstName: '',
         lastName: '',
@@ -17,49 +24,41 @@ const useAdmissionForm = () => {
         previousSchool: '',
         transferCertificate: null,
         medicalInformation: '',
-        parentName: '',
+        parentName: userName as string,
         relationToStudent: '',
-        email: '',
+        email: userEmail as string,
         mobileNumber: '',
         emergencyContactName: '',
         emergencyContactNumber: '',
         parentOccupation: '',
         classApplied: '',
-        nationality:'',
-        state:'',
-        pincode:''
-        
+        nationality: '',
+        state: '',
+        pincode: '',
+        cast: '',
+        religion: '',
+        gender: '',
+        status: 'pending',
+
     });
 
     const [errors, setErrors] = useState<AdmissionFormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleInputChange: HandleInputChange = (name, value) => {
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
 
         // Clear error when user starts typing
         if (errors[name]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ''
-            }));
+            setErrors(prev => ({ ...prev, [name]: '' }));
         }
     };
 
     const handleFileChange: HandleFileChange = (name, file) => {
-        setFormData(prev => ({
-            ...prev,
-            [name]: file
-        }));
+        setFormData(prev => ({ ...prev, [name]: file }));
 
         if (errors[name]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ''
-            }));
+            setErrors(prev => ({ ...prev, [name]: '' }));
         }
     };
 
@@ -97,10 +96,15 @@ const useAdmissionForm = () => {
 
         setIsSubmitting(true);
         try {
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            alert("Admission form submitted successfully!");
+            await createAdmission(formData, {
+                profilePicture: formData.profilePicture,
+                aadharDocument: formData.aadharDocument,
+                birthCertificate: formData.birthCertificate,
+                transferCertificate: formData.transferCertificate
+            })
+            toast.success("Admission submitted successfully!");
         } catch {
-            alert("Error submitting form. Please try again.");
+            toast.error("Error submitting admission form.");
         } finally {
             setIsSubmitting(false);
         }

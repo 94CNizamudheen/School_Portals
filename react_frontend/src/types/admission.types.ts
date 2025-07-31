@@ -1,7 +1,9 @@
 export interface AdmissionFormData {
-  _id: string
   firstName: string
   lastName: string
+  gender: string;
+  religion: string;
+  cast: string;
   dob: string
   address: string
   profilePicture: File | null
@@ -23,11 +25,8 @@ export interface AdmissionFormData {
   state: string
   pincode: string
   status: "pending" | "approved" | "rejected" | "completed"
-  createdAt: string
   verificationNotes?: string
   rejectionReason?: string
-  refillRequestedAt?: string
-  updatedAt?:string
 }
 
 export type AdmissionFormErrors = Partial<Record<keyof AdmissionFormData, string>>;
@@ -40,4 +39,11 @@ export interface DocumentPreview {
   url: string
   type: string
   name: string
+}
+
+export interface AdmissionFiles {
+  profilePicture?: File|null;
+  aadharDocument?:  File|null;
+  birthCertificate?:  File|null;
+  transferCertificate?:  File|null;
 }

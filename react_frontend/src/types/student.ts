@@ -73,7 +73,7 @@ export interface Student {
   lastName: string;
   email: string;
   mobileNumber: string;
-  dateOfBirth?: string;
+  dob?: string;
   gender?: string;
   bloodGroup?: string;
   nationality?: string;
@@ -83,13 +83,12 @@ export interface Student {
   rollNumber?: string;
   previousSchool?: string;
   address?: string;
-  city?: string;
   state?: string;
   pincode?: string;
-  medicalConditions?: string;
+  medicalInformation?: string;
   allergies?: string;
   medications?: string;
-  profileImage?: string;
+  profilePicture?: string;
   enrollmentDate?: string;
   isActive?: boolean;
   parentIds?: string[]; 

@@ -21,7 +21,7 @@ const StudentTable: React.FC<StudentTableProps> = ({ students }) => {
         <table className="w-full">
           <thead className="bg-gray-300">
             <tr>
-              {['Student', 'Roll Number', 'Grade & Class', 'Phone', 'Status', 'Actions'].map((th) => (
+              {['Student', 'Roll Number', 'Grade', 'Phone', 'Status', 'Actions'].map((th) => (
                 <th key={th} className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider">
                   {th}
                 </th>

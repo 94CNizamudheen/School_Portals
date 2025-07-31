@@ -9,6 +9,7 @@ import { User, UserSchema } from 'src/user/entities/user.schema';
 import { StudentController } from './controllers/student.controller';
 import { StudentService } from './services/student.service';
 import { StudentRepository } from './repositories/student.repository';
+import { AdmissionModule } from 'src/admission/admission.module';
 
 
 @Module({
@@ -19,6 +20,7 @@ import { StudentRepository } from './repositories/student.repository';
       { name: Otp.name, schema: OtpSchema },
       { name: User.name, schema: UserSchema },
     ]),
+    AdmissionModule
   ],
   controllers: [StudentController],
   providers: [StudentService, {provide:"IStudentRepository",useClass:StudentRepository}],

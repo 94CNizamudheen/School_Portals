@@ -30,7 +30,7 @@ const StudentDetailPage: React.FC = () => {
   useEffect(() => {
     const found = students.find((s) => s._id === id);
     setStudent(found || null);
-    setPreviewImage(found?.profileImage || null);
+    setPreviewImage(found?.profilePicture || null);
   }, [students, id]);
 
   const handleBack = () => {
@@ -65,7 +65,7 @@ const StudentDetailPage: React.FC = () => {
       reader.onloadend = () => {
         const base64 = reader.result as string;
         setPreviewImage(base64);
-        dispatch(updateStudent({ id: student._id, updates: { profileImage: base64 } }));
+        dispatch(updateStudent({ id: student._id, updates: { profilePicture: base64 } }));
       };
       reader.readAsDataURL(file);
     }
@@ -169,10 +169,11 @@ const StudentDetailPage: React.FC = () => {
           <InfoCard
             title="Personal Information"
             data={[
-              { label: 'Date of Birth', value: formatDate(student.dateOfBirth) },
+              { label: 'Date of Birth', value: formatDate(student.dob) },
               { label: 'Gender', value: student.gender },
               { label: 'Blood Group', value: student.bloodGroup },
               { label: 'Nationality', value: student.nationality },
+              { label: 'Religion', value: student.religion },
             ]}
             onEdit={() => setEditingSection('personal')}
           />
@@ -181,8 +182,7 @@ const StudentDetailPage: React.FC = () => {
             title="Academic Information"
             data={[
               { label: 'Roll Number', value: student.rollNumber },
-              { label: 'Grade', value: student.grade },
-              { label: 'Class', value: student.class },
+              { label: 'Grade', value: student.class },
               { label: 'Previous School', value: student.previousSchool },
               { label: 'Enrollment Date', value: formatDate(student.enrollmentDate) },
             ]}
@@ -195,7 +195,6 @@ const StudentDetailPage: React.FC = () => {
               { label: 'Mobile Number', value: student.mobileNumber },
               { label: 'Email Address', value: student.email },
               { label: 'Address', value: student.address },
-              { label: 'City', value: student.city },
               { label: 'State', value: student.state },
               { label: 'Pincode', value: student.pincode },
             ]}
@@ -205,9 +204,7 @@ const StudentDetailPage: React.FC = () => {
           <InfoCard
             title="Medical Information"
             data={[
-              { label: 'Medical Conditions', value: student.medicalConditions },
-              { label: 'Allergies', value: student.allergies },
-              { label: 'Medications', value: student.medications },
+              { label: 'Medical Conditions', value: student.medicalInformation },
             ]}
             onEdit={() => setEditingSection('medical')}
           />

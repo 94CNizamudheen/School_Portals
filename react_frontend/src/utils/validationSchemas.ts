@@ -1,146 +1,7 @@
 import * as Yup from 'yup';
-
-export const personalInformationSchema = Yup.object().shape({
-  firstName: Yup.string()
-    .trim()
-    .required('First Name is required'),
-  lastName: Yup.string()
-    .trim()
-    .required('Last Name is required'),
-  email: Yup.string()
-    .email('Invalid email format')
-    .required('Email is required'),
-  phone: Yup.string()
-    .matches(/^[0-9]{10}$/, 'Phone number must be 10 digits')
-    .required('Phone number is required'),
-  dateOfBirth: Yup.date()
-    .required('Date of Birth is required')
-    .max(
-      new Date(new Date().setFullYear(new Date().getFullYear() - 4)),
-      'Student must be at least 4 years old'
-    ),
-  gender: Yup.string().required('Gender is required'),
-  bloodGroup: Yup.string().notRequired(),
-  nationality: Yup.string().notRequired(),
-  profileImage: Yup.mixed().required('select image'),
-});
-
-export const academicInformationSchema = Yup.object().shape({
-  grade: Yup.string().required('Grade is required'),
-  class: Yup.string().required('Class is required'),
-  rollNumber: Yup.number().required('Roll Number is required'),
-  previousSchool: Yup.string().notRequired(),
-  address: Yup.string().required('Address is required'),
-  city: Yup.string().required('City is required'),
-  state: Yup.string().required('State is required'),
-  pincode: Yup.string()
-    .matches(/^[0-9]{6}$/, 'Pincode must be 6 digits')
-    .required('Pincode is required'),
-});
-
-export const parentInformationSchema = Yup.object().shape({
-  parentName: Yup.string().required('Parent/Guardian Name is required'),
-  parentPhone: Yup.string()
-    .matches(/^[0-9]{10}$/, 'Parent phone number must be 10 digits')
-    .required('Parent phone number is required')
-    .test('unique-phone', 'Parent phone number must be different from student phone number', function(value) {
-      const { phone } = this.parent;
-      return value !== phone;
-    }),
-  parentEmail: Yup.string()
-    .email('Invalid email format')
-    .required('Parent email is required')
-    .test('unique-email', 'Parent email must be different from student email', function(value) {
-      const { email } = this.parent;
-      return value !== email;
-    }),
-  parentOccupation: Yup.string().notRequired(),
-  relationship: Yup.string().required('Relationship is required'),
-  emergencyContactName: Yup.string().required('Emergency Contact Name is required'),
-  emergencyContactPhone: Yup.string()
-    .matches(/^[0-9]{10}$/, 'Emergency contact phone must be 10 digits')
-    .required('Emergency contact phone is required')
-    .test('unique-emergency-phone', 'Emergency contact phone must be different from student and parent phone numbers', function(value) {
-      const { phone, parentPhone } = this.parent;
-      return value !== phone && value !== parentPhone;
-    }),
-  emergencyContactRelationship: Yup.string().required(
-    'Emergency Contact Relationship is required'
-  ),
-});
-
-export const medicalInformationSchema = Yup.object().shape({
-  medicalConditions: Yup.string().notRequired(),
-  allergies: Yup.string().notRequired(),
-  medications: Yup.string().notRequired(),
-});
+import { ageRules, calculateAge } from './helpers/calculateAge';
 
 
-export const completeFormSchema = Yup.object().shape({
-  firstName: Yup.string()
-    .trim()
-    .required('First Name is required'),
-  lastName: Yup.string()
-    .trim()
-    .required('Last Name is required'),
-  email: Yup.string()
-    .email('Invalid email format')
-    .required('Email is required'),
-  phone: Yup.string()
-    .matches(/^[0-9]{10}$/, 'Phone number must be 10 digits')
-    .required('Phone number is required'),
-  dateOfBirth: Yup.date()
-    .required('Date of Birth is required')
-    .max(
-      new Date(new Date().setFullYear(new Date().getFullYear() - 4)),
-      'Student must be at least 4 years old'
-    ),
-  gender: Yup.string().required('Gender is required'),
-  bloodGroup: Yup.string().notRequired(),
-  nationality: Yup.string().notRequired(),
-  profileImage: Yup.mixed().required('select image'),
-  grade: Yup.string().required('Grade is required'),
-  class: Yup.string().required('Class is required'),
-  rollNumber: Yup.number().required('Roll Number is required'),
-  previousSchool: Yup.string().notRequired(),
-  address: Yup.string().required('Address is required'),
-  city: Yup.string().required('City is required'),
-  state: Yup.string().required('State is required'),
-  pincode: Yup.string()
-    .matches(/^[0-9]{6}$/, 'Pincode must be 6 digits')
-    .required('Pincode is required'),
-  parentName: Yup.string().required('Parent/Guardian Name is required'),
-  parentPhone: Yup.string()
-    .matches(/^[0-9]{10}$/, 'Parent phone number must be 10 digits')
-    .required('Parent phone number is required')
-    .test('unique-parent-phone', 'Parent phone number must be different from student phone number', function(value) {
-      const { phone } = this.parent;
-      return value !== phone;
-    }),
-  parentEmail: Yup.string()
-    .email('Invalid email format')
-    .required('Parent email is required')
-    .test('unique-parent-email', 'Parent email must be different from student email', function(value) {
-      const { email } = this.parent;
-      return value !== email;
-    }),
-  parentOccupation: Yup.string().notRequired(),
-  relationship: Yup.string().required('Relationship is required'),
-  emergencyContactName: Yup.string().required('Emergency Contact Name is required'),
-  emergencyContactPhone: Yup.string()
-    .matches(/^[0-9]{10}$/, 'Emergency contact phone must be 10 digits')
-    .required('Emergency contact phone is required')
-    .test('unique-emergency-phone', 'Emergency contact phone must be different from student and parent phone numbers', function(value) {
-      const { phone, parentPhone } = this.parent;
-      return value !== phone && value !== parentPhone;
-    }),
-  emergencyContactRelationship: Yup.string().required(
-    'Emergency Contact Relationship is required'
-  ),
-  medicalConditions: Yup.string().notRequired(),
-  allergies: Yup.string().notRequired(),
-  medications: Yup.string().notRequired(),
-});
 
 export const parentModalSchema = Yup.object({
   name: Yup.string().required('Name is required'),
@@ -177,21 +38,18 @@ export const teacherSchema = Yup.object({
     .of(Yup.string().required("Subject is required"))
     .min(1, "At least one subject is required")
     .required("Subjects are required"),
-    profileImage: Yup.mixed().required('select image'),
+  profileImage: Yup.mixed().required('select image'),
 });
 
 
 export const admissionValidationSchema = Yup.object({
   firstName: Yup.string().required('First name is required').trim(),
   lastName: Yup.string().required('Last name is required').trim(),
-  dob: Yup.date().required('Date of birth is required'),
   address: Yup.string().required('Address is required').trim(),
   profilePicture: Yup.string().required('Profile picture is required'),
   bloodGroup: Yup.string().required('Blood group is required'),
   aadharDocument: Yup.string().required('Aadhar document is required'),
   birthCertificate: Yup.string().required('Birth certificate is required'),
-  previousSchool: Yup.string(),
-  transferCertificate: Yup.string(),
   medicalInformation: Yup.string(),
   parentName: Yup.string().required('Parent name is required').trim(),
   relationToStudent: Yup.string().required('Relation to student is required').trim(),
@@ -201,9 +59,40 @@ export const admissionValidationSchema = Yup.object({
   emergencyContactNumber: Yup.string().matches(/^\d{10}$/, 'Emergency contact number must be 10 digits').required('Emergency contact number is required'),
   parentOccupation: Yup.string(),
   classApplied: Yup.string().required('Class applied is required'),
-  nationality:Yup.string().required('Nationality required'),
-  state:Yup.string().required("State is required"),
-  pincode:Yup.string().required('Pincode required').matches(/^\d{10}$/,"Enter valid pincode")
+  nationality: Yup.string().required('Nationality required'),
+  state: Yup.string().required("State is required"),
+  pincode: Yup.string().required('Pincode required').matches(/^\d{6}$/, "Enter valid 6-digit pincode"),
+  gender: Yup.string().required('please select gender'),
+  religion: Yup.string().required('please select religion'),
+  cast: Yup.string().required('please select cast'),
+  previousSchool: Yup.string().when('classApplied', {
+    is: (value: string) => value && value !== 'LKG',
+    then: (schema) => schema.required('Previous school is required'),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  transferCertificate: Yup.string().when('classApplied', {
+    is: (value: string) => value && value !== 'LKG',
+    then: (schema) => schema.required('Transfer certificate is required'),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  dob: Yup.date()
+    .required('Date of birth is required')
+    .test('age-by-class', function (dobValue) {
+      const { classApplied } = this.parent;
+      if (!dobValue || !classApplied) return true;
+
+      const age = calculateAge(dobValue);
+      const rule = ageRules[classApplied];
+      if (!rule) return false;
+
+      if (age < rule.min || age > rule.max) {
+        return this.createError({
+          message: `Age for ${classApplied} must be between ${rule.min} and ${rule.max} years (current: ${age})`,
+        });
+      }
+
+      return true;
+    }),
 });
 
 export const signupSchema = Yup.object({
