@@ -26,6 +26,8 @@ export class Admission extends Document {
   @Prop({ required: true  }) emergencyContactNumber: string;
   @Prop({ required: false }) parentOccupation: string;
   @Prop({ required: true }) classApplied: string;
+  @Prop({ required: false, unique: true })rollNumber?: string;
+  @Prop({required:true, enum:['male','female','transgender']})gender:string;
   @Prop({ default: 'pending', enum: ['pending', 'approved', 'rejected','completed'] }) status: string;
   @Prop()verificationNotes?:string;
   @Prop() rejectionReason?:string;

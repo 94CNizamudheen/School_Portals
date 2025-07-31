@@ -14,7 +14,7 @@ const StudentTableRow: React.FC<StudentTableRowProps> = ({ student }) => {
   const handleViewStudent = () => {
     navigate(`/admin/students/${student._id}`);
   };
-
+  console.log()
   return (
     <tr className="hover:bg-gray-50">
       <td className="px-6 py-4 whitespace-nowrap">

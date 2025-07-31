@@ -1,16 +1,24 @@
 
 
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { StudentRepository } from '../repositories/student.repository';
 import { CreateStudentDto } from '../dtos/create-student.dto';
 import { UpdateStudentDto } from '../dtos/update-student.dto';
+import { IAdmissionRepository } from 'src/admission/repositories/interfaces/admission.repositoriy.interface';
 @Injectable()
 export class StudentService {
-
-  constructor(   @Inject("IStudentRepository") private readonly repo: StudentRepository) {}
+  private readonly logger= new Logger(StudentService.name)
+  constructor( 
+      @Inject("IStudentRepository") private readonly repo: StudentRepository,
+       @Inject("IAdmissionRepository") private readonly admissionRepo:IAdmissionRepository,
+    ) {}
 
   async create(dto: CreateStudentDto) {
-    return this.repo.createStudent(dto);
+     this.logger.log(`Creating student for admission ${dto.admissionId}`);
+     const admission = await this.admissionRepo.findById(dto.admissionId);
+     this.logger.log("Admission data",admission)
+     if (!admission) throw new NotFoundException("Admission not found");
+    return this.repo.createStudent(dto,admission.toObject());
   }
 
   async findAll() {

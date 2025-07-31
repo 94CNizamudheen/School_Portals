@@ -1,28 +1,49 @@
 
 
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Student } from '../entities/student.schema'; 
+import { Student } from '../entities/student.schema';
 import { CreateStudentDto } from '../dtos/create-student.dto';
 import { UpdateStudentDto } from '../dtos/update-student.dto';
 import { IStudentRepository } from './interfaces/student-repositories.interface';
+import { AdmissionType } from 'src/admission/repositories/admission.type';
 
 @Injectable()
-export class StudentRepository implements IStudentRepository{
-  constructor(@InjectModel(Student.name) private studentModel: Model<Student>) {}
 
-  async createStudent(dto: CreateStudentDto) {
+export class StudentRepository implements IStudentRepository {
+  constructor(
+    @InjectModel(Student.name) private studentModel: Model<Student>,
+  ) {}
 
-    return  new this.studentModel({
-      firstName:dto.firstName,
-      lastName:dto.lastName,
-      classLevel:dto.classLevel,
-      admissionId:dto.admissionId,
-      identity:dto.identity,
-      password:dto.password
-    }).save()
+  async createStudent(dto: CreateStudentDto,admission:AdmissionType): Promise<Student> {
+   
+    const student = new this.studentModel({
+      firstName: admission.firstName,
+      lastName: admission.lastName,
+      classLevel: admission.classApplied,
+      admissionId: dto.admissionId,
+      identity: dto.identity,
+      password: dto.password,
 
+      rollNumber: admission.rollNumber || undefined,
+      class: admission.classApplied || undefined,
+      dob: admission.dob,
+      gender: admission.gender,
+      bloodGroup: admission.bloodGroup,
+      nationality: admission.nationality,
+      address: admission.address,
+      state: admission.state,
+      pincode: admission.pincode,
+      mobileNumber: admission.mobileNumber,
+      email: admission.email,
+      previousSchool: admission.previousSchool,
+      medicalInformation: admission.medicalInformation,
+      profilePicture: admission.profilePicture || undefined,
+      isActive: true
+    });
+
+    return student.save();
   }
 
   async findAll() {
@@ -44,7 +65,7 @@ export class StudentRepository implements IStudentRepository{
   async deleteStudent(id: string) {
     await this.studentModel.deleteOne({ _id: new Types.ObjectId(id) });
   }
-  async saveStudent(student: Student){
-      return await student.save()
+  async saveStudent(student: Student) {
+    return await student.save()
   }
 }

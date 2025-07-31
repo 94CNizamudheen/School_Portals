@@ -54,13 +54,13 @@ export class ParentService {
     };
   }
 
-  async delete(id: string) {
-    const parent = await this.repo.findParentById(id);
-    if (!parent) throw new NotFoundException('Parent not found');
+  // async delete(id: string) {
+  //   const parent = await this.repo.findParentById(id);
+  //   if (!parent) throw new NotFoundException('Parent not found');
 
-    await this.repo.removeParentFromAllStudents(id, parent?.studentIds);
-    await this.repo.deleteParent(id);
-  }
+  //   await this.repo.removeParentFromAllStudents(id, parent?.studentIds);
+  //   await this.repo.deleteParent(id);
+  // }
 
   async findChildrens(id: string) {
     const parent = await this.repo.findParentById(id);
