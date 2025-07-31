@@ -25,7 +25,8 @@ export class StudentRepository implements IStudentRepository {
       admissionId: dto.admissionId,
       identity: dto.identity,
       password: dto.password,
-
+      religion:admission.religion,
+      cast:admission.cast,
       rollNumber: admission.rollNumber || undefined,
       class: admission.classApplied || undefined,
       dob: admission.dob,

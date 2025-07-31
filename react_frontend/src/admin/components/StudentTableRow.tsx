@@ -20,9 +20,9 @@ const StudentTableRow: React.FC<StudentTableRowProps> = ({ student }) => {
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
           <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-            {student.profileImage ? (
+            {student.profilePicture ? (
               <img
-                src={student.profileImage}
+                src={student.profilePicture}
                 alt={fullName}
                 className="h-10 w-10 rounded-full object-cover"
               />

@@ -10,35 +10,61 @@ import { User } from "lucide-react";
 
 interface StudentInformationSectionProps {
   formData: AdmissionFormData;
-  handleInputChange: HandleInputChange; 
+  handleInputChange: HandleInputChange;
   errors: AdmissionFormErrors;
 }
 
 const StudentInformationSection: React.FC<StudentInformationSectionProps> = ({ formData, handleInputChange, errors }) => {
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
   const classes = ['LKG', 'UKG', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7',];
-  
+  const casteOptionsByReligion: Record<string, string[]> = {
+    hindu: [
+      'brahmin', 'kshatriya', 'vaishya', 'shudra',
+      'kurmi', 'yadav', 'nai', 'teli', 'jaiswal', 'kayastha', 'baniya', 'rajput',
+      'sc', 'st', 'obc'
+    ],
+    muslim: [
+      'sunni', 'shia', 'syed', 'pathan', 'sheikh', 'mughal',
+      'ansari', 'qureshi', 'bohra', 'meman'
+    ],
+    christian: [
+      'roman_catholic', 'protestant', 'syro_malabar', 'syro_malankara',
+      'orthodox', 'pentecostal', 'jacobite'
+    ],
+    sikh: [
+      'jatt', 'ramgarhia', 'khatri', 'rai', 'ramdassia', 'mazhabi'
+    ],
+    parse: [
+      'zoroastrian'
+    ],
+    not_disclose: [
+      'not_disclosed'
+    ]
+  };
+  const casteOptions = casteOptionsByReligion[formData.religion] || [];
+
   // Indian states and union territories
   const indianStates = [
-    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 
-    'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 
-    'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 
-    'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 
-    'Uttarakhand', 'West Bengal', 'Andaman and Nicobar Islands', 'Chandigarh', 
-    'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Jammu and Kashmir', 
+    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat',
+    'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh',
+    'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
+    'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh',
+    'Uttarakhand', 'West Bengal', 'Andaman and Nicobar Islands', 'Chandigarh',
+    'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Jammu and Kashmir',
     'Ladakh', 'Lakshadweep', 'Puducherry'
   ];
 
   // Common nationalities
   const nationalities = [
-    'Indian', 'American', 'British', 'Canadian', 'Australian', 'German', 'French', 
-    'Japanese', 'Chinese', 'Russian', 'Brazilian', 'South African', 'Nigerian', 
-    'Egyptian', 'Saudi Arabian', 'UAE', 'Singaporean', 'Malaysian', 'Thai', 
+    'Indian', 'American', 'British', 'Canadian', 'Australian', 'German', 'French',
+    'Japanese', 'Chinese', 'Russian', 'Brazilian', 'South African', 'Nigerian',
+    'Egyptian', 'Saudi Arabian', 'UAE', 'Singaporean', 'Malaysian', 'Thai',
     'Indonesian', 'Filipino', 'Korean', 'Italian', 'Spanish', 'Dutch', 'Swedish',
     'Norwegian', 'Danish', 'Finnish', 'Swiss', 'Austrian', 'Belgian', 'Portuguese',
     'Greek', 'Turkish', 'Israeli', 'Iranian', 'Pakistani', 'Bangladeshi', 'Sri Lankan',
     'Nepali', 'Bhutanese', 'Myanmarese', 'Vietnamese', 'Cambodian', 'Laotian'
   ].sort();
+
 
   return (
     <Card className="shadow-lg p-0">
@@ -105,6 +131,75 @@ const StudentInformationSection: React.FC<StudentInformationSectionProps> = ({ f
             </Select>
           </FormField>
         </div>
+        <div className="grid md:grid-cols-2 gap-6">
+          <FormField
+            name="gender"
+            label="Gender"
+            required
+            errors={errors}
+            formData={formData}
+            handleInputChange={handleInputChange}
+          >
+            <Select value={formData.gender} onValueChange={(value) => handleInputChange('gender', value)}>
+              <SelectTrigger className={errors.gender ? 'border-red-500' : ''}>
+                <SelectValue placeholder="Select gender" />
+              </SelectTrigger>
+              <SelectContent>
+                {['male', 'female', 'transgender'].map((g) => (
+                  <SelectItem key={g} value={g}>{g.charAt(0).toUpperCase() + g.slice(1)}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
+
+          <FormField
+            name="religion"
+            label="Religion"
+            required
+            errors={errors}
+            formData={formData}
+            handleInputChange={handleInputChange}
+          >
+            <Select value={formData.religion} onValueChange={(value) => handleInputChange('religion', value)}>
+              <SelectTrigger className={errors.religion ? 'border-red-500' : ''}>
+                <SelectValue placeholder="Select religion" />
+              </SelectTrigger>
+              <SelectContent>
+                {['hindu', 'muslim', 'christian', 'sikh', 'parse', 'not_disclose'].map((r) => (
+                  <SelectItem key={r} value={r}>{r.replace('_', ' ').toUpperCase()}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
+        </div>
+
+        <FormField
+          name="cast"
+          label="Cast"
+          required
+          errors={errors}
+          formData={formData}
+          handleInputChange={handleInputChange}
+        >
+          <Select
+            value={formData.cast}
+            onValueChange={(value) => handleInputChange('cast', value)}
+            disabled={!formData.religion}
+          >
+            <SelectTrigger className={errors.cast ? 'border-red-500' : ''}>
+              <SelectValue placeholder={formData.religion ? "Select cast" : "Select religion first"} />
+            </SelectTrigger>
+            <SelectContent className="max-h-64 overflow-auto">
+              {casteOptions.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c.replace(/_/g, ' ').toUpperCase()}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FormField>
+
+
 
         {/* Address Section */}
         <FormField

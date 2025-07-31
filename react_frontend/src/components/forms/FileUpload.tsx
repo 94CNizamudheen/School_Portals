@@ -11,7 +11,7 @@ interface FileUploadProps {
     required?: boolean,
     accept?: string
 }
-
+ 
 const FileUpload: React.FC<FileUploadProps> = ({ name, label, required = false, accept = "*/*", formData, handleFileChange, errors }) => (
     <div className="space-y-2">
         <Label htmlFor={name} className="text-sm font-medium">

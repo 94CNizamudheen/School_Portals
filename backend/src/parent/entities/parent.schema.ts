@@ -7,7 +7,7 @@ import { Document, Types } from "mongoose";
 export class Parent extends Document {
   @Prop({ required: true }) name: string;
   @Prop({ required: true, unique: true }) email: string;
-  @Prop({ required: true, unique: true }) mobileNumber: string;
+  @Prop({ required: true}) mobileNumber: string;
 
   @Prop() occupation?: string;
   @Prop() relationship?: string;

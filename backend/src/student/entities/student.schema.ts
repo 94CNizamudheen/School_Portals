@@ -10,6 +10,18 @@ export class Student extends Document {
   @Prop({ required: true }) classLevel: string;
   @Prop({ required: true, unique: true }) identity: string;
   @Prop({ required: true }) password: string;
+  @Prop({ required: true, enum: ['hindu', 'muslim', 'christian', 'sikh', 'parse', 'not_disclose'] })
+  @Prop({
+    required: true,
+    enum: [
+      'brahmin', 'kshatriya', 'vaishya', 'shudra', 'kurmi', 'yadav', 'nai', 'teli',
+      'jaiswal', 'kayastha', 'baniya', 'rajput', 'sc', 'st', 'obc',
+      'sunni', 'shia', 'syed', 'pathan', 'sheikh', 'mughal', 'ansari', 'qureshi', 'bohra', 'meman',
+      'roman_catholic', 'protestant', 'syro_malabar', 'syro_malankara', 'orthodox', 'pentecostal', 'jacobite',
+      'jatt', 'ramgarhia', 'khatri', 'rai', 'ramdassia', 'mazhabi', 'tonk_kshatriya',
+      'zoroastrian', 'agnostic', 'not_disclosed'
+    ],
+  }) cast: string;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Admission', required: true }) admissionId: Types.ObjectId;
   @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'Parent', default: [] }) parentIds?: Types.ObjectId[];

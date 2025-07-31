@@ -22,7 +22,7 @@ export const EditModal: React.FC<EditModalProps> = ({ section, student, onClose,
 
   const fieldsMap: Record<string, { label: string; field: keyof Student }[]> = {
     personal: [
-      { label: 'Date of Birth', field: 'dateOfBirth' },
+      { label: 'Date of Birth', field: 'dob' },
       { label: 'Gender', field: 'gender' },
       { label: 'Blood Group', field: 'bloodGroup' },
       { label: 'Nationality', field: 'nationality' },
@@ -38,14 +38,11 @@ export const EditModal: React.FC<EditModalProps> = ({ section, student, onClose,
       { label: 'Mobile Number', field: 'mobileNumber' },
       { label: 'Email', field: 'email' },
       { label: 'Address', field: 'address' },
-      { label: 'City', field: 'city' },
       { label: 'State', field: 'state' },
       { label: 'Pincode', field: 'pincode' },
     ],
     medical: [
-      { label: 'Medical Conditions', field: 'medicalConditions' },
-      { label: 'Allergies', field: 'allergies' },
-      { label: 'Medications', field: 'medications' },
+      { label: 'Medical Conditions', field: 'medicalInformation' },
     ],
   };
 
