@@ -1,9 +1,9 @@
 // src/router.tsx
 import { createBrowserRouter } from "react-router-dom"
-import React, { lazy } from "react"
+import React, { createElement, lazy } from "react"
 import AdminLayout from "./admin/pages/AdminLayout"
 import  ProtectedRoute from "../src/utils/protected/AdminProtection" 
-
+import RouterErrorFallback from "./components/error/RouterErrorFallback"
 
 const Home = lazy(() => import("./pages/Home"))
 const PortalsPage = lazy(() => import("./pages/PortalsPage"))
@@ -30,7 +30,7 @@ const ForgetPassword= lazy(()=>import('./pages/ForgotPasswordPage'))
 
 
 export const router = createBrowserRouter([
-  { path: "/", element: React.createElement(Home) },
+  { path: "/", element: React.createElement(Home),errorElement:createElement(RouterErrorFallback) },
   { path: "/portals", element: React.createElement(PortalsPage) },
   { path: "/admin/login", element: React.createElement(AdminLogin) },
   { path: "/parent/login", element: React.createElement(ParentLogin) },
@@ -49,6 +49,7 @@ export const router = createBrowserRouter([
     { allowedRoles: ["ADMIN"] },
     React.createElement(AdminLayout)
   ),
+  errorElement:React.createElement(RouterErrorFallback),
   children: [
     { path: "dashboard", element: React.createElement(Dashboard), },
     { path: 'students',element: React.createElement(StudentPage)},

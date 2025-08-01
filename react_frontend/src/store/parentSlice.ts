@@ -1,11 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
-import type { RootState } from './store';
-import { logout } from './authSlice';
-import { isTokenExpired } from '../utils/token';
-
-
-
+import API from '../axios.config';
 
 interface AssignParentPayload {
     parentId: string;
@@ -38,16 +33,12 @@ export interface Child {
 
 const initial: ParentState = { parents: [], loading: false, error: null };
 
-const API = import.meta.env.VITE_BACKEND_URL;
 
 export const fetchChildrenOfParent = createAsyncThunk(
     'parent/fetchChildrens',
-    async (parentId: string, { rejectWithValue, getState }) => {
-        const token = (getState() as RootState).auth.token;
+    async (parentId: string, { rejectWithValue, }) => {
         try {
-            const res = await axios.get(`${API}/parents/${parentId}/children`, {
-                headers: { Authorization: `Bearer ${token}` }
-            })
+            const res = await axios.get(`${API}/parents/${parentId}/children`)
             return res.data as Child[];
 
         } catch (err) {
@@ -60,12 +51,10 @@ export const fetchChildrenOfParent = createAsyncThunk(
 // Fetch all parents
 export const fetchParents = createAsyncThunk(
     'parent/fetch',
-    async (_, { rejectWithValue, getState }) => {
-        const token = (getState() as RootState).auth.token;
+    async (_, { rejectWithValue }) => {
         try {
-            const res = await axios.get(`${API}/parents`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await axios.get(`${API}/parents`,);
+            console.log('parents',res.data)
             return res.data as Parent[];
         } catch (err) {
             const e = err as AxiosError<{ message: string }>;
@@ -77,12 +66,10 @@ export const fetchParents = createAsyncThunk(
 // Add a new parent
 export const addParent = createAsyncThunk(
     'parent/add',
-    async (parent: Omit<Parent, '_id'>, { rejectWithValue, getState }) => {
-        const token = (getState() as RootState).auth.token;
+    async (parent: Omit<Parent, '_id'>, { rejectWithValue }) => {
+
         try {
-            const res = await axios.post(`${API}/parents`, parent, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await axios.post(`${API}/parents`, parent);
             console.log("response in parent add ")
             return res.data as Parent;
         } catch (err) {
@@ -97,13 +84,10 @@ export const updateParent = createAsyncThunk(
     'parent/update',
     async (
         { id, updates }: { id: string; updates: Partial<Parent> },
-        { rejectWithValue, getState }
+        { rejectWithValue }
     ) => {
-        const token = (getState() as RootState).auth.token;
         try {
-            const res = await axios.put(`${API}/parents/${id}`, updates, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await axios.put(`${API}/parents/${id}`, updates,);
             return res.data as Parent;
         } catch (err) {
             const e = err as AxiosError<{ message: string }>;
@@ -115,12 +99,9 @@ export const updateParent = createAsyncThunk(
 // Delete parent
 export const deleteParent = createAsyncThunk(
     'parent/delete',
-    async (id: string, { rejectWithValue, getState }) => {
-        const token = (getState() as RootState).auth.token;
+    async (id: string, { rejectWithValue }) => {
         try {
-            await axios.delete(`${API}/parents/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await axios.delete(`${API}/parents/${id}`);
             return id;
         } catch (err) {
             const e = err as AxiosError<{ message: string }>;
@@ -130,19 +111,9 @@ export const deleteParent = createAsyncThunk(
 );
 export const assignParent = createAsyncThunk(
     'parent/assignParent',
-    async ({ parentId, studentIds }: AssignParentPayload, { rejectWithValue, getState, dispatch }) => {
-        const state = await getState() as RootState;
-        const token = state.auth.token;
-        if (!token || isTokenExpired(token)) {
-            dispatch(logout())
-            
-        }
+    async ({ parentId, studentIds }: AssignParentPayload, { rejectWithValue, }) => {
         try {
-            const response = await axios.patch(`${API}/parents/${parentId}`, { studentIds }, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            const response = await axios.patch(`${API}/parents/${parentId}`, { studentIds });
             return response.data
         } catch (err) {
             const error = err as AxiosError<{ message: string }>

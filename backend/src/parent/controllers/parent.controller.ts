@@ -5,10 +5,11 @@ import { UpdateParentDto } from "../dtos/update-parent.dto";
 import { Roles } from "src/auth/roles.decorator";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { Role } from "src/auth/dtos/register.dtos";
+import { AuthGuard } from "@nestjs/passport";
 
 
 @Controller('parents')
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard('jwt'))
 export class ParentController {
   constructor(private readonly parentService: ParentService) {}
 
@@ -18,17 +19,17 @@ export class ParentController {
   //   return this.parentService.create(createParentDto);
   // }
 
-  @Roles(Role.ADMIN)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateParentDto: UpdateParentDto) {
-    return this.parentService.update(id, updateParentDto);
-  }
-
-  @Roles(Role.ADMIN, Role.PARENT)
-  @Get()
-  // findAll() {
-  //   return this.parentService.findAll();
+  // @Roles(Role.ADMIN)
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateParentDto: UpdateParentDto) {
+  //   return this.parentService.update(id, updateParentDto);
   // }
+
+  @Roles(Role.ADMIN,)
+  @Get()
+  findAll() {
+    return this.parentService.findAll();
+  }
 
   @Roles(Role.ADMIN, Role.PARENT)
   @Get(':id')

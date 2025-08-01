@@ -26,7 +26,7 @@ import { StudentModule } from "src/student/student.module";
 
   ],
   controllers: [ParentController],
-  providers: [ParentService, ParentRepository,MailService],
+  providers: [ParentService, ParentRepository,MailService,{provide:"IParentRepository",useClass:ParentRepository}],
   exports: [ParentService],
 })
 export class ParentModule {}

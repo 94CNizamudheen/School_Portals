@@ -10,13 +10,14 @@ import { SendStudentLoginDetailsDto } from 'src/mailer/dtos/send.mail.dto';
 import * as path from 'path';
 import * as fs from 'fs';
 import { studentLoginTemplate } from 'src/mailer/utils/templates/student.login.template';
+import { IParentRepository } from '../repositories/interfaces/parent.repository.interface';
+import { Parent } from '../entities/parent.schema';
 
 @Injectable()
 export class ParentService {
   private readonly logger = new Logger(ParentService.name)
   constructor(
-    @Inject("IStudentRepository") private readonly studentRepo: IStudentRepository,
-    private readonly repo: ParentRepository,
+    @Inject("IParentRepository") private readonly repo: IParentRepository,
     private readonly mailService: MailService
 
   ) { }
@@ -26,33 +27,33 @@ export class ParentService {
     if (!parent) throw new NotFoundException('Parent not found');
     return parent;
   };
-  async update(id: string, dto: UpdateParentDto) {
-    const parent = await this.repo.findParentById(id);
-    if (!parent) throw new NotFoundException('Parent not found');
+  // async update(id: string, dto: UpdateParentDto) {
+  //   const parent = await this.repo.findParentById(id);
+  //   if (!parent) throw new NotFoundException('Parent not found');
 
-    if (dto.email) {
-      const existing = await this.repo.findByEmail(dto.email);
-      if (existing && existing.id !== id) throw new ForbiddenException('Email already exists');
-      await this.repo.updateUserEmail(id, dto.email);
-    }
+  //   if (dto.email) {
+  //     const existing = await this.repo.findByEmail(dto.email);
+  //     if (existing && existing.id !== id) throw new ForbiddenException('Email already exists');
+  //     await this.repo.updateUserEmail(id, dto.email);
+  //   }
 
-    if (dto.studentIds?.length) {
-      for (const sid of dto.studentIds) {
-        const student = await this.repo.addParentToStudent(sid, id);
-        if (!student) throw new NotFoundException('Student not found');
-      }
-    }
+  //   if (dto.studentIds?.length) {
+  //     for (const sid of dto.studentIds) {
+  //       const student = await this.repo.addParentToStudent(sid, id);
+  //       if (!student) throw new NotFoundException('Student not found');
+  //     }
+  //   }
 
-    const { studentIds, ...rest } = dto;
-    await this.repo.updateParent(id, { studentIds });
-    await this.repo.updateParent(id, rest);
+  //   const { studentIds, ...rest } = dto;
+  //   await this.repo.updateParent(id, { studentIds });
+  //   await this.repo.updateParent(id, rest);
 
-    const updatedParent = await this.repo.findParentById(id);
-    return {
-      parent: updatedParent,
-      assignedCount: studentIds?.length || 0,
-    };
-  }
+  //   const updatedParent = await this.repo.findParentById(id);
+  //   return {
+  //     parent: updatedParent,
+  //     assignedCount: studentIds?.length || 0,
+  //   };
+  // }
 
   // async delete(id: string) {
   //   const parent = await this.repo.findParentById(id);
@@ -89,6 +90,11 @@ export class ParentService {
       this.logger.error(`Failed to send login email to ${dto.toEmail}`, err);
       return false;
     }
+  };
+  async findAll():Promise<Parent[]>{
+    const parents= await this.repo.findAllParents();
+    if(!parents||parents.length===0) throw new NotFoundException("parents not found");
+    return parents
   }
 
 
