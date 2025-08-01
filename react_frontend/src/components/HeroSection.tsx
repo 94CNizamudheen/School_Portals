@@ -1,3 +1,4 @@
+import TypewriterText from "../animations/textAnimations/TypeWriterText";
 import { Link } from "react-router-dom";
 
 
@@ -19,7 +20,7 @@ const HeroSection = () => {
             <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight break-words">
               <span className="block">AUP School</span>
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-pink-400 mt-1 sm:mt-2">
-                Where Learning Meets Excellence
+                <TypewriterText>Where Learning Meets Excellence</TypewriterText>
               </span>
             </h1>
             <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-200 leading-relaxed max-w-xs sm:max-w-md md:max-w-2xl mx-auto lg:mx-0 px-2 sm:px-0">
