@@ -52,11 +52,8 @@ export class PaymentService {
         if (!student) throw new InternalServerErrorException("Student creation failed");
 
         const parent = await this.ParentService.findOrCreateParent({
-            email: admission.email,
-            mobileNumber: admission.mobileNumber,
-            name: admission.parentName,
             studentIds: [student._id as string],
-            admissionId: dto.admissionId
+            admissionId: dto.admissionId,
         });
         if (!parent) throw new InternalServerErrorException("Failed to create or find parent");
 

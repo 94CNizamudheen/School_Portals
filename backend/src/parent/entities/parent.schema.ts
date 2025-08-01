@@ -6,7 +6,7 @@ import { Document, Types } from "mongoose";
 @Schema({ timestamps: true })
 export class Parent extends Document {
   @Prop({ required: true }) name: string;
-  @Prop({ required: true, unique: true }) email: string;
+  @Prop({ required: true,}) email: string;
   @Prop({ required: true}) mobileNumber: string;
 
   @Prop() occupation?: string;
@@ -14,7 +14,6 @@ export class Parent extends Document {
 
   @Prop() emergencyContactName?: string;
   @Prop() emergencyContactPhone?: string;
-  @Prop() emergencyContactRelationship?: string;
 
   @Prop({type:Types.ObjectId,ref:"Admission",required:true})admissionId:string 
   @Prop({ type: [{ type: Types.ObjectId, ref: "Student" }], default: [] })

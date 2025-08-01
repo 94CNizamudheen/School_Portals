@@ -7,6 +7,8 @@ import { Student } from "src/student/entities/student.schema";
 import { Model, Types } from "mongoose";
 import { CreateParentDto } from "../dtos/create-parent.dto";
 import { UpdateParentDto } from "../dtos/update-parent.dto";
+import { AdmissionType } from "src/admission/repositories/admission.type";
+import { ParentMatchCriteria } from "./interfaces/parent.type.inerface";
 
 @Injectable()
 export class ParentRepository implements IParentRepository {
@@ -20,10 +22,19 @@ export class ParentRepository implements IParentRepository {
     return this.parentModel.findOne({ email }).exec();
   }
 
-async createParent(dto: CreateParentDto) {
-  const payload = {...dto,studentIds: dto.studentIds?.map(id => new Types.ObjectId(id))};
+async createParent(dto: CreateParentDto, admission: AdmissionType) {
+  const payload = {
+    name: admission.parentName,
+    email: admission.email,
+    mobileNumber: admission.mobileNumber,
+    occupation: admission.parentOccupation,
+    relationship: admission.relationToStudent,
+    admissionId: admission._id,
+    studentIds: dto.studentIds?.map(id => new Types.ObjectId(id)) ?? []
+  };
+
   const parent = new this.parentModel(payload);
-  return await parent.save(); 
+  return await parent.save();
 }
 
   async findAllParents() {
@@ -92,5 +103,8 @@ async createParent(dto: CreateParentDto) {
     const updated= await this.parentModel.findByIdAndUpdate(parentId,{$addToSet:{studentIds:{$each:studentIds.map(id=>new Types.ObjectId(id))}}},{new:true});
     if(!updated) throw new NotFoundException("Parent Not found with this id")
     return updated
+  }
+   async findByMultipleFields(criteria: ParentMatchCriteria): Promise<Parent | null> {
+    return await this.parentModel.findOne(criteria);
   }
 }

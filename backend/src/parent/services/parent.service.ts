@@ -12,12 +12,14 @@ import * as fs from 'fs';
 import { studentLoginTemplate } from 'src/mailer/utils/templates/student.login.template';
 import { IParentRepository } from '../repositories/interfaces/parent.repository.interface';
 import { Parent } from '../entities/parent.schema';
+import { IAdmissionRepository } from 'src/admission/repositories/interfaces/admission.repositoriy.interface';
 
 @Injectable()
 export class ParentService {
   private readonly logger = new Logger(ParentService.name)
   constructor(
     @Inject("IParentRepository") private readonly repo: IParentRepository,
+    @Inject("IAdmissionRepository") private readonly admissionRepo: IAdmissionRepository,
     private readonly mailService: MailService
 
   ) { }
@@ -70,14 +72,25 @@ export class ParentService {
   }
 
   async findOrCreateParent(dto: CreateParentDto) {
-    let parent = await this.repo.findByEmail(dto.email);
+    const admission = await this.admissionRepo.findById(dto.admissionId);
+    if (!admission) throw new NotFoundException("Admission not found");
+
+    let parent = await this.repo.findByMultipleFields({
+      email: admission.email,
+      mobileNumber: admission.mobileNumber,
+      name: admission.parentName,
+      relationToStudent: admission.relationToStudent
+    });
+
     if (!parent) {
-      parent = await this.repo.createParent(dto);
+      parent = await this.repo.createParent(dto, admission.toObject());
     } else {
-      await this.repo.pushStudentIds(parent._id as string, dto.studentIds ?? [])
+      await this.repo.pushStudentIds(parent._id as string, dto.studentIds ?? []);
     }
-    return parent
-  };
+
+    return parent;
+  }
+
   async sendStudentLoginDetailsMail(dto: SendStudentLoginDetailsDto): Promise<boolean> {
     const { toEmail, studentIdentity, password } = dto;
     const subject = 'Your Student Login Details';
@@ -91,12 +104,10 @@ export class ParentService {
       return false;
     }
   };
-  async findAll():Promise<Parent[]>{
-    const parents= await this.repo.findAllParents();
-    this.logger.log('parents',parents)
-    if(!parents||parents.length===0) throw new NotFoundException("parents not found");
+  async findAll(): Promise<Parent[]> {
+    const parents = await this.repo.findAllParents();
+    this.logger.log('parents', parents)
+    if (!parents || parents.length === 0) throw new NotFoundException("parents not found");
     return parents
   }
-
-
 }
