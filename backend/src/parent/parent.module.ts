@@ -12,6 +12,7 @@ import { ParentRepository } from "./repositories/parent.repository";
 import { MailService } from "src/mailer/services/mail.service";
 import { MailerModule } from "src/mailer/mailer.module";
 import { StudentModule } from "src/student/student.module";
+import { AdmissionModule } from "src/admission/admission.module";
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { StudentModule } from "src/student/student.module";
     ]),
     AuthModule,
     MailerModule,
-    StudentModule
+    StudentModule,
+    AdmissionModule
 
   ],
   controllers: [ParentController],
