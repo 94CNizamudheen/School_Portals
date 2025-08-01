@@ -1,9 +1,8 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Patch } from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Patch, Logger } from "@nestjs/common";
 import { ParentService } from "../services/parent.service";
 import { CreateParentDto } from "../dtos/create-parent.dto";
 import { UpdateParentDto } from "../dtos/update-parent.dto";
 import { Roles } from "src/auth/roles.decorator";
-import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { Role } from "src/auth/dtos/register.dtos";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -11,10 +10,11 @@ import { AuthGuard } from "@nestjs/passport";
 @Controller('parents')
 @UseGuards(AuthGuard('jwt'))
 export class ParentController {
+  private readonly logger= new Logger(ParentController.name)
   constructor(private readonly parentService: ParentService) {}
 
-  @Roles(Role.ADMIN)
-  @Post()
+  // @Roles(Role.ADMIN)
+  // @Post()
   // create(@Body() createParentDto: CreateParentDto) {
   //   return this.parentService.create(createParentDto);
   // }
@@ -28,6 +28,7 @@ export class ParentController {
   @Roles(Role.ADMIN,)
   @Get()
   findAll() {
+    this.logger.log('parent get invoked')
     return this.parentService.findAll();
   }
 

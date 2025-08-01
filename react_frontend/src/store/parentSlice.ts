@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import API from '../axios.config';
 
 interface AssignParentPayload {
@@ -38,7 +38,7 @@ export const fetchChildrenOfParent = createAsyncThunk(
     'parent/fetchChildrens',
     async (parentId: string, { rejectWithValue, }) => {
         try {
-            const res = await axios.get(`${API}/parents/${parentId}/children`)
+            const res = await API.get(`/parents/${parentId}/children`)
             return res.data as Child[];
 
         } catch (err) {
@@ -48,13 +48,12 @@ export const fetchChildrenOfParent = createAsyncThunk(
     }
 )
 
-// Fetch all parents
 export const fetchParents = createAsyncThunk(
     'parent/fetch',
     async (_, { rejectWithValue }) => {
         try {
-            const res = await axios.get(`${API}/parents`,);
-            console.log('parents',res.data)
+            const res = await API.get(`/parents`,);
+            console.log('parents data ',res.data)
             return res.data as Parent[];
         } catch (err) {
             const e = err as AxiosError<{ message: string }>;
@@ -62,6 +61,15 @@ export const fetchParents = createAsyncThunk(
         }
     }
 );
+// export const fetchParents= async():Promise<Parent[]>=>{
+//     try {
+//         const res= await API.get('/parents')
+//         return res.data as Parent[]
+//     } catch (error) {
+//         const err= error as AxiosError<{message:string}>
+//         throw err
+//     }
+// }
 
 // Add a new parent
 export const addParent = createAsyncThunk(
@@ -69,7 +77,7 @@ export const addParent = createAsyncThunk(
     async (parent: Omit<Parent, '_id'>, { rejectWithValue }) => {
 
         try {
-            const res = await axios.post(`${API}/parents`, parent);
+            const res = await API.post(`/parents`, parent);
             console.log("response in parent add ")
             return res.data as Parent;
         } catch (err) {
@@ -87,7 +95,7 @@ export const updateParent = createAsyncThunk(
         { rejectWithValue }
     ) => {
         try {
-            const res = await axios.put(`${API}/parents/${id}`, updates,);
+            const res = await API.put(`/parents/${id}`, updates,);
             return res.data as Parent;
         } catch (err) {
             const e = err as AxiosError<{ message: string }>;
@@ -101,7 +109,7 @@ export const deleteParent = createAsyncThunk(
     'parent/delete',
     async (id: string, { rejectWithValue }) => {
         try {
-            await axios.delete(`${API}/parents/${id}`);
+            await API.delete(`/parents/${id}`);
             return id;
         } catch (err) {
             const e = err as AxiosError<{ message: string }>;
@@ -113,7 +121,7 @@ export const assignParent = createAsyncThunk(
     'parent/assignParent',
     async ({ parentId, studentIds }: AssignParentPayload, { rejectWithValue, }) => {
         try {
-            const response = await axios.patch(`${API}/parents/${parentId}`, { studentIds });
+            const response = await API.patch(`/parents/${parentId}`, { studentIds });
             return response.data
         } catch (err) {
             const error = err as AxiosError<{ message: string }>

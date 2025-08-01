@@ -93,6 +93,7 @@ export class ParentService {
   };
   async findAll():Promise<Parent[]>{
     const parents= await this.repo.findAllParents();
+    this.logger.log('parents',parents)
     if(!parents||parents.length===0) throw new NotFoundException("parents not found");
     return parents
   }
