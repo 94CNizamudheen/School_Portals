@@ -10,13 +10,14 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import AdmissionSuccessModal from "../components/modals/AdmissionSuccessModal";
 
 
 
 
 const AdmissionPage: React.FC = () => {
 
-  const {formFile, formData, errors, isSubmitting, handleInputChange, handleFileChange, handleSubmit } = useAdmissionForm();
+  const { formFile, formData, errors, isSubmitting, handleInputChange, handleFileChange, handleSubmit,showSuccessModal,handleCloseModal ,handleViewApplication} = useAdmissionForm();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
   const navigate = useNavigate()
   useEffect(() => {
@@ -61,9 +62,15 @@ const AdmissionPage: React.FC = () => {
             isSubmitting={isSubmitting}
             handleSubmit={handleSubmit}
             errors={errors}
+
           />
         </div>
       </div>
+      <AdmissionSuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleCloseModal}
+        onViewApplication={handleViewApplication}
+      />
     </div>
   );
 }

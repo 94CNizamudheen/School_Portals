@@ -7,10 +7,15 @@ import { toast } from "react-toastify";
 import { createAdmission } from "../../store/admissionThunks";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
+import { useNavigate } from "react-router-dom";
 
 const useAdmissionForm = () => {
-    const userEmail= useSelector((state:RootState)=>state.auth.userEmail);
-    const userName= useSelector((state:RootState)=>state.auth.userName);
+    const userEmail = useSelector((state: RootState) => state.auth.userEmail);
+    const userName = useSelector((state: RootState) => state.auth.userName);
+    
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate= useNavigate()
 
     const [formData, setFormData] = useState<AdmissionFormBody>({
         firstName: '',
@@ -36,15 +41,14 @@ const useAdmissionForm = () => {
         gender: '',
         status: 'pending',
     });
-    const [formFile,setFormFile]= useState<AdmissionFiles>({
-        profilePicture:null,
-        aadharDocument:null,
-        birthCertificate:null,
-        transferCertificate:null
+    const [formFile, setFormFile] = useState<AdmissionFiles>({
+        profilePicture: null,
+        aadharDocument: null,
+        birthCertificate: null,
+        transferCertificate: null
     })
 
     const [errors, setErrors] = useState<AdmissionFormErrors>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleInputChange: HandleInputChange = (name, value) => {
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -104,11 +108,23 @@ const useAdmissionForm = () => {
                 transferCertificate: formFile.transferCertificate
             })
             toast.success("Admission submitted successfully!");
+            setShowSuccessModal(true);
         } catch {
             toast.error("Error submitting admission form.");
         } finally {
             setIsSubmitting(false);
         }
+    };
+    const handleCloseModal = () => {
+        setShowSuccessModal(false);
+        navigate('/')
+    };
+
+    const handleViewApplication = () => {
+        
+        console.log("Navigating to application view...");
+        navigate('/my-applications')
+        setShowSuccessModal(false);
     };
     return {
         formFile,
@@ -117,7 +133,11 @@ const useAdmissionForm = () => {
         isSubmitting,
         handleInputChange,
         handleFileChange,
-        handleSubmit
+        handleSubmit,
+        handleViewApplication,
+        handleCloseModal,
+        showSuccessModal
+
     };
 };
 

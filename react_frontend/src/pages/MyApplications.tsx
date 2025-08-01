@@ -8,6 +8,7 @@ import ApplicationCard from "../components/ApplicationCard"
 import { AxiosError } from "axios"
 import { toast } from "react-toastify"
 import ComponentLoader from "../components/shared/ComponentLoader"
+import { useNavigate } from "react-router-dom"
 
 
 interface StatusCounts {
@@ -18,6 +19,7 @@ interface StatusCounts {
     completed: number
 }
 const MyApplications: React.FC = () => {
+    const navigate= useNavigate()
     const [applications, setApplications] = useState<AdmissionFormData[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
@@ -121,7 +123,8 @@ const MyApplications: React.FC = () => {
                         <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">No Applications Found</h2>
                         <p className="text-gray-600 mb-6">You haven't submitted any admission applications yet.</p>
-                        <button className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-300">
+                        
+                        <button onClick={()=>navigate('/admission')} className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-300">
                             Apply for Admission
                         </button>
                     </div>
