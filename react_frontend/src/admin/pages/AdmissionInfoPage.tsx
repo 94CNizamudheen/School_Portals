@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { StatsCards } from "../components/Admission/stats.cards"
-import { Filters } from "../components/Admission/filters"
+import StatusFilterWithSearch from "../../components/shared/filters" 
 import { ApplicationsTable } from "../components/Admission/application.table"
 import { ApplicationDetailsDialog } from "../components/Admission/application.details.dialog"
 import { DocumentViewer } from "../components/Admission/document.viewer"
@@ -123,23 +123,22 @@ export default function AdmissionInfoPage() {
       name: fileName,
     });
   };
+  const handleFilterChange=(value:string)=>{
+    setStatusFilter(value)
+  }
+  const handleSearchQuery=(value:string)=>{
+    setSearchTerm(value)
+  }
 
 
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex flex-col space-y-4">
-        {/* <div>
-          <h1 className="text-3xl font-bold">Admission Management</h1>
-          <p className="text-muted-foreground">Review and manage student admission requests</p>
-        </div> */}
-
         <StatsCards stats={stats} />
 
-        <Filters
-          searchTerm={searchTerm}
-          statusFilter={statusFilter}
-          onSearchChange={setSearchTerm}
-          onStatusFilterChange={setStatusFilter}
+        <StatusFilterWithSearch
+        onFilterChange={handleFilterChange}
+        onSearchChange={handleSearchQuery}
         />
       </div>
 
