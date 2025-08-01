@@ -34,9 +34,9 @@ export class AdmissionService {
   }
 
   async fetchAdmissionDetails(email: string) {
-    const admission = await this.repo.findByEmail(email);
-    if (!admission) throw new NotFoundException('Application not found');
-    return  admission ;
+    const admissions = await this.repo.findByEmail(email);
+    if (!admissions ||admissions.length===0) throw new NotFoundException('Application not found');
+    return  admissions ;
   }
 
   async updateApplicationStatus(id:string,dto:UpdateAdmissionDto) {

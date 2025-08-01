@@ -1,9 +1,9 @@
 import { AlertCircle, Upload } from "lucide-react";
 import { Label } from "../ui/label";
-import type { AdmissionFormData, AdmissionFormErrors, HandleFileChange ,FileFieldKeys} from "../../types/admission.types";
+import type { AdmissionFormErrors, HandleFileChange ,FileFieldKeys, AdmissionFiles} from "../../types/admission.types";
 
 interface FileUploadProps {
-    formData: AdmissionFormData
+    formfile:AdmissionFiles
     handleFileChange: HandleFileChange;
     errors: AdmissionFormErrors
     name: FileFieldKeys;
@@ -12,7 +12,7 @@ interface FileUploadProps {
     accept?: string
 }
  
-const FileUpload: React.FC<FileUploadProps> = ({ name, label, required = false, accept = "*/*", formData, handleFileChange, errors }) => (
+const FileUpload: React.FC<FileUploadProps> = ({ name, label, required = false, accept = "*/*", formfile, handleFileChange, errors }) => (
     <div className="space-y-2">
         <Label htmlFor={name} className="text-sm font-medium">
             {label} {required && <span className="text-red-500">*</span>}
@@ -31,7 +31,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ name, label, required = false, 
             >
                 <Upload className="h-8 w-8 text-gray-400" />
                 <span className="text-sm text-gray-600">
-                    {formData[name] ? formData[name]?.name : "Click to upload file"}
+                    {formfile[name] ? formfile[name]?.name : "Click to upload file"}
                 </span>
             </label>
         </div>

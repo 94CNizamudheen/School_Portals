@@ -3,13 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Textarea } from "../ui/textarea";
-import type { AdmissionFormData, AdmissionFormErrors, HandleInputChange } from "../../types/admission.types";
+import type { AdmissionFormBody, AdmissionFormErrors, HandleInputChange } from "../../types/admission.types";
 
 import type React from "react";
 import { User } from "lucide-react";
 
 interface StudentInformationSectionProps {
-  formData: AdmissionFormData;
+  formData: AdmissionFormBody;
   handleInputChange: HandleInputChange;
   errors: AdmissionFormErrors;
 }

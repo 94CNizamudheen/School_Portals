@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 
 const AdmissionPage: React.FC = () => {
 
-  const { formData, errors, isSubmitting, handleInputChange, handleFileChange, handleSubmit } = useAdmissionForm();
+  const {formFile, formData, errors, isSubmitting, handleInputChange, handleFileChange, handleSubmit } = useAdmissionForm();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
   const navigate = useNavigate()
   useEffect(() => {
@@ -40,7 +40,7 @@ const AdmissionPage: React.FC = () => {
           />
 
           <DocumentsSection
-            formData={formData}
+            formfile={formFile}
             handleFileChange={handleFileChange}
             errors={errors}
           />

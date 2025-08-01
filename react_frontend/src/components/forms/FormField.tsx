@@ -2,19 +2,19 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { AlertCircle } from "lucide-react";
 
-import type { AdmissionFormData, AdmissionFormErrors, HandleInputChange } from "../../types/admission.types";
+import type { AdmissionFormBody, AdmissionFormErrors, HandleInputChange } from "../../types/admission.types";
 import type React from "react";
 import type { ReactNode } from "react";
 
 interface FormFieldProps {
-    name: keyof AdmissionFormData;
+    name: keyof AdmissionFormBody;
     label: string;
     type?: string;
     required?: boolean;
     placeholder?: string;
     children?: ReactNode;
     errors: AdmissionFormErrors;
-    formData: AdmissionFormData;
+    formData: AdmissionFormBody;
     handleInputChange: HandleInputChange;
 }
 

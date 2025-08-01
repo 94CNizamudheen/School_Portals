@@ -4,10 +4,10 @@ import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/sel
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Heart } from "lucide-react";
 
-import type { AdmissionFormData,AdmissionFormErrors,HandleInputChange } from "../../types/admission.types";
+import type { AdmissionFormBody,AdmissionFormErrors,HandleInputChange } from "../../types/admission.types";
 
 interface ParentInfoProps{
-  formData:AdmissionFormData;
+  formData:AdmissionFormBody;
   handleInputChange:HandleInputChange;
   errors:AdmissionFormErrors
 }
