@@ -1,16 +1,16 @@
 import { FileText } from "lucide-react";
 import FileUpload from "./FileUpload";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import type { HandleFileChange,AdmissionFormData,AdmissionFormErrors } from "../../types/admission.types";
+import type { HandleFileChange,AdmissionFormErrors, AdmissionFiles } from "../../types/admission.types";
 import type React from "react";
 
 interface DocumentSectionProps{
- formData:AdmissionFormData;
+ formfile:AdmissionFiles;
  handleFileChange:HandleFileChange;
  errors:AdmissionFormErrors
 }
 
-const DocumentsSection:React.FC<DocumentSectionProps> = ({ formData, handleFileChange, errors }) => {
+const DocumentsSection:React.FC<DocumentSectionProps> = ({ formfile, handleFileChange, errors }) => {
   return (
     <Card className="shadow-lg p-0">
       <CardHeader className="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-t-lg">
@@ -29,7 +29,7 @@ const DocumentsSection:React.FC<DocumentSectionProps> = ({ formData, handleFileC
             label="Profile Picture"
             required
             accept="image/*"
-            formData={formData}
+            formfile={formfile}
             handleFileChange={handleFileChange}
             errors={errors}
           />
@@ -38,7 +38,7 @@ const DocumentsSection:React.FC<DocumentSectionProps> = ({ formData, handleFileC
             label="Aadhar Card"
             required
             accept=".pdf,.jpg,.jpeg,.png"
-            formData={formData}
+            formfile={formfile}
             handleFileChange={handleFileChange}
             errors={errors}
           />
@@ -50,7 +50,7 @@ const DocumentsSection:React.FC<DocumentSectionProps> = ({ formData, handleFileC
             label="Birth Certificate"
             required
             accept=".pdf,.jpg,.jpeg,.png"
-            formData={formData}
+            formfile={formfile}
             handleFileChange={handleFileChange}
             errors={errors}
           />
@@ -58,7 +58,7 @@ const DocumentsSection:React.FC<DocumentSectionProps> = ({ formData, handleFileC
             name="transferCertificate"
             label="Transfer Certificate"
             accept=".pdf,.jpg,.jpeg,.png"
-            formData={formData}
+            formfile={formfile}
             handleFileChange={handleFileChange}
             errors={errors}
           />

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import type { AdmissionFiles, AdmissionFormData } from "../types/admission.types";
+import type { AdmissionFiles, AdmissionFormBody, AdmissionFormData } from "../types/admission.types";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import type { RootState } from "./store";
@@ -63,9 +63,9 @@ export const completeAdmissionPayment = async (admissionId: string, amount: numb
     throw new Error(err.response?.data.message);
   }
 }
-export const createAdmission = async (form: AdmissionFormData, files: AdmissionFiles): Promise<{ message: string }> => {
+export const createAdmission = async (form:AdmissionFormBody, files: AdmissionFiles): Promise<{ message: string }> => {
   const data = new FormData();
-  (Object.keys(form) as (keyof AdmissionFormData)[]).forEach((key) => {
+  (Object.keys(form) as (keyof AdmissionFormBody)[]).forEach((key) => {
     const value = form[key];
     if (value !== undefined && value !== null) {
       data.append(key, value.toString());

@@ -1,10 +1,10 @@
 import { Phone } from "lucide-react";
 import FormField from "./FormField";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import type { AdmissionFormData, AdmissionFormErrors, HandleInputChange } from "@/types/admission.types";
+import type { AdmissionFormBody, AdmissionFormErrors, HandleInputChange } from "../../types/admission.types";
 
 interface EmergencyContactProps{
- formData:AdmissionFormData;
+ formData:AdmissionFormBody;
  handleInputChange:HandleInputChange;
  errors:AdmissionFormErrors
 }

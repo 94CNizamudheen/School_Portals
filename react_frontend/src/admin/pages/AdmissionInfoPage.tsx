@@ -11,15 +11,13 @@ import { useAdmissionData } from "../../hooks/useAdmissionData"
 import { getStatusCounts, filterAdmissions } from "../../utils/admission.utils"
 import type { AdmissionFormData, DocumentPreview, } from "../../types/admission.types"
 import { handleStatusChange } from "../../store/admissionThunks"
-import { useSelector } from "react-redux"
-import type { RootState } from "../../store/store"
 import { toast } from "react-toastify"
 import type { AxiosError } from "axios"
 import { Pagination } from "../../components/shared/Pagination"
 
 
 export default function AdmissionInfoPage() {
-  const token = useSelector((state: RootState) => state.auth.token)
+
 
   const { admissions, updateAdmissionStatus } = useAdmissionData()
   // Filter states
@@ -65,8 +63,8 @@ export default function AdmissionInfoPage() {
       try {
         await handleStatusChange(selectedAdmission._id, {
           status: 'approved',
-          verificationNotes: verificationNotes || 'verified and approved',
-        }, token as string)
+          verificationNotes: verificationNotes || 'verified and approved, Please pay admission fee for completed procedure',
+        })
         updateAdmissionStatus(selectedAdmission._id, "approved", verificationNotes)
         handleCloseDetailsDialog()
       } catch (error) {
@@ -84,7 +82,7 @@ export default function AdmissionInfoPage() {
           status: 'rejected',
           verificationNotes: verificationNotes || 'verification  rejected',
           rejectionReason: rejectionReason || 'Invalid details'
-        }, token as string)
+        })
         updateAdmissionStatus(selectedAdmission._id, "rejected", verificationNotes, rejectionReason)
         handleCloseDetailsDialog()
       } catch (error) {

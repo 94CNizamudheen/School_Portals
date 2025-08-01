@@ -26,8 +26,8 @@ export class AdmissionRepository implements IAdmissionRepository {
     return this.model.find().exec();
   }
 
-   findByEmail(email: string): Promise<Admission | null> {
-    return this.model.findOne({email:email}).exec();
+   findByEmail(email: string): Promise<Admission[]> {
+    return this.model.find({email:email}).exec();
   }
 
   async updateStatus(id: string, dto: UpdateAdmissionDto): Promise<Admission> {

@@ -82,7 +82,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
         setIsPaymentLoading(true);
         
         try {
-            await onPayment(application._id);
+             onPayment(application._id);
         } catch (error) {
             console.error('Payment error:', error);
         } finally {
@@ -183,23 +183,35 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
                                 <div className="space-y-3 pl-7">
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Full Name:</span>
-                                        <span className="font-medium">{application.firstName} {application.lastName}</span>
+                                        <span className="font-medium text-indigo-600">{application.firstName} {application.lastName}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Date of Birth:</span>
-                                        <span className="font-medium">{formatDate(application.dob)}</span>
+                                        <span className="font-medium text-indigo-600">{formatDate(application.dob)}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Blood Group:</span>
-                                        <span className="font-medium">{application.bloodGroup}</span>
+                                        <span className="font-medium text-red-600 ">{application.bloodGroup}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Nationality:</span>
-                                        <span className="font-medium">{application.nationality}</span>
+                                        <span className="font-medium text-indigo-600">{application.nationality}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Class Applied:</span>
                                         <span className="font-medium text-indigo-600">{application.classApplied}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-600">Religion:</span>
+                                        <span className="font-medium text-indigo-600">{application.religion}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-600">Cast:</span>
+                                        <span className="font-medium text-indigo-600">{application.cast}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-600">Gender:</span>
+                                        <span className="font-medium text-indigo-600">{application.gender}</span>
                                     </div>
                                 </div>
                             </div>
@@ -212,15 +224,15 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
                                 <div className="space-y-3 pl-7">
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Address:</span>
-                                        <span className="font-medium text-right flex-1 ml-4">{application.address}</span>
+                                        <span className="font-medium text-right flex-1 ml-4 text-indigo-600">{application.address}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">State:</span>
-                                        <span className="font-medium">{application.state}</span>
+                                        <span className="font-medium text-indigo-600">{application.state}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Pincode:</span>
-                                        <span className="font-medium">{application.pincode}</span>
+                                        <span className="font-medium text-indigo-600">{application.pincode}</span>
                                     </div>
                                 </div>
                             </div>
@@ -236,15 +248,15 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
                                 <div className="space-y-3 pl-7">
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Name:</span>
-                                        <span className="font-medium">{application.parentName}</span>
+                                        <span className="font-medium text-indigo-600">{application.parentName}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-gray-600">Relation:</span>
-                                        <span className="font-medium">{application.relationToStudent}</span>
+                                        <span className="text-gray-600 ">Relation:</span>
+                                        <span className="font-medium text-indigo-600">{application.relationToStudent}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Occupation:</span>
-                                        <span className="font-medium">{application.parentOccupation || 'Not provided'}</span>
+                                        <span className="font-medium text-indigo-600">{application.parentOccupation || 'Not provided'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -257,19 +269,19 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
                                 <div className="space-y-3 pl-7">
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Email:</span>
-                                        <span className="font-medium text-right flex-1 ml-4">{application.email}</span>
+                                        <span className="font-medium text-right flex-1 ml-4 text-indigo-600">{application.email}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Mobile:</span>
-                                        <span className="font-medium">{application.mobileNumber}</span>
+                                        <span className="font-medium text-indigo-600">{application.mobileNumber}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Emergency Contact:</span>
-                                        <span className="font-medium">{application.emergencyContactName}</span>
+                                        <span className="font-medium text-indigo-600">{application.emergencyContactName}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Emergency Number:</span>
-                                        <span className="font-medium">{application.emergencyContactNumber}</span>
+                                        <span className="font-medium text-indigo-600">{application.emergencyContactNumber}</span>
                                     </div>
                                 </div>
                             </div>
@@ -286,12 +298,12 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
                             <div className="pl-7 space-y-3">
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Previous School:</span>
-                                    <span className="font-medium">{application.previousSchool}</span>
+                                    <span className="font-medium text-indigo-600">{application.previousSchool}</span>
                                 </div>
                                 {application.medicalInformation && (
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Medical Information:</span>
-                                        <span className="font-medium">{application.medicalInformation}</span>
+                                        <span className="font-medium text-red-600">{application.medicalInformation}</span>
                                     </div>
                                 )}
                             </div>

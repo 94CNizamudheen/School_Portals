@@ -10,7 +10,7 @@ export class Student extends Document {
   @Prop({ required: true }) classLevel: string;
   @Prop({ required: true, unique: true }) identity: string;
   @Prop({ required: true }) password: string;
-  @Prop({ required: true, enum: ['hindu', 'muslim', 'christian', 'sikh', 'parse', 'not_disclose'] })
+  @Prop({ required: true, enum: ['hindu', 'muslim', 'christian', 'sikh', 'parse', 'not_disclose'] })religion:string;
   @Prop({
     required: true,
     enum: [

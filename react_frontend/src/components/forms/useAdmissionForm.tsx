@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { AdmissionFormData, AdmissionFormErrors, HandleFileChange, HandleInputChange } from "../../types/admission.types";
+import type { AdmissionFiles, AdmissionFormBody, AdmissionFormErrors, HandleFileChange, HandleInputChange } from "../../types/admission.types";
 import { ValidationError } from "yup";
 
 import { admissionValidationSchema } from "../../utils/validationSchemas";
@@ -12,17 +12,13 @@ const useAdmissionForm = () => {
     const userEmail= useSelector((state:RootState)=>state.auth.userEmail);
     const userName= useSelector((state:RootState)=>state.auth.userName);
 
-    const [formData, setFormData] = useState<AdmissionFormData>({
+    const [formData, setFormData] = useState<AdmissionFormBody>({
         firstName: '',
         lastName: '',
         dob: '',
         address: '',
-        profilePicture: null,
         bloodGroup: '',
-        aadharDocument: null,
-        birthCertificate: null,
         previousSchool: '',
-        transferCertificate: null,
         medicalInformation: '',
         parentName: userName as string,
         relationToStudent: '',
@@ -39,8 +35,13 @@ const useAdmissionForm = () => {
         religion: '',
         gender: '',
         status: 'pending',
-
     });
+    const [formFile,setFormFile]= useState<AdmissionFiles>({
+        profilePicture:null,
+        aadharDocument:null,
+        birthCertificate:null,
+        transferCertificate:null
+    })
 
     const [errors, setErrors] = useState<AdmissionFormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,7 +56,7 @@ const useAdmissionForm = () => {
     };
 
     const handleFileChange: HandleFileChange = (name, file) => {
-        setFormData(prev => ({ ...prev, [name]: file }));
+        setFormFile(prev => ({ ...prev, [name]: file }));
 
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }));
@@ -66,10 +67,10 @@ const useAdmissionForm = () => {
         try {
             const dataToValidate = {
                 ...formData,
-                profilePicture: formData.profilePicture?.name || '',
-                aadharDocument: formData.aadharDocument?.name || '',
-                birthCertificate: formData.birthCertificate?.name || '',
-                transferCertificate: formData.transferCertificate?.name || ''
+                profilePicture: formFile.profilePicture?.name || '',
+                aadharDocument: formFile.aadharDocument?.name || '',
+                birthCertificate: formFile.birthCertificate?.name || '',
+                transferCertificate: formFile.transferCertificate?.name || ''
             };
 
             await admissionValidationSchema.validate(dataToValidate, { abortEarly: false });
@@ -97,10 +98,10 @@ const useAdmissionForm = () => {
         setIsSubmitting(true);
         try {
             await createAdmission(formData, {
-                profilePicture: formData.profilePicture,
-                aadharDocument: formData.aadharDocument,
-                birthCertificate: formData.birthCertificate,
-                transferCertificate: formData.transferCertificate
+                profilePicture: formFile.profilePicture,
+                aadharDocument: formFile.aadharDocument,
+                birthCertificate: formFile.birthCertificate,
+                transferCertificate: formFile.transferCertificate
             })
             toast.success("Admission submitted successfully!");
         } catch {
@@ -110,6 +111,7 @@ const useAdmissionForm = () => {
         }
     };
     return {
+        formFile,
         formData,
         errors,
         isSubmitting,
