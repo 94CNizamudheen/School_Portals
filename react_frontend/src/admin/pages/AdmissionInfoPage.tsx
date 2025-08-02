@@ -1,14 +1,14 @@
 
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { StatsCards } from "../components/Admission/stats.cards"
-import StatusFilterWithSearch from "../../components/shared/filters" 
+import StatusFilterWithSearch from "../../components/shared/filters"
 import { ApplicationsTable } from "../components/Admission/application.table"
 import { ApplicationDetailsDialog } from "../components/Admission/application.details.dialog"
 import { DocumentViewer } from "../components/Admission/document.viewer"
 import { RejectionDialog } from "../components/Admission/rejection.dialog"
 import { useAdmissionData } from "../../hooks/useAdmissionData"
-import { getStatusCounts, filterAdmissions } from "../../utils/admission.utils"
+
 import type { AdmissionFormData, DocumentPreview, } from "../../types/admission.types"
 import { handleStatusChange } from "../../store/admissionThunks"
 import { toast } from "react-toastify"
@@ -36,15 +36,9 @@ export default function AdmissionInfoPage() {
   const [applicationToReject, setApplicationToReject] = useState<string | null>(null)
 
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10;
+  const itemsPerPage = 7;
 
 
-  const filteredAdmissions = filterAdmissions(admissions, searchTerm, statusFilter)
-  const paginatedAdmissions = filteredAdmissions.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  )
-  const stats = getStatusCounts(admissions)
 
 
   const handleViewDetails = (admission: AdmissionFormData) => {
@@ -123,13 +117,36 @@ export default function AdmissionInfoPage() {
       name: fileName,
     });
   };
-  const handleFilterChange=(value:string)=>{
+  const handleFilterChange = (value: string) => {
     setStatusFilter(value)
   }
-  const handleSearchQuery=(value:string)=>{
+  const handleSearchQuery = (value: string) => {
     setSearchTerm(value)
   }
+  const filteredAdmissions = admissions.filter((a) => {
+    const matchesStatus =
+      statusFilter === "all" || a.status?.toLowerCase() === statusFilter.toLowerCase();
 
+    const matchesSearch =
+      a.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      a.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      a.mobileNumber?.includes(searchTerm);
+
+    return matchesStatus && matchesSearch;
+  });
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const paginatedAdmissions = filteredAdmissions.slice(indexOfFirst, indexOfLast);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter]);
+  const stats = {
+  total: admissions.length,
+  pending: admissions.filter(a => a.status === 'pending').length,
+  approved: admissions.filter(a => a.status === 'approved').length,
+  rejected: admissions.filter(a => a.status === 'rejected').length,
+  completed: admissions.filter(a => a.status === 'completed').length,
+};
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -137,8 +154,8 @@ export default function AdmissionInfoPage() {
         <StatsCards stats={stats} />
 
         <StatusFilterWithSearch
-        onFilterChange={handleFilterChange}
-        onSearchChange={handleSearchQuery}
+          onFilterChange={handleFilterChange}
+          onSearchChange={handleSearchQuery}
         />
       </div>
 
@@ -147,13 +164,7 @@ export default function AdmissionInfoPage() {
         totalCount={admissions.length}
         onViewDetails={handleViewDetails}
       />
-      {filteredAdmissions.length > itemsPerPage && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={Math.ceil(filteredAdmissions.length / itemsPerPage)}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
-      )}
+     
 
       <ApplicationDetailsDialog
         admission={selectedAdmission}
@@ -174,7 +185,11 @@ export default function AdmissionInfoPage() {
         onRequestRefill={handleRequestRefill}
         onClose={handleCloseRejectionDialog}
       />
-
+       <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(filteredAdmissions.length / itemsPerPage)}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       <DocumentViewer document={documentPreview} onClose={() => setDocumentPreview(null)} />
     </div>
   )

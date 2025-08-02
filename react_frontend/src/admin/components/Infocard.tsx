@@ -1,17 +1,17 @@
 import React from 'react';
-import { Pencil } from 'lucide-react';
+// import { Pencil } from 'lucide-react';
 interface InfoCardProps {
   title: string;
   data: { label: string; value?: string | null }[];
   onEdit?: () => void;
 }
 
-export const InfoCard: React.FC<InfoCardProps> = ({ title, data, onEdit }) => {
+export const InfoCard: React.FC<InfoCardProps> = ({ title, data, /*onEdit*/ }) => {
   return (
     <div className="bg-gray-400 shadow rounded-lg p-5">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-        {onEdit && (
+        {/* {onEdit && (
           <button
             onClick={onEdit}
             className="text-blue-600 hover:text-blue-800 flex items-center text-sm"
@@ -19,7 +19,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({ title, data, onEdit }) => {
             <Pencil className="w-4 h-4 mr-1" />
             Edit
           </button>
-        )}
+        )} */}
       </div>
       <div className="space-y-2">
         {data.map((item, index) => (

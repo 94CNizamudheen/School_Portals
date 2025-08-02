@@ -11,7 +11,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick, notificationCount, header }) => {
   return (
-    <header className="bg-gray-800 border-b border-gray-700 px-4 py-3 lg:px-6 lg:py-4 ">
+    <header className="bg-gray-850 border-b border-gray-700 px-4 py-3 lg:px-6 lg:py-4 ">
       <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0 max-w-7xl mx-auto">
         {/* Left: Menu toggle + heading */}
         <div className="flex items-center justify-between">

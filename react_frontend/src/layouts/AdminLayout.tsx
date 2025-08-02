@@ -1,16 +1,10 @@
-
-// src/admin/AdminLayout.tsx
-import React, {  useState } from 'react';
-import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
+import { useState } from 'react';
+import Header from '../admin/components/Header';
+import Sidebar from '../admin/components/Sidebar';
 import { Outlet } from 'react-router-dom';
 
-
-const AdminLayout = ({ children }: { children: React.ReactNode }) => {
-
+const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex">
@@ -27,8 +21,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           onMenuClick={() => setSidebarOpen(true)}
           notificationCount={0}
         />
-        <main className="p-4 sm:p-6 lg:p-8 space-y-10">{children}</main>
-         <Outlet />
+        <main>
+          <Outlet />
+        </main>
       </div>
     </div>
   );

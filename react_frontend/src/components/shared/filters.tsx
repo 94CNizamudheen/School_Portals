@@ -14,8 +14,14 @@ const filterOptions: Record<string, { label: string; value: string }[]> = {
   ],
   "/admin/parents": [
     { value: "all", label: "All Parents" },
-    { value: "verified", label: "Verified" },
-    { value: "unverified", label: "Unverified" },
+    { value: "Father", label: "Relation Father" },
+    { value: "Mother", label: "Relation Mother" },
+    { value: "Uncle", label: "Relation Uncle" },
+    { value: "Aunt", label: "Relation Aunt" },
+    { value: "Grandmother", label: "Relation Grandmother" },
+    { value: "Grandfather", label: "Relation Grandfather" },
+    { value: "Guardian", label: "Relation Guardian" },
+    { value: "Other", label: "Other" },
   ],
   "/admin/students": [
     { value: "all", label: "All Students" },

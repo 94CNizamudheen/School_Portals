@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllStudents, updateStudent } from '../../store/studentSlice';
 import { InfoCard } from '../components/Infocard';
-import { EditModal } from '../components/EditInfoModal';
+//  import { EditModal } from '../components/EditInfoModal';
 import type { RootState, AppDispatch } from '../../store/store';
 import type { Student } from '../../types/student';
 
@@ -15,7 +15,7 @@ const StudentDetailPage: React.FC = () => {
 
   const {student:storeStudent, students, loading, error } = useSelector((state: RootState) => state.student);
   const [student, setStudent] = useState<Student | null>(null);
-  const [editingSection, setEditingSection] = useState<'personal' | 'academic' | 'contact' | 'medical' | null>(null);
+  const [/*ditingSection*/, setEditingSection] = useState<'personal' | 'academic' | 'contact' | 'medical' | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -46,11 +46,11 @@ const StudentDetailPage: React.FC = () => {
     });
   };
 
-  const handleSave = (updates: Partial<Student>) => {
-    if (student) {
-      dispatch(updateStudent({ id: student._id, updates }));
-    }
-  };
+  // const handleSave = (updates: Partial<Student>) => {
+  //   if (student) {
+  //     dispatch(updateStudent({ id: student._id, updates }));
+  //   }
+  // };
 
   const handleToggleStatus = () => {
     if (student) {
@@ -174,6 +174,7 @@ const StudentDetailPage: React.FC = () => {
               { label: 'Blood Group', value: student.bloodGroup },
               { label: 'Nationality', value: student.nationality },
               { label: 'Religion', value: student.religion },
+              {label:'Cast',value:student.cast},
             ]}
             onEdit={() => setEditingSection('personal')}
           />
@@ -206,18 +207,18 @@ const StudentDetailPage: React.FC = () => {
             data={[
               { label: 'Medical Conditions', value: student.medicalInformation },
             ]}
-            onEdit={() => setEditingSection('medical')}
+            // onEdit={() => setEditingSection('medical')}
           />
         </div>
 
-        {editingSection && (
+        {/* {editingSection && (
           <EditModal
             section={editingSection}
             student={student}
             onClose={() => setEditingSection(null)}
             onSave={handleSave}
           />
-        )}
+        )} */}
       </div>
     </div>
   );

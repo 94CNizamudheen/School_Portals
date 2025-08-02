@@ -92,4 +92,5 @@ export interface Student {
   enrollmentDate?: string;
   isActive?: boolean;
   parentIds?: string[]; 
+  cast:string
 }

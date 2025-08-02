@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import StatusFilterWithSearch from '../../components/shared/filters';
 import StudentTableRow from './StudentTableRow';
 import type { Student } from '../../types/student';
+import { Pagination } from '../../components/shared/Pagination';
 
 interface StudentTableProps {
   students: Student[];
@@ -10,6 +11,7 @@ interface StudentTableProps {
 const StudentTable: React.FC<StudentTableProps> = ({ students }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>("all")
+   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredStudents= students.filter((student)=>{
     const matchesSearch= student.firstName.toLowerCase().includes(searchTerm.toLowerCase());
@@ -17,6 +19,13 @@ const StudentTable: React.FC<StudentTableProps> = ({ students }) => {
     return matchesSearch && matchesStatus
   })
 
+  
+     const studentsperPage=8;
+     const indexofLastStudent=currentPage*studentsperPage;
+     const indexoffirstStudent= indexofLastStudent-studentsperPage;
+     const currentStudents= filteredStudents.slice(indexoffirstStudent,indexofLastStudent);
+     const totalPages= Math.ceil(students.length/studentsperPage)
+  
   const handleStatusChange = (value: string) => {
     setStatusFilter(value)
   }
@@ -44,12 +53,17 @@ const StudentTable: React.FC<StudentTableProps> = ({ students }) => {
             </tr>
           </thead>
           <tbody className="bg-gray-500 divide-y divide-gray-200">
-            {filteredStudents.map(student => (
+            {currentStudents.map(student => (
               <StudentTableRow key={student._id} student={student} />
             ))}
           </tbody>
         </table>
       </div>
+       <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
     </div>
   );
 };
