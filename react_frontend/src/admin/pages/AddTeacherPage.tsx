@@ -14,9 +14,6 @@ import { Textarea } from "../../components/ui/textarea";
 import { Button } from "../../components/ui/button";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import {SubjectField} from "../components/SubjectField";
-
-
 
 type TeacherFormValues = Yup.InferType<typeof teacherSchema>;
 const AddTeacherPage = () => {
@@ -200,7 +197,6 @@ const AddTeacherPage = () => {
                 )}
               />
 
-              <SubjectField control={form.control} />
 
             </div>
           </div>

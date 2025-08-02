@@ -1,22 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import type { RootState } from "./store";
 import  { AxiosError } from "axios";
-import { isTokenExpired } from "../utils/token";
-import { logout } from "./authSlice";
+
 import { toast } from "react-toastify";
 import API from "../axios.config";
 
 
 export const fetchTeachers = createAsyncThunk(
     'teacher/fetchAll',
-    async (_, { rejectWithValue, getState, dispatch }) => {
-        const state = getState() as RootState;
-        const token = state.auth.token;
-        if (!token || isTokenExpired(token)) return dispatch(logout());
+    async (_, { rejectWithValue }) => {
         try {
-            const res = await API.get(`/teachers`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const res = await API.get(`/teachers`, )
             console.log("response of teacher fetcAll",res.data)
             return res.data;
         } catch (error) {
@@ -28,24 +21,32 @@ export const fetchTeachers = createAsyncThunk(
 
 export const addTeacher= createAsyncThunk(
     'teacher/addTeacher',
-    async(formData:FormData,{rejectWithValue,getState,})=>{
+    async(formData:FormData,{rejectWithValue,})=>{
 
-        const token= (getState() as RootState).auth.token;
-                console.log("fotm data",formData)
         try {
             const response= await API.post(`/teachers`,formData,{
                 headers:{
-                    Authorization:`Bearer ${token}`,
                     "Content-Type":"multipart/form-data"
                 }
             })
-            
             return response.data
-            
         } catch (error) {
             const err= error as AxiosError<{message:string}>
             toast.error(err.response?.data.message|| "Failed to add teacher")
             return rejectWithValue(err.response?.data.message|| "Failed to add teacher")
         }
     }
+)
+export const deleteTeacher= createAsyncThunk(
+    'teacher/deleteTeacher',
+    async(id:string,{rejectWithValue})=>{
+        try {
+             await API.delete(`/teachers/${id}`);
+        } catch (error) {
+            const err= error as AxiosError<{message:string}>
+            rejectWithValue(err.response?.data.message)
+        }
+       
+    }
+
 )

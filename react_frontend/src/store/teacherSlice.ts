@@ -4,10 +4,12 @@ import { fetchTeachers } from './teacherThunks';
 
 export interface Teacher {
     _id: string;
-    name: string;
+    firstName: string;
+    lastName:string;
     subject: string;
-    phone: string;
+    mobileNumber: string;
     email: string;
+    imageUrl:string
 }
 
 interface TeacherState {
@@ -28,7 +30,7 @@ const teacherSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: (builder) => {
-        builder
+        builder 
             .addCase(fetchTeachers.pending, (state) => {
                 state.loading = true;
                 state.error = null;
