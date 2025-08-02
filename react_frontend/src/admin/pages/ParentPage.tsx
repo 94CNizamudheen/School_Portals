@@ -164,7 +164,6 @@ const ParentPage: React.FC = () => {
                             <p><strong>Mobile:</strong> {p.mobileNumber}</p>
                             <p><strong>Occupation:</strong> {p.occupation || 'N/A'}</p>
                             <p><strong>Relationship:</strong> {p.relationship || 'N/A'}</p>
-                            <p><strong>Emergency Contact:</strong> {p.emergencyContactName} – {p.emergencyContactPhone}</p>
                             <p><strong>Children:</strong> {p.studentIds?.length || 0}</p>
                         </CardContent>
                     </Card>

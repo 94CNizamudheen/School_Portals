@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+
 import AdmissionFormHeader from "../components/forms/AdmissionFormHeader";
 import AdmissionSubmitSection from "../components/forms/AdmissionSubmitSection";
 import DocumentsSection from "../components/forms/DocumentSection";
@@ -6,26 +6,13 @@ import EmergencyContactSection from "../components/forms/EmergencyContactSection
 import ParentInformationSection from "../components/forms/ParentInformationSection ";
 import StudentInformationSection from "../components/forms/StudentInformationSection";
 import useAdmissionForm from "../components/forms/useAdmissionForm";
-import { useSelector } from "react-redux";
-import type { RootState } from "../store/store";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import AdmissionSuccessModal from "../components/modals/AdmissionSuccessModal";
-
-
 
 
 const AdmissionPage: React.FC = () => {
 
   const { formFile, formData, errors, isSubmitting, handleInputChange, handleFileChange, handleSubmit,showSuccessModal,handleCloseModal ,handleViewApplication} = useAdmissionForm();
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
-  const navigate = useNavigate()
-  useEffect(() => {
-    if (!isAuthenticated) {
-      toast.info('Please login for  admission')
-      navigate('/guest/login');
-    }
-  }, [isAuthenticated, navigate])
+
 
   return (
     <div className=" min-h-screen bg-gradient-to-br from-purple-300 to-purple-950 py-8 px-4">

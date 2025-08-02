@@ -1,0 +1,76 @@
+import { createBrowserRouter } from "react-router-dom"
+import { lazy } from "react"
+import AdminLayout from "./layouts/AdminLayout.tsx"
+import AdminProtectedRoute from "./utils/protected/AdminProtection.tsx"
+import PrivateRoute from "./utils/protected/GuestPrivateRoute.tsx"
+import RouterErrorFallback from "./components/error/RouterErrorFallback.tsx"
+
+const Home = lazy(() => import("./pages/Home.tsx"))
+const PortalsPage = lazy(() => import("./pages/PortalsPage.tsx"))
+const AdminLogin = lazy(() => import("./pages/Logins/AdminLogin.tsx"))
+const StudentLogin = lazy(() => import("./pages/Logins/StudentLogin.tsx"))
+const ParentLogin = lazy(() => import("./pages/Logins/ParentLogin.tsx"))
+const TeacherLogin = lazy(() => import("./pages/Logins/TeacherLogin.tsx"))
+const NotFound = lazy(() => import("./pages/NotFound.tsx"))
+const Dashboard = lazy(() => import('./admin/pages/DashboardPage.tsx'))
+const StudentPage = lazy(() => import('./admin/pages/StudentPage.tsx'))
+const StudentDetailPage = lazy(() => import("./admin/pages/StudentDeatailsPage.tsx"))
+const TeachersPage = lazy(() => import('./admin/pages/TeacherPage.tsx'))
+const AddTeachersPage = lazy(() => import('./admin/pages/AddTeacherPage.tsx'))
+const ParentPage = lazy(() => import('./admin/pages/ParentPage.tsx'))
+const GuestLogin = lazy(() => import('./pages/Logins/GuestLogin.tsx'))
+const AdmissionPage = lazy(() => import('./pages/AdmissionPage.tsx'))
+const Signup = lazy(() => import('./pages/Signup.tsx'))
+const AdmissionInfoPage = lazy(() => import('./admin/pages/AdmissionInfoPage.tsx'))
+const MyApplications = lazy(() => import('./pages/MyApplications.tsx'))
+const ForgetPassword = lazy(() => import('./pages/ForgotPasswordPage.tsx'))
+
+export const router = createBrowserRouter([
+  { path: "/", element: <Home />, errorElement: <RouterErrorFallback /> },
+  { path: "/portals", element: <PortalsPage /> },
+  { path: "/admin/login", element: <AdminLogin /> },
+  { path: "/parent/login", element: <ParentLogin /> },
+  { path: "/student/login", element: <StudentLogin /> },
+  { path: "/teacher/login", element: <TeacherLogin /> },
+  { path: "/guest/login", element: <GuestLogin /> },
+  { path: "/signup", element: <Signup /> },
+  { path: "/forgot-password", element: <ForgetPassword /> },
+
+  {
+    path: "/admission",
+    element: (
+      <PrivateRoute>
+        <AdmissionPage />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/my-applications",
+    element: (
+      <PrivateRoute>
+        <MyApplications />
+      </PrivateRoute>
+    ),
+  },
+
+  {
+    path: "/admin",
+    element: (
+      <AdminProtectedRoute allowedRoles={["ADMIN"]}>
+        <AdminLayout />
+      </AdminProtectedRoute>
+    ),
+    errorElement: <RouterErrorFallback />,
+    children: [
+      { path: "dashboard", element: <Dashboard /> },
+      { path: "students", element: <StudentPage /> },
+      { path: "students/:id", element: <StudentDetailPage /> },
+      { path: "parents", element: <ParentPage /> },
+      { path: "teachers", element: <TeachersPage /> },
+      { path: "teachers/add", element: <AddTeachersPage /> },
+      { path: "admission", element: <AdmissionInfoPage /> },
+    ],
+  },
+
+  { path: "*", element: <NotFound /> },
+])

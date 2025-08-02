@@ -8,7 +8,7 @@ interface Props {
   children?: React.ReactNode
 }
 
-const ProtectedRoute = ({ allowedRoles, children }: Props) => {
+const AdminProtectedRoute = ({ allowedRoles, children }: Props) => {
   const { isAuthenticated, role } = useSelector((state: RootState) => state.auth)
 
   if (!isAuthenticated || !allowedRoles.includes(role || "")) {
@@ -18,4 +18,4 @@ const ProtectedRoute = ({ allowedRoles, children }: Props) => {
   return <>{children}</>
 }
 
-export default ProtectedRoute
+export default AdminProtectedRoute
