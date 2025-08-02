@@ -218,3 +218,13 @@ body, html {
     }
   }
 }
+@keyframes border-spin {
+  100% {
+    --border-angle: 360deg;
+  }
+}
+
+.animate-border {
+  animation: border-spin 6s linear infinite;
+  --border-angle: 0deg;
+}

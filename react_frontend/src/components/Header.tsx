@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react"
-import { X, Menu, User, LogOut, ChevronDown, Settings, FileText, Bell, GraduationCap } from "lucide-react"
+import { X, Menu, User, LogOut, ChevronDown, Settings, FileText, Bell, GraduationCap, } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
 import type { AppDispatch, RootState } from "../store/store"
@@ -65,6 +65,7 @@ const Header = () => {
     { icon: FileText, label: 'My Applications', path: '/my-applications' },
     { icon: GraduationCap, label: 'New Admission', path: '/admission' },
     { icon: Bell, label: 'Notifications', path: '/notifications' },
+    {icon:GraduationCap,label:'Teacher Form',path:'/teacher-application'},
     { icon: Settings, label: 'Settings', path: '/settings' },
   ]
 

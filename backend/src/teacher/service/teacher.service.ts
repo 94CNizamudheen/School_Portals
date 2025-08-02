@@ -1,17 +1,16 @@
-import {
-  ForbiddenException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException,} from '@nestjs/common';
 import { TeacherRepository } from '../repositories/teacher.repository';
 import { CreateTeacherDto } from '../dtos/create-teacher.dto'; 
 import { UpdateTeacherDto } from '../dtos/update-teacher.dto';
 import { uploadImage } from 'src/utils/upload.image';
+import { IUserRepository } from 'src/user/repositories/interfaces/user.repositoriy.interface';
 
 @Injectable()
 export class TeacherService {
-  constructor(@Inject('ITeacherRepository') private readonly repo: TeacherRepository) {}
+  constructor(
+    @Inject('ITeacherRepository') private readonly repo: TeacherRepository,
+    @Inject('IUserRepository') private readonly userRepo:IUserRepository
+  ) {}
 
   async create(dto: CreateTeacherDto,file:Express.Multer.File) {
 
@@ -48,5 +47,6 @@ export class TeacherService {
     if (!teacher) throw new NotFoundException('Teacher not found');
 
     await this.repo.deleteTeacher(id);
+    await this.userRepo.deleteUser(id)
   }
 }

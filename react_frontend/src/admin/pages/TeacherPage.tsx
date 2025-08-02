@@ -1,86 +1,159 @@
-// src/admin/pages/TeachersPage.tsx
-
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
-import { fetchTeachers } from "../../store/teacherThunks";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import { deleteTeacher, fetchTeachers } from "../../store/teacherThunks";
+import { Card, CardContent, CardHeader, CardTitle, } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import StatusFilterWithSearch from "../../components/shared/filters";
+import { CustomPagination, } from "../../components/shared/CustomPagination";
+import { Mail, Phone, GraduationCap, MoreHorizontal, } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from "../../components/ui/dropdown-menu";
+import { toast } from "react-toastify";
+import ConfirmDeleteModal from "../components/modals/ConfirmDeleteModal";
 
- const TeachersPage = () => {
+const TeachersPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { teachers, loading } = useSelector((state: RootState) => state.teacher);
 
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
+  const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterValue, setFilterValue] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 15;
 
   useEffect(() => {
     dispatch(fetchTeachers());
   }, [dispatch]);
 
-  const filtered = teachers.filter(t => t.name.toLowerCase().includes(search.toLowerCase()));
-  const totalPages = Math.ceil(filtered.length / pageSize);
-  const start = (page - 1) * pageSize;
-  const paginated = filtered.slice(start, start + pageSize);
+  const filteredTeachers = teachers.filter((teacher) => {
+    const fullName = `${teacher.firstName} ${teacher.lastName}`.toLowerCase();
+    const matchesSearch = fullName.includes(searchQuery.toLowerCase());
+    const matchesFilter =
+      filterValue === "all" ||
+      teacher.subject?.toLowerCase() === filterValue.toLowerCase();
+
+    return matchesSearch && matchesFilter;
+  });
+
+  const totalPages = Math.ceil(filteredTeachers.length / pageSize);
+  const start = (currentPage - 1) * pageSize;
+  const paginatedTeachers = filteredTeachers.slice(start, start + pageSize);
+
+  const handleDeleteClick = (teacherId: string) => {
+    setSelectedTeacherId(teacherId);
+    setShowConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedTeacherId) return;
+    try {
+      await dispatch(deleteTeacher(selectedTeacherId)).unwrap();
+      toast.success("Teacher deleted successfully");
+      await dispatch(fetchTeachers());
+    } catch {
+      toast.error("Delete failed");
+    } finally {
+      setShowConfirm(false);
+    }
+  };
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <Input
-          placeholder="Search here..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="w-64"
+      <div className="flex justify-between items-center mb-6 flex-col md:flex-row gap-3">
+        <StatusFilterWithSearch
+          onSearchChange={setSearchQuery}
+          onFilterChange={setFilterValue}
         />
-        <Link to='/admin/teachers/add'>
+        <Link to="/admin/teachers/add">
           <Button>+ New Teacher</Button>
         </Link>
-      
       </div>
 
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {paginated.map(teacher => (
-            <Card key={teacher._id} className="text-center">
-              <CardHeader>
-                <div className="mx-auto w-20 h-20 bg-purple-200 rounded-full" />
-                <CardTitle className="mt-2">{teacher.name}</CardTitle>
-                <p className="text-sm text-gray-500">{teacher.subject}</p>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-center gap-4">
-                  <Button size="icon" variant="ghost">📞</Button>
-                  <Button size="icon" variant="ghost">📧</Button>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {paginatedTeachers.map((teacher) => (
+              <Card
+                key={teacher._id}
+                className="relative p-4 pt-6 bg-[#f4f6ff] rounded-2xl shadow-sm text-center"
+              >
+                {/* Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute bg-gray-200 top-4 right-4 text-gray-500 hover:bg-gray-300"
+                    >
+                      <MoreHorizontal className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-24">
+                    <DropdownMenuItem
+                      onClick={() => handleDeleteClick(teacher._id)}
+                      className="text-red-600 hover:bg-red-100"
+                    >
+                      Remove
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                {/* Avatar */}
+                <div className="mx-auto w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow">
+                  <img
+                    src={teacher.imageUrl || "/default-avatar.png"}
+                    alt={`${teacher.firstName} ${teacher.lastName}`}
+                    className="object-cover w-full h-full"
+                  />
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+
+                <CardHeader className="mt-4">
+                  <CardTitle className="text-[#1d1b58] text-lg font-bold">
+                    {teacher.firstName} {teacher.lastName}
+                  </CardTitle>
+                  <div className="flex items-center justify-center gap-2 text-[#1d1b58]">
+                    <GraduationCap className="w-4 h-4" />
+                    <span className="text-sm">{teacher.subject}</span>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="mt-2 space-y-2">
+                  <div className="flex items-center justify-center gap-2 text-[#1d1b58]">
+                    <Phone className="w-4 h-4" />
+                    <span className="text-sm">{teacher.mobileNumber}</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 text-[#1d1b58]">
+                    <Mail className="w-4 h-4" />
+                    <span className="text-sm">{teacher.email}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+            ))}
+          </div>
+
+          <ConfirmDeleteModal
+            open={showConfirm}
+            onClose={() => setShowConfirm(false)}
+            onConfirm={confirmDelete}
+          />
+        </>
       )}
 
-      <div className="mt-6 flex justify-between items-center">
-        <p className="text-sm">Showing {start + 1} - {Math.min(start + pageSize, filtered.length)} of {filtered.length} teachers</p>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1}>
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          {[...Array(totalPages)].map((_, i) => (
-            <Button key={i} variant={i + 1 === page ? "default" : "outline"} size="icon" onClick={() => setPage(i + 1)}>
-              {i + 1}
-            </Button>
-          ))}
-          <Button variant="outline" size="icon" onClick={() => setPage(p => Math.min(p + 1, totalPages))} disabled={page === totalPages}>
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
+      {filteredTeachers.length > 0 && (
+
+        <CustomPagination 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
     </div>
   );
 };
-export default TeachersPage
+
+export default TeachersPage;

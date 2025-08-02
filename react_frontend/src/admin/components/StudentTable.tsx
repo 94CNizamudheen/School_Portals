@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import StatusFilterWithSearch from '../../components/shared/filters';
 import StudentTableRow from './StudentTableRow';
 import type { Student } from '../../types/student';
-import { Pagination } from '../../components/shared/Pagination';
+import { Pagination } from '../../components/shared/CustomPagination';
 
 interface StudentTableProps {
   students: Student[];

@@ -7,6 +7,7 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { AuthModule } from "src/auth/auth.module"; 
 import { TeacherRepository } from "./repositories/teacher.repository"; 
+import { UserModule } from "src/user/user.module";
 
 @Module({
     imports:[
@@ -15,6 +16,7 @@ import { TeacherRepository } from "./repositories/teacher.repository";
             {name:User.name,schema:UserSchema}
         ]),
         AuthModule,
+        UserModule
     ],
     controllers:[TeacherController],
 

@@ -15,7 +15,6 @@ import { ITeacherRepository } from './interfaces/teacher.repository.interface';
 export class TeacherRepository implements ITeacherRepository  {
   constructor(
     @InjectModel(Teacher.name) private teacherModel: Model<Teacher>,
-    @InjectModel(User.name) private userModel: Model<User>
   ) {}
 
   async findByEmail(email: string) {
@@ -37,14 +36,6 @@ export class TeacherRepository implements ITeacherRepository  {
     const teacher = new this.teacherModel(dto);
     const savedTeacher = await teacher.save();
 
-    const user = new this.userModel({
-      email: dto.email,
-      password: hashed,
-      role: 'TEACHER',
-      profileId: savedTeacher._id,
-    });
-
-    await user.save();
     console.log(`Teacher created: ${dto.email}, Password: ${password}`);
 
     return savedTeacher;
@@ -54,11 +45,11 @@ export class TeacherRepository implements ITeacherRepository  {
     const teacher = await this.teacherModel.findByIdAndUpdate(id, dto, { new: true }).exec();
 
     if (dto.email) {
-      const user = await this.userModel.findOne({ profileId: id });
-      if (user) {
-        user.email = dto.email;
-        await user.save();
-      }
+      // const user = await this.userModel.findOne({ profileId: id });
+      // if (user) {
+      //   user.email = dto.email;
+      //   await user.save();
+      // }
     }
 
     return teacher;
@@ -66,6 +57,5 @@ export class TeacherRepository implements ITeacherRepository  {
 
   async deleteTeacher(id: string) {
     await this.teacherModel.deleteOne({ _id: id });
-    await this.userModel.deleteOne({ profileId: id });
   }
 }

@@ -42,6 +42,7 @@ const HeroSection = () => {
           </div>
           
           {/* Right Stats Card */}
+          
           <div className="relative order-1 lg:order-2 px-2 sm:px-0">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl max-w-xs sm:max-w-md mx-auto lg:max-w-none">
               <div className="space-y-3 sm:space-y-4 md:space-y-6">

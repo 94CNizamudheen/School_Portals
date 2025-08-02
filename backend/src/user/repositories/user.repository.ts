@@ -24,5 +24,8 @@ export class UserRepository implements IUserRepository {
     async saveUser(user:User):Promise<User>{
         return await user.save()
     }
+    async deleteUser(id: string): Promise<void> {
+         await this.userModel.deleteOne({_id:id})
+    }
 
 };

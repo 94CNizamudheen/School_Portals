@@ -7,5 +7,6 @@ export interface IUserRepository {
     findUserById(id: string): Promise<User | null>;
     createUser(dto:CreateUserDto): Promise<User>;
     saveUser(user:User):Promise<User>
+    deleteUser(id:string):Promise<void>
 
 }
