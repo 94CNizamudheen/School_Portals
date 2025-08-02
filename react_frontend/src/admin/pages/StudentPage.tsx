@@ -9,9 +9,10 @@ import { fetchAllStudents } from '../../store/studentSlice';
 const StudentsPage = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { students, error } = useSelector((state: RootState) => state.student)
+  
 
   useEffect(() => {
-      dispatch(fetchAllStudents());
+    dispatch(fetchAllStudents());
   }, [dispatch,])
 
   useEffect(() => {
@@ -28,6 +29,7 @@ const StudentsPage = () => {
       />
 
       <StudentTable students={students} />
+     
     </div>
   )
 }
