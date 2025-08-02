@@ -61,17 +61,7 @@ export const fetchParents = createAsyncThunk(
         }
     }
 );
-// export const fetchParents= async():Promise<Parent[]>=>{
-//     try {
-//         const res= await API.get('/parents')
-//         return res.data as Parent[]
-//     } catch (error) {
-//         const err= error as AxiosError<{message:string}>
-//         throw err
-//     }
-// }
 
-// Add a new parent
 export const addParent = createAsyncThunk(
     'parent/add',
     async (parent: Omit<Parent, '_id'>, { rejectWithValue }) => {

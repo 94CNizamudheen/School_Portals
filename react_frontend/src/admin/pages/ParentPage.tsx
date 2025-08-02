@@ -1,50 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchParents, addParent, updateParent, deleteParent, fetchChildrenOfParent } from '../../store/parentSlice';
+import { fetchParents, deleteParent, fetchChildrenOfParent } from '../../store/parentSlice';
 import type { Parent } from '../../store/parentSlice';
 import type { RootState, AppDispatch } from '../../store/store';
 import { Button } from '../../components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
-import { Trash2, Pencil } from 'lucide-react';
-import { AddEditParentModal } from '../components/AddEditParentModal';
+import { Trash2, /*Pencil*/ } from 'lucide-react';
 import { ViewChildrenModal } from '../components/ViewChildrenModal';
 import type { Child } from '../../store/parentSlice';
 import { toast } from 'react-toastify';
 import { AxiosError, isAxiosError } from 'axios';
 import { Pagination } from '../../components/shared/Pagination';
 import { AssignChildrenModal } from '../components/AssignChildrenModal';
-import {  fetchAllStudents } from '../../store/studentSlice';
+import { fetchAllStudents } from '../../store/studentSlice';
 import { assignParent } from '../../store/parentSlice';
+import StatusFilterWithSearch from '../../components/shared/filters';
 
 
 const ParentPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { parents, loading, error } = useSelector((s: RootState) => s.parent);
-    const students= useSelector((state:RootState)=>state.student.students)
-    const [modalOpen, setModalOpen] = useState(false);
-    const [editing, setEditing] = useState<Parent | null>(null);
+    const students = useSelector((state: RootState) => state.student.students)
     const [viewing, setViewing] = useState<Parent | null>(null);
     const [childrenList, setChildrenList] = useState<Child[]>([]);
     const [assigningParent, setAssigningParent] = useState<Parent | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const parentsPerPage = 9;
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('')
 
+    const filterdParents = parents.filter((parent) => {
+        const matchStatus = statusFilter === 'all' || parent.relationship?.toLocaleLowerCase() === statusFilter.toLowerCase();
+        const matchesSearch = parent.name.toLowerCase().includes(searchTerm.toLowerCase()) || parent.mobileNumber.includes(searchTerm)
+        return matchStatus && matchesSearch
+    })
+
+    const parentsPerPage = 9;
     const indexOfLastParent = currentPage * parentsPerPage;
     const indexOfFirstParent = indexOfLastParent - parentsPerPage;
-    const currentParents = parents.slice(indexOfFirstParent, indexOfLastParent);
+    const currentParents = filterdParents.slice(indexOfFirstParent, indexOfLastParent);
     const totalPages = Math.ceil(parents.length / parentsPerPage);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [statusFilter, searchTerm]);
 
-    const [form, setForm] = useState<Omit<Parent, '_id' | 'studentIds'>>({
-        name: '',
-        email: '',
-        mobileNumber: '',
-        occupation: '',
-        relationship: '',
-        emergencyContactName: '',
-        emergencyContactPhone: '',
-        emergencyContactRelationship: ''
-    });
 
 
 
@@ -53,53 +52,6 @@ const ParentPage: React.FC = () => {
         dispatch(fetchAllStudents())
     }, [dispatch]);
 
-    const openAdd = () => {
-        setEditing(null);
-        setForm({
-            name: '',
-            email: '',
-            mobileNumber: '',
-            occupation: '',
-            relationship: '',
-            emergencyContactName: '',
-            emergencyContactPhone: '',
-            emergencyContactRelationship: ''
-        });
-        setModalOpen(true);
-    };
-
-    const openEdit = (p: Parent) => {
-        setEditing(p);
-        const {
-            name,
-            email,
-            mobileNumber,
-            occupation,
-            relationship,
-            emergencyContactName,
-            emergencyContactPhone,
-            emergencyContactRelationship
-        } = p;
-        setForm({ name, email, mobileNumber, occupation, relationship, emergencyContactName, emergencyContactPhone, emergencyContactRelationship });
-        setModalOpen(true);
-    };
-
-    const handleSave = async () => {
-        try {
-            if (editing) {
-                await dispatch(updateParent({ id: editing._id, updates: form })).unwrap();
-            } else {
-                await dispatch(addParent(form));
-            }
-            setModalOpen(false);
-        } catch (error) {
-            if (isAxiosError(error)) {
-                toast.error(error.response?.data?.message)
-            }
-
-        }
-
-    };
 
     const handleDelete = (p: Parent) => {
         const count = p.studentIds?.length ?? 0;
@@ -125,27 +77,38 @@ const ParentPage: React.FC = () => {
         }
     };
 
-    const handleAssignChildren =async (parent: Parent,selectedIds:string[]) => {
-       try {
-        await dispatch(assignParent({parentId:parent._id,studentIds:selectedIds})).unwrap();
-        toast.success('Parent assigned successfully')
-         dispatch(fetchParents());
-        setAssigningParent(null)
-       } catch (error) {
-        const err= error as AxiosError<{message:string}>;
-        toast.error(err.response?.data.message||'failed to assign parent')
-       }
+    const handleAssignChildren = async (parent: Parent, selectedIds: string[]) => {
+        try {
+            await dispatch(assignParent({ parentId: parent._id, studentIds: selectedIds })).unwrap();
+            toast.success('Parent assigned successfully')
+            dispatch(fetchParents());
+            setAssigningParent(null)
+        } catch (error) {
+            const err = error as AxiosError<{ message: string }>;
+            toast.error(err.response?.data.message || 'failed to assign parent')
+        }
     };
+
+
+    const handleStatusChange = (value: string) => {
+        setStatusFilter(value)
+    }
+    const handleSearchQuery = (value: string) => {
+        setSearchTerm(value)
+    }
 
     return (
         <div className="min-h-screen bg-gray-800 p-8">
             <h1 className="text-3xl text-white font-bold mb-4">Manage Parents</h1>
-            <Button className="mb-4" onClick={openAdd}>Add Parent</Button>
 
             {loading && <p className="text-white">Loading...</p>}
             {error && <p className="text-red-400">{error}</p>}
+            <StatusFilterWithSearch
+                onFilterChange={handleStatusChange}
+                onSearchChange={handleSearchQuery}
+            />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 pt-2">
                 {currentParents.map(p => (
                     <Card key={p._id}>
                         <CardHeader>
@@ -155,7 +118,7 @@ const ParentPage: React.FC = () => {
                                 {!p.studentIds?.length && (
                                     <Button variant="outline" size="sm" onClick={() => setAssigningParent(p)}>Assign</Button>
                                 )}
-                                <Button variant="ghost" size="icon" onClick={() => openEdit(p)}><Pencil className="w-4 h-4" /></Button>
+                                {/* <Button variant="ghost" size="icon" onClick={() => openEdit(p)}><Pencil className="w-4 h-4" /></Button> */}
                                 <Button variant="destructive" size="icon" onClick={() => handleDelete(p)}><Trash2 className="w-4 h-4" /></Button>
                             </div>
                         </CardHeader>
@@ -174,19 +137,6 @@ const ParentPage: React.FC = () => {
                 totalPages={totalPages}
                 onPageChange={(page) => setCurrentPage(page)}
             />
-
-            {/* Add/Edit Modal */}
-            {modalOpen && (
-                <AddEditParentModal
-                    editing={!!editing}
-                    form={form}
-                    onChange={(key, value) => setForm((f) => ({ ...f, [key]: value }))}
-                    onClose={() => setModalOpen(false)}
-                    onSave={handleSave}
-                />
-            )}
-
-            {/* View Children Modal */}
             {viewing && (
                 <ViewChildrenModal
                     name={viewing.name}
@@ -198,9 +148,9 @@ const ParentPage: React.FC = () => {
                 <AssignChildrenModal
                     open={!!assigningParent}
                     parent={assigningParent}
-                    students={students} 
+                    students={students}
                     onClose={() => setAssigningParent(null)}
-                    onAssign={(selectedIds) => {handleAssignChildren(assigningParent,selectedIds);}}
+                    onAssign={(selectedIds) => { handleAssignChildren(assigningParent, selectedIds); }}
                 />
             )}
 
