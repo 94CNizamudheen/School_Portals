@@ -103,3 +103,19 @@ export const signupSchema = Yup.object({
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Confirm Password is required"),
 });
+
+export const teacherValidationSchema = Yup.object().shape({
+  firstName: Yup.string().required('First name is required'),
+  lastName: Yup.string().required('Last name is required'),
+  email: Yup.string().email('Invalid email').required('Email is required'),
+  phone: Yup.string().required('Phone number is required'),
+  address: Yup.string().required('Address is required'),
+  dateOfBirth: Yup.string().required('Date of birth is required'),
+  university: Yup.string().required('University is required'),
+  qualification: Yup.string().required('Qualification is required'),
+  city: Yup.string().required('City is required'),
+  subject: Yup.string().required('Subject is required'),
+  teachingLevel: Yup.string().required('Teaching level is required'),
+  experience: Yup.number().typeError('Experience must be a number').required('Experience is required'),
+  certificateNo: Yup.string().required('Certificate number is required')
+});

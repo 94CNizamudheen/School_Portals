@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
 import { deleteTeacher, fetchTeachers } from "../../store/teacherThunks";
-import {Card, CardContent, CardHeader, CardTitle,} from "../../components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Link } from "react-router-dom";
 import StatusFilterWithSearch from "../../components/shared/filters";
-import { Pagination } from "../../components/shared/Pagination";
-import { Mail, Phone, GraduationCap, MoreHorizontal,} from "lucide-react";
-import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger,} from "../../components/ui/dropdown-menu";
+import { CustomPagination, } from "../../components/shared/CustomPagination";
+import { Mail, Phone, GraduationCap, MoreHorizontal, } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from "../../components/ui/dropdown-menu";
 import { toast } from "react-toastify";
 import ConfirmDeleteModal from "../components/modals/ConfirmDeleteModal";
 
@@ -132,6 +132,7 @@ const TeachersPage = () => {
                   </div>
                 </CardContent>
               </Card>
+
             ))}
           </div>
 
@@ -144,7 +145,8 @@ const TeachersPage = () => {
       )}
 
       {filteredTeachers.length > 0 && (
-        <Pagination
+
+        <CustomPagination 
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}

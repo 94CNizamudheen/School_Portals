@@ -13,7 +13,7 @@ import type { AdmissionFormData, DocumentPreview, } from "../../types/admission.
 import { handleStatusChange } from "../../store/admissionThunks"
 import { toast } from "react-toastify"
 import type { AxiosError } from "axios"
-import { Pagination } from "../../components/shared/Pagination"
+import { Pagination } from "../../components/shared/CustomPagination"
 
 
 export default function AdmissionInfoPage() {

@@ -24,6 +24,7 @@ const Signup = lazy(() => import('./pages/Signup.tsx'))
 const AdmissionInfoPage = lazy(() => import('./admin/pages/AdmissionInfoPage.tsx'))
 const MyApplications = lazy(() => import('./pages/MyApplications.tsx'))
 const ForgetPassword = lazy(() => import('./pages/ForgotPasswordPage.tsx'))
+const TeacherApplicationForm= lazy(()=>import('./pages/TeacherApplication.tsx'))
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home />, errorElement: <RouterErrorFallback /> },
@@ -51,6 +52,14 @@ export const router = createBrowserRouter([
         <MyApplications />
       </PrivateRoute>
     ),
+  },
+  {
+    path:'/teacher-application',
+    element:(
+      <PrivateRoute>
+        <TeacherApplicationForm/>
+      </PrivateRoute>
+    )
   },
 
   {

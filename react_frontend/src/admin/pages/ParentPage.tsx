@@ -10,7 +10,7 @@ import { ViewChildrenModal } from '../components/ViewChildrenModal';
 import type { Child } from '../../store/parentSlice';
 import { toast } from 'react-toastify';
 import { AxiosError, isAxiosError } from 'axios';
-import { Pagination } from '../../components/shared/Pagination';
+import { CustomPagination } from '../../components/shared/CustomPagination';
 import { AssignChildrenModal } from '../components/AssignChildrenModal';
 import { fetchAllStudents } from '../../store/studentSlice';
 import { assignParent } from '../../store/parentSlice';
@@ -132,10 +132,11 @@ const ParentPage: React.FC = () => {
                     </Card>
                 ))}
             </div>
-            <Pagination
+
+            <CustomPagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={(page) => setCurrentPage(page)}
+                onPageChange={setCurrentPage}
             />
             {viewing && (
                 <ViewChildrenModal
