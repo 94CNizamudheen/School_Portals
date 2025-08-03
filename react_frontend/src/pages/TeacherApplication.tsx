@@ -1,26 +1,34 @@
 import { useState } from 'react';
 import * as Yup from 'yup';
 import { teacherValidationSchema } from '../utils/validationSchemas';
-import { mapYupErrors } from '../utils/validationHelpers'; 
+import { mapYupErrors } from '../utils/validationHelpers';
 import InputField from '../components/forms/InputField';
-import SelectField from '../components/forms/SelectField'; 
+import SelectField from '../components/forms/SelectField';
 import FileUploadArea from '../components/forms/FileUploadArea';
 import { Check } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { sendteacherApplication } from '../store/teacherThunks';
+import type { AppDispatch } from '../store/store';
+import ApplicationSuucessModal from '../components/modals/ApplicationSuccessModal';
+import { useNavigate } from 'react-router-dom';
 
 interface FormData {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
+  mobileNumber: string;
   address: string;
-  dateOfBirth: string;
+  dob: string;
   university: string;
   qualification: string;
+  addressLine: string;
   city: string;
+  state: string;
+  pincode: string;
   subject: string;
   teachingLevel: string;
-  experience: string ;
-  certificateNo: string;
+  experience: string;
+  KTET_CTET_certificateNo: string;
 }
 
 interface FileData {
@@ -29,20 +37,25 @@ interface FileData {
 }
 
 export default function TeacherApplicationForm() {
+  const navigate= useNavigate()
+  const dispatch = useDispatch<AppDispatch>()
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     email: '',
-    phone: '',
+    mobileNumber: '',
     address: '',
-    dateOfBirth: '',
+    dob: '',
     university: '',
     qualification: '',
+    addressLine: '',
     city: '',
+    state: '',
+    pincode: '',
     subject: '',
     teachingLevel: '',
     experience: '',
-    certificateNo: ''
+    KTET_CTET_certificateNo: ''
   });
 
   const [files, setFiles] = useState<FileData>({
@@ -53,6 +66,7 @@ export default function TeacherApplicationForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -90,10 +104,19 @@ export default function TeacherApplicationForm() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
+    console.log(formData)
     try {
       await teacherValidationSchema.validate(formData, { abortEarly: false });
-      alert('Form submitted successfully!');
+      const formDataToSend = new FormData()
+      console.log(formDataToSend)
+      Object.entries(formData).forEach(([key, val]) => { formDataToSend.append(key, val) })
+      if (files.photo) {
+        formDataToSend.append('photo', files.photo)
+      }
+      files.documents.forEach((document) => formDataToSend.append('document', document))
+      await dispatch(sendteacherApplication(formDataToSend));
       setErrors({});
+      setIsModalOpen(true);
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const formattedErrors = mapYupErrors(err);
@@ -105,8 +128,15 @@ export default function TeacherApplicationForm() {
   };
 
   return (
-    
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 p-4 sm:p-6">
+
+    <div className="min-h-screen bg-gradient-to-br from-purple via-purple-700 to-purple relative overflow-hidden ">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-white rounded-full"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-white rounded-full"></div>
+        <div className="absolute bottom-20 left-20 w-40 h-40 bg-white rounded-full"></div>
+        <div className="absolute bottom-40 right-10 w-28 h-28 bg-white rounded-full"></div>
+      </div>
       <div className="w-full lg:w-[60%] mx-auto">
         <div className=" bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl overflow-hidden">
           <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-8 text-white">
@@ -157,37 +187,66 @@ export default function TeacherApplicationForm() {
                   touched={touched.email}
                 />
                 <InputField
-                  label="Phone Number"
+                  label="Mobile Number"
                   type="tel"
-                  field="phone"
+                  field="mobileNumber"
                   placeholder="Enter your phone number"
-                  value={formData.phone}
+                  value={formData.mobileNumber}
                   onChange={handleInputChange}
                   onBlur={handleBlur}
-                  error={errors.phone}
-                  touched={touched.phone}
+                  error={errors.mobileNumber}
+                  touched={touched.mobileNumber}
                 />
-                <div className="md:col-span-2">
-                  <InputField
-                    label="Address"
-                    field="address"
-                    placeholder="Enter your complete address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    onBlur={handleBlur}
-                    error={errors.address}
-                    touched={touched.address}
-                  />
-                </div>
+                <InputField
+                  label="Address Line"
+                  field="addressLine"
+                  placeholder="Street, Area, Locality"
+                  value={formData.addressLine}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  error={errors.addressLine}
+                  touched={touched.addressLine}
+                />
+                <InputField
+                  label="City"
+                  field="city"
+                  placeholder="Enter your city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  error={errors.city}
+                  touched={touched.city}
+                />
+                <InputField
+                  label="State"
+                  field="state"
+                  placeholder="Enter your state"
+                  value={formData.state}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  error={errors.state}
+                  touched={touched.state}
+                />
+                <InputField
+                  label="Pincode"
+                  field="pincode"
+                  placeholder="Enter pincode"
+                  value={formData.pincode}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  error={errors.pincode}
+                  touched={touched.pincode}
+                />
+
                 <InputField
                   label="Date of Birth"
                   type="date"
-                  field="dateOfBirth"
-                  value={formData.dateOfBirth}
+                  field="dob"
+                  value={formData.dob}
                   onChange={handleInputChange}
                   onBlur={handleBlur}
-                  error={errors.dateOfBirth}
-                  touched={touched.dateOfBirth}
+                  error={errors.dob}
+                  touched={touched.dob}
                 />
                 <FileUploadArea
                   label="Profile Photo"
@@ -238,16 +297,7 @@ export default function TeacherApplicationForm() {
                   error={errors.qualification}
                   touched={touched.qualification}
                 />
-                <InputField
-                  label="City"
-                  field="city"
-                  placeholder="Enter city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  onBlur={handleBlur}
-                  error={errors.city}
-                  touched={touched.city}
-                />
+
               </div>
             </section>
 
@@ -269,7 +319,7 @@ export default function TeacherApplicationForm() {
                     { value: 'english', label: 'English' },
                     { value: 'hindi', label: 'Hindi' },
                     { value: 'maths', label: 'Mathematics' },
-                    { value: 'science', label: 'Science' },
+                    { value: 'science', label: 'Sacience' },
                     { value: 'social', label: 'Social Science' },
                     { value: 'arabic', label: 'Arabic' },
                     { value: 'sanskrit', label: 'Sanskrit' }
@@ -305,14 +355,14 @@ export default function TeacherApplicationForm() {
                   touched={touched.experience}
                 />
                 <InputField
-                  label="KTET/CTET Certificate No."
-                  field="certificateNo"
+                  label="KTETCTET Certificate No."
+                  field="KTET_CTET_certificateNo"
                   placeholder="Enter certificate number"
-                  value={formData.certificateNo}
+                  value={formData.KTET_CTET_certificateNo}
                   onChange={handleInputChange}
                   onBlur={handleBlur}
-                  error={errors.certificateNo}
-                  touched={touched.certificateNo}
+                  error={errors.KTET_CTET_certificateNo}
+                  touched={touched.KTET_CTET_certificateNo}
                 />
                 <div className="md:col-span-2">
                   <FileUploadArea
@@ -352,6 +402,15 @@ export default function TeacherApplicationForm() {
           </div>
         </div>
       </div>
+      <ApplicationSuucessModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onViewApplication={() => {
+          setIsModalOpen(false);
+          navigate("/my-applications");
+        }}
+      />
+
     </div>
   );
 }

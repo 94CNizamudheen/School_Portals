@@ -1,27 +1,35 @@
 
-import { IsString,IsEmail,IsDateString,IsArray,IsNumber, ArrayNotEmpty } from "class-validator";
+import { Type } from "class-transformer";
+import { IsString, IsEmail, IsDateString, IsArray, IsNumber, ArrayNotEmpty, IsNotEmpty, IsMobilePhone, ValidateNested, IsOptional, IsIn } from "class-validator";
+import { AddressDto } from "src/utils/AddressDto";
 
-export class CreateTeacherDto{
+export class CreateTeacherDto {
+    @IsString()@IsNotEmpty()firstName: string;
 
-    @IsString() firstName:string;
+    @IsString()@IsNotEmpty()lastName: string;
 
-    @IsString() lastName:string;
+    @IsEmail()email: string;
 
-    @IsEmail() email:string;
+    @IsString()mobileNumber: string;
 
-    @IsString() mobileNumber:string;
 
-    @IsDateString() dob:Date;
+    @IsOptional() @IsString()  profileImage?: string;
 
-    @IsString() address:string;
+    @IsDateString() dob: Date;
 
-    @IsString() degree:string;
+    @ValidateNested()@Type(() => AddressDto)address: AddressDto;
 
-    @IsString() university: string;
+    @IsString()@IsNotEmpty()qualification: string;
 
-    @IsNumber() experienceYears:number;
+    @IsString()@IsNotEmpty()university: string;
 
-    @IsString() profileImage: string;
+    @IsString()experience: string;
 
-    @IsArray() @ArrayNotEmpty() @IsString({each:true}) subjects?:string[];
+    @IsString()@IsNotEmpty()KTET_CTET_certificateNo: string;
+
+    @IsString()subject: string;
+
+    @IsArray()@IsString({ each: true })@IsOptional()eligibilityDocuments?: string[];
+
+    @IsOptional()@IsIn(['pending', 'approved', 'rejected'])status?: 'pending'| 'approved'| 'rejected';
 }

@@ -7,7 +7,7 @@ interface AdmissionSuccessModalProps {
   onViewApplication: () => void;
 }
 
-const AdmissionSuccessModal: React.FC<AdmissionSuccessModalProps> = ({  isOpen, onClose, onViewApplication }) => {
+const ApplicationSuucessModal: React.FC<AdmissionSuccessModalProps> = ({  isOpen, onClose, onViewApplication }) => {
   if (!isOpen) return null;
 
   return (
@@ -59,7 +59,7 @@ const AdmissionSuccessModal: React.FC<AdmissionSuccessModalProps> = ({  isOpen, 
             Welcome Aboard! 🎉
           </h2>
           <p className="text-gray-600 mb-8 leading-relaxed text-lg">
-            Your admission application has been successfully submitted! Get ready for an amazing educational journey.
+            Your  application has been successfully submitted! Get ready for an amazing educational journey.
           </p>
 
           {/* Fun Stats */}
@@ -104,4 +104,4 @@ const AdmissionSuccessModal: React.FC<AdmissionSuccessModalProps> = ({  isOpen, 
   );
 };
 
-export default AdmissionSuccessModal;
+export default ApplicationSuucessModal;

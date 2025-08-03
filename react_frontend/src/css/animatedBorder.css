@@ -1,0 +1,23 @@
+.border-wrapper {
+  background: linear-gradient(
+    45deg,
+    #7c3aed,
+    #6366f1,
+    #ec4899,
+    #f97316,
+    #7c3aed
+  );
+  background-size: 400% 400%;
+  animation: animatedGradient 6s linear infinite;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+  transition: box-shadow 0.1s ease-in-out;
+}
+
+@keyframes animatedGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}

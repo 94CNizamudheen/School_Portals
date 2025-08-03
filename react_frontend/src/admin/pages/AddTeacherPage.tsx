@@ -196,8 +196,6 @@ const AddTeacherPage = () => {
                   </FormItem>
                 )}
               />
-
-
             </div>
           </div>
 
