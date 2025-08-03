@@ -14,7 +14,8 @@ import ConfirmDeleteModal from "../components/modals/ConfirmDeleteModal";
 
 const TeachersPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { teachers, loading } = useSelector((state: RootState) => state.teacher);
+  const teachers = useSelector((state: RootState) => state.teacher.approved);
+  const loading = useSelector((state: RootState) => state.teacher.loading);
 
   const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -105,7 +106,7 @@ const TeachersPage = () => {
                 {/* Avatar */}
                 <div className="mx-auto w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow">
                   <img
-                    src={teacher.imageUrl || "/default-avatar.png"}
+                    src={teacher.profileImage || "/default-avatar.png"}
                     alt={`${teacher.firstName} ${teacher.lastName}`}
                     className="object-cover w-full h-full"
                   />
@@ -146,7 +147,7 @@ const TeachersPage = () => {
 
       {filteredTeachers.length > 0 && (
 
-        <CustomPagination 
+        <CustomPagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}

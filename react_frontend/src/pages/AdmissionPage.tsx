@@ -6,7 +6,7 @@ import EmergencyContactSection from "../components/forms/EmergencyContactSection
 import ParentInformationSection from "../components/forms/ParentInformationSection ";
 import StudentInformationSection from "../components/forms/StudentInformationSection";
 import useAdmissionForm from "../components/forms/useAdmissionForm";
-import AdmissionSuccessModal from "../components/modals/AdmissionSuccessModal";
+import ApplicationSuucessModal from "../components/modals/ApplicationSuccessModal";
 
 
 const AdmissionPage: React.FC = () => {
@@ -53,7 +53,7 @@ const AdmissionPage: React.FC = () => {
           />
         </div>
       </div>
-      <AdmissionSuccessModal
+      <ApplicationSuucessModal
         isOpen={showSuccessModal}
         onClose={handleCloseModal}
         onViewApplication={handleViewApplication}

@@ -19,12 +19,11 @@ export const fetchTeachers = createAsyncThunk(
     }
 );
 
-export const addTeacher= createAsyncThunk(
-    'teacher/addTeacher',
+export const sendteacherApplication= createAsyncThunk(
+    'teacher/sendApplication',
     async(formData:FormData,{rejectWithValue,})=>{
-
         try {
-            const response= await API.post(`/teachers`,formData,{
+            const response= await API.post(`/teachers/apply`,formData,{
                 headers:{
                     "Content-Type":"multipart/form-data"
                 }

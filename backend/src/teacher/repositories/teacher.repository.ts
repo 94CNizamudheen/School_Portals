@@ -16,6 +16,10 @@ export class TeacherRepository implements ITeacherRepository  {
   constructor(
     @InjectModel(Teacher.name) private teacherModel: Model<Teacher>,
   ) {}
+  async apply(data: CreateTeacherDto & { profileImage: string; eligibilityDocuments: string[]; }): Promise<Teacher> {
+      const aplliedTeacher= new this.teacherModel(data)
+      return aplliedTeacher.save()
+  }
 
   async findByEmail(email: string) {
     return this.teacherModel.findOne({ email }).exec();
@@ -29,31 +33,31 @@ export class TeacherRepository implements ITeacherRepository  {
     return this.teacherModel.find().exec();
   }
 
-  async createTeacher(dto: CreateTeacherDto) {
-    const password = Math.random().toString(36).slice(-8);
-    const hashed = await bcrypt.hash(password, 10);
+  // async createTeacher(dto: CreateTeacherDto) {
+  //   const password = Math.random().toString(36).slice(-8);
+  //   const hashed = await bcrypt.hash(password, 10);
 
-    const teacher = new this.teacherModel(dto);
-    const savedTeacher = await teacher.save();
+  //   const teacher = new this.teacherModel(dto);
+  //   const savedTeacher = await teacher.save();
 
-    console.log(`Teacher created: ${dto.email}, Password: ${password}`);
+  //   console.log(`Teacher created: ${dto.email}, Password: ${password}`);
 
-    return savedTeacher;
-  }
+  //   return savedTeacher;
+  // }
 
-  async updateTeacher(id: string, dto: UpdateTeacherDto) {
-    const teacher = await this.teacherModel.findByIdAndUpdate(id, dto, { new: true }).exec();
+  // async updateTeacher(id: string, dto: UpdateTeacherDto) {
+  //   const teacher = await this.teacherModel.findByIdAndUpdate(id, dto, { new: true }).exec();
 
-    if (dto.email) {
-      // const user = await this.userModel.findOne({ profileId: id });
-      // if (user) {
-      //   user.email = dto.email;
-      //   await user.save();
-      // }
-    }
+  //   if (dto.email) {
+  //     // const user = await this.userModel.findOne({ profileId: id });
+  //     // if (user) {
+  //     //   user.email = dto.email;
+  //     //   await user.save();
+  //     // }
+  //   }
 
-    return teacher;
-  }
+  //   return teacher;
+  // }
 
   async deleteTeacher(id: string) {
     await this.teacherModel.deleteOne({ _id: id });

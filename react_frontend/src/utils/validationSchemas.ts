@@ -108,14 +108,21 @@ export const teacherValidationSchema = Yup.object().shape({
   firstName: Yup.string().required('First name is required'),
   lastName: Yup.string().required('Last name is required'),
   email: Yup.string().email('Invalid email').required('Email is required'),
-  phone: Yup.string().required('Phone number is required'),
-  address: Yup.string().required('Address is required'),
-  dateOfBirth: Yup.string().required('Date of birth is required'),
+  mobileNumber: Yup.string().matches(/^\d{10}$/, 'Mobile number must be 10 digits').required('Mobile number is required'),
+  addressLine: Yup.string().required("Address is required"),
+  city: Yup.string().required("City is required"),
+  state: Yup.string().required("State is required"),
+  pincode: Yup.string().matches(/^\d{6}$/, "Pincode must be 6 digits").required("Pincode is required"),
+  dob: Yup.date().max(new Date(), 'Date of birth cannot be in the future').required('Date of birth is required'),
   university: Yup.string().required('University is required'),
   qualification: Yup.string().required('Qualification is required'),
-  city: Yup.string().required('City is required'),
   subject: Yup.string().required('Subject is required'),
   teachingLevel: Yup.string().required('Teaching level is required'),
-  experience: Yup.number().typeError('Experience must be a number').required('Experience is required'),
-  certificateNo: Yup.string().required('Certificate number is required')
+  experience: Yup.number()
+    .min(0, 'Experience cannot be negative')
+    .max(50, 'Experience seems too high')
+    .required('Experience is required'),
+  KTET_CTET_certificateNo: Yup.string()
+    .matches(/^(KTET|CTET)[A-Z0-9]{6,}$/, 'Invalid certificate number')
+    .required('Certificate number is required')
 });

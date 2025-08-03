@@ -1,49 +1,63 @@
-
-import { createSlice, } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { fetchTeachers } from './teacherThunks';
 
-export interface Teacher {
-    _id: string;
-    firstName: string;
-    lastName:string;
-    subject: string;
-    mobileNumber: string;
-    email: string;
-    imageUrl:string
+interface Teacher {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobileNumber: string;
+  dob: string;
+  qualification: string;
+  university: string;
+  experience: string;
+  KTET_CTET_certificateNo: string;
+  subject: string;
+  teachingLevel: string;
+  profileImage: string;
+  eligibilityDocuments: string[];
+  status: 'pending' | 'approved' | 'rejected';
+  addressLine: string;
+  city: string;
+  state: string;
+  pincode: string;
 }
 
 interface TeacherState {
-    teachers: Teacher[];
-    loading: boolean;
-    error: string | null;
+  approved: Teacher[];
+  applied: Teacher[];
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: TeacherState = {
-    teachers: [],
-    loading: false,
-    error: null,
+  approved: [],
+  applied: [],
+  loading: false,
+  error: null,
 };
 
-
 const teacherSlice = createSlice({
-    name: 'teacher',
-    initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder 
-            .addCase(fetchTeachers.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchTeachers.fulfilled, (state, action) => {
-                state.teachers = action.payload;
-                state.loading = false;
-            })
-            .addCase(fetchTeachers.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload as string;
-            });
-    },
+  name: 'teacher',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTeachers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchTeachers.fulfilled, (state, action) => {
+        const allTeachers = action.payload as Teacher[];
+        state.approved = allTeachers.filter(t => t.status === 'approved');
+        state.applied = allTeachers.filter(t => t.status !== 'approved');
+        state.loading = false;
+      })
+      .addCase(fetchTeachers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+  },
 });
 
 export default teacherSlice.reducer;
