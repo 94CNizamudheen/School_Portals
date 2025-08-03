@@ -37,7 +37,7 @@ interface FileData {
 }
 
 export default function TeacherApplicationForm() {
-  const navigate= useNavigate()
+  const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
@@ -407,8 +407,14 @@ export default function TeacherApplicationForm() {
         onClose={() => setIsModalOpen(false)}
         onViewApplication={() => {
           setIsModalOpen(false);
-          navigate("/my-applications");
+          navigate("/");
         }}
+        icon="⏳"
+        label="Next Step"
+        subtext="Await Review"
+        title="Application Received!"
+        message="Your application for the teacher position has been submitted. We'll get back to you shortly!"
+        secondaryButtonText="Go Back to Home"
       />
 
     </div>

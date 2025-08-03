@@ -10,7 +10,6 @@ import { toast } from "react-toastify"
 import ComponentLoader from "../components/shared/ComponentLoader"
 import { useNavigate } from "react-router-dom"
 
-
 interface StatusCounts {
     total: number
     pending: number
@@ -26,8 +25,6 @@ const MyApplications: React.FC = () => {
     const [expandedApplications, setExpandedApplications] = useState<Set<string>>(new Set())
     const { token, isAuthenticated } = useSelector((state: RootState) => state.auth);
     const userEmail = useSelector((state: RootState) => state.auth.userEmail)
-
-
 
     useEffect(() => {
         const loadApplications = async (): Promise<void> => {

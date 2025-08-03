@@ -5,24 +5,31 @@ interface AdmissionSuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
   onViewApplication: () => void;
+  title: string;
+  message: string
+  icon: string,
+  label: string,
+  subtext: string,
+  secondaryButtonText:string
+
 }
 
-const ApplicationSuucessModal: React.FC<AdmissionSuccessModalProps> = ({  isOpen, onClose, onViewApplication }) => {
+const ApplicationSuucessModal: React.FC<AdmissionSuccessModalProps> = ({ isOpen, onClose, onViewApplication, title, message ,icon,label,subtext,secondaryButtonText}) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center ">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-gradient-to-br from-purple-900/50 to-pink-900/50 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
       />
-      
+
       {/* Modal */}
       <div className="relative bg-white rounded-3xl shadow-2xl max-w-md w-w-[50%] mx-4 transform transition-all duration-300 scale-100 overflow-hidden">
         {/* Colorful Header Background */}
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500"></div>
-        
+
         {/* Floating Elements */}
         <div className="absolute top-4 left-4">
           <Sparkles className="w-6 h-6 text-white/70 animate-pulse" />
@@ -56,10 +63,10 @@ const ApplicationSuucessModal: React.FC<AdmissionSuccessModalProps> = ({  isOpen
 
           {/* Success Message */}
           <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
-            Welcome Aboard! 🎉
+            {title}
           </h2>
           <p className="text-gray-600 mb-8 leading-relaxed text-lg">
-            Your  application has been successfully submitted! Get ready for an amazing educational journey.
+            {message}
           </p>
 
           {/* Fun Stats */}
@@ -70,9 +77,9 @@ const ApplicationSuucessModal: React.FC<AdmissionSuccessModalProps> = ({  isOpen
               <div className="text-xs text-blue-600">Submitted</div>
             </div>
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-4">
-              <div className="text-2xl font-bold text-purple-600">📚</div>
-              <div className="text-sm text-purple-700 font-medium">Next Step</div>
-              <div className="text-xs text-purple-600">Review</div>
+              <div className="text-2xl font-bold text-purple-600">{icon}</div>
+              <div className="text-sm text-purple-700 font-medium">{label}</div>
+              <div className="text-xs text-purple-600">{subtext}</div>
             </div>
           </div>
 
@@ -82,10 +89,10 @@ const ApplicationSuucessModal: React.FC<AdmissionSuccessModalProps> = ({  isOpen
               onClick={onViewApplication}
               className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 flex items-center justify-center space-x-2 group shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
-              <span>View My Application</span>
+              <span>{secondaryButtonText}</span>
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-200" />
             </button>
-            
+
             <button
               onClick={onClose}
               className="w-full bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-2xl transition-all duration-200 hover:shadow-md"
