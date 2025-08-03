@@ -10,8 +10,10 @@ import ApplicationSuucessModal from "../components/modals/ApplicationSuccessModa
 
 
 const AdmissionPage: React.FC = () => {
+  const successModalTitle = "Your admission form was successfully received. We’ll notify you about the next steps shortly.";
+  const successModalMessage = "Admission Form Submitted!";
 
-  const { formFile, formData, errors, isSubmitting, handleInputChange, handleFileChange, handleSubmit,showSuccessModal,handleCloseModal ,handleViewApplication} = useAdmissionForm();
+  const { formFile, formData, errors, isSubmitting, handleInputChange, handleFileChange, handleSubmit, showSuccessModal, handleCloseModal, handleViewApplication } = useAdmissionForm();
 
 
   return (
@@ -57,6 +59,12 @@ const AdmissionPage: React.FC = () => {
         isOpen={showSuccessModal}
         onClose={handleCloseModal}
         onViewApplication={handleViewApplication}
+        title={successModalTitle}
+        message={successModalMessage}
+        icon="🔍"
+        label="Next Step"
+        subtext= "Review"
+        secondaryButtonText="Go to My application"
       />
     </div>
   );
