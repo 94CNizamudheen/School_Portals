@@ -1,6 +1,6 @@
 
 
-import { Put,Post,Get,Body,Param,Controller,UseGuards,Delete, UseInterceptors, UploadedFile, UploadedFiles, Logger } from "@nestjs/common";
+import { Put,Post,Get,Body,Param,Controller,UseGuards,Delete, UseInterceptors, UploadedFile, UploadedFiles, Logger, Patch } from "@nestjs/common";
 import { TeacherService } from "../service/teacher.service";
 import { CreateTeacherDto } from "../dtos/create-teacher.dto"; 
 import { UpdateTeacherDto } from "../dtos/update-teacher.dto";
@@ -23,6 +23,11 @@ export class TeacherController{
         this.logger.log("body ",body);
         return this.teacherService.apply(body,files)
     };
+    @Patch('verify-and-create/:teacherId')
+    @Roles(Role.ADMIN)
+    verrifyAndCreate(@Param('teacherId')teacherId:string){
+        return this.teacherService.verifyAndCreate(teacherId);
+    }
 
     @Roles(Role.ADMIN,Role.TEACHER)
     @Get()

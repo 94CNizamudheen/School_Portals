@@ -1,42 +1,56 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException, } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, Logger, NotFoundException, } from '@nestjs/common';
 import { TeacherRepository } from '../repositories/teacher.repository';
 import { CreateTeacherDto } from '../dtos/create-teacher.dto';
 import { UpdateTeacherDto } from '../dtos/update-teacher.dto';
 import { uploadImage } from 'src/utils/upload.image';
 import { IUserRepository } from 'src/user/repositories/interfaces/user.repositoriy.interface';
 import { ITeacherRepository } from '../repositories/interfaces/teacher.repository.interface';
+import { uploadDocument } from 'src/utils/upload.document';
 
 @Injectable()
 export class TeacherService {
+  private readonly logger = new Logger(TeacherService.name)
   constructor(
     @Inject('ITeacherRepository') private readonly repo: ITeacherRepository,
     @Inject('IUserRepository') private readonly userRepo: IUserRepository
   ) { }
   async apply(body: CreateTeacherDto, files: Express.Multer.File[]) {
+    const existingTeacher = await this.repo.findOneEmailOrMobile( body.mobileNumber,body.email);
+    if (existingTeacher) {
+      this.logger.log(existingTeacher)
+      throw new BadRequestException('A teacher with this email or mobile number already exists');
+    }
     const photofile = files.find(file => file.fieldname === 'photo');
     if (!photofile) {
       throw new BadRequestException('Photo is required');
     }
     const documentFiles = files.filter(file => file.fieldname === 'document');
-    const profileImage = photofile ? photofile.filename : '';
-    const eligibilityDocuments = documentFiles.map((file) => file.filename);
-    const { addressLine, city, state, pincode } = body.address
+    const profileImage = await uploadImage(photofile)
+    const eligibilityDocuments = await Promise.all(
+      documentFiles.map(async (file) => {
+        return await uploadDocument(file)
+      })
+    )
+
+    const address = { addressLine: body.addressLine, city: body.city, state: body.state, pincode: body.pincode };
     const { experience, ...rest } = body;
-    const address = { addressLine, city, state, pincode };
     const teacherData = { ...rest, address, profileImage, experience, eligibilityDocuments }
     return await this.repo.apply(teacherData)
   }
 
-  // async create(dto: CreateTeacherDto, file: Express.Multer.File) {
-
-  //   const existing = await this.repo.findByEmail(dto.email);
-  //   if (existing) throw new ForbiddenException('Teacher with this email already exists');
-
-  //   const imageUrl = await uploadImage(file)
-
-  //   const result = await this.repo.createTeacher({ ...dto, profileImage: imageUrl });
-  //   return result;
-  // }
+  async verifyAndCreate(teacherId: string) {
+    const teacher = await this.repo.findById(teacherId);
+    this.logger.log(teacher)
+    if (!teacher) throw new BadRequestException('Cant find teacher with this Id');
+    const user = await this.userRepo.findUserByEmail(teacher.email);
+    if (!user) throw new BadRequestException('cant find the user with provided teacher email');
+    teacher.status = 'approved'
+    teacher.experienceStartDate = new Date()
+    user.role = "TEACHER";
+    await this.userRepo.saveUser(user);
+    await this.repo.saveTeacher(teacher);
+    return teacher
+  }
 
   async findAll() {
     return this.repo.findAll();

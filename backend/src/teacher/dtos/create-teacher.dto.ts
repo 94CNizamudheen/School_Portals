@@ -1,35 +1,36 @@
 
-import { Type } from "class-transformer";
 import { IsString, IsEmail, IsDateString, IsArray, IsNumber, ArrayNotEmpty, IsNotEmpty, IsMobilePhone, ValidateNested, IsOptional, IsIn } from "class-validator";
-import { AddressDto } from "src/utils/AddressDto";
 
 export class CreateTeacherDto {
-    @IsString()@IsNotEmpty()firstName: string;
+    @IsString() @IsNotEmpty() firstName: string;
 
-    @IsString()@IsNotEmpty()lastName: string;
+    @IsString() @IsNotEmpty() lastName: string;
 
-    @IsEmail()email: string;
+    @IsEmail() email: string;
 
-    @IsString()mobileNumber: string;
+    @IsString() mobileNumber: string;
 
 
-    @IsOptional() @IsString()  profileImage?: string;
+    @IsOptional() @IsString() profileImage?: string;
 
     @IsDateString() dob: Date;
 
-    @ValidateNested()@Type(() => AddressDto)address: AddressDto;
+    @IsString() @IsNotEmpty() addressLine: string;
+    @IsString() @IsNotEmpty() city: string;
+    @IsString() @IsNotEmpty() state: string;
+    @IsString() @IsNotEmpty() pincode: string;
 
-    @IsString()@IsNotEmpty()qualification: string;
+    @IsString() @IsNotEmpty() qualification: string;
 
-    @IsString()@IsNotEmpty()university: string;
+    @IsString() @IsNotEmpty() university: string;
 
-    @IsString()experience: string;
+    @IsString() experience: string;
 
-    @IsString()@IsNotEmpty()KTET_CTET_certificateNo: string;
+    @IsString() @IsNotEmpty() KTET_CTET_certificateNo: string;
 
-    @IsString()subject: string;
+    @IsString() subject: string;
 
-    @IsArray()@IsString({ each: true })@IsOptional()eligibilityDocuments?: string[];
+    @IsArray() @IsString({ each: true }) @IsOptional() eligibilityDocuments?: string[];
 
-    @IsOptional()@IsIn(['pending', 'approved', 'rejected'])status?: 'pending'| 'approved'| 'rejected';
+    @IsOptional() @IsIn(['pending', 'approved', 'rejected']) status?: 'pending' | 'approved' | 'rejected';
 }
