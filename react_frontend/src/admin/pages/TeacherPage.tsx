@@ -67,8 +67,8 @@ const TeachersPage = () => {
           onSearchChange={setSearchQuery}
           onFilterChange={setFilterValue}
         />
-        <Link to="/admin/teachers/add">
-          <Button>+ New Teacher</Button>
+        <Link to="/admin/teachers/review-and-verify">
+          <Button>Review and Verify Teacher</Button>
         </Link>
       </div>
 
