@@ -6,13 +6,16 @@ import { uploadImage } from 'src/utils/upload.image';
 import { IUserRepository } from 'src/user/repositories/interfaces/user.repositoriy.interface';
 import { ITeacherRepository } from '../repositories/interfaces/teacher.repository.interface';
 import { uploadDocument } from 'src/utils/upload.document';
+import { rejectTeacherTemplate } from 'src/mailer/utils/templates/teacher.reject.mail.template';
+import { MailService } from 'src/mailer/services/mail.service';
 
 @Injectable()
 export class TeacherService {
   private readonly logger = new Logger(TeacherService.name)
   constructor(
     @Inject('ITeacherRepository') private readonly repo: ITeacherRepository,
-    @Inject('IUserRepository') private readonly userRepo: IUserRepository
+    @Inject('IUserRepository') private readonly userRepo: IUserRepository,
+    @Inject() private readonly mailService:MailService
   ) { }
   async apply(body: CreateTeacherDto, files: Express.Multer.File[]) {
     const existingTeacher = await this.repo.findOneEmailOrMobile( body.mobileNumber,body.email);
@@ -49,6 +52,22 @@ export class TeacherService {
     user.role = "TEACHER";
     await this.userRepo.saveUser(user);
     await this.repo.saveTeacher(teacher);
+    return teacher
+  }
+  async rejectApplication(teacherId:string){
+    const teacher= await this.repo.findById(teacherId);
+    if(!teacher) throw new NotFoundException("teacher with this id not found");
+    teacher.status="rejected";
+    await this.repo.saveTeacher(teacher);
+    const subject= 'Your Teacher Application Status';
+    const text=`Dear ${teacher.firstName},\n\nWe regret to inform you that your application has been rejected.\n\nRegards,\nSchool Admin`;
+    const html= rejectTeacherTemplate(teacher.firstName);
+    try {
+      await this.mailService.sendMail({to:teacher.email,subject,text,html})
+    } catch (error) {
+      this.logger.error(`Failed to send rejection email to ${teacher.email}`),
+      error.stack||error.message
+    }
     return teacher
   }
 

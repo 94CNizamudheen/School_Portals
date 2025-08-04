@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchTeachers, verifyTeacher } from './teacherThunks';
+import { fetchTeachers, rejectApplication, verifyTeacher } from './teacherThunks';
 
 interface Teacher {
   _id: string;
@@ -69,7 +69,23 @@ const teacherSlice = createSlice({
         }
         state.loading=false;
       })
-      .addCase(fetchTeachers.rejected,(state,action)=>{
+      .addCase(verifyTeacher.rejected,(state,action)=>{
+        state.error=action.payload as string
+        state.loading= false
+      })
+      .addCase(rejectApplication.pending,(state)=>{
+        state.loading=true;
+        state.error=null;
+      })
+      .addCase(rejectApplication.fulfilled,(state,action)=>{
+        const updated= action.payload
+        const index= state.applied.findIndex(t=>t._id===updated._id);
+        if(index!==-1){
+          state.applied[index]=updated;
+        }
+        state.loading=false;
+      })
+      .addCase(rejectApplication.rejected,(state,action)=>{
         state.error=action.payload as string
         state.loading= false
       })

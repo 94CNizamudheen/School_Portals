@@ -7,8 +7,7 @@ import { UpdateParentDto } from '../dtos/update-parent.dto';
 import { IStudentRepository } from 'src/student/repositories/interfaces/student-repositories.interface';
 import { MailService } from 'src/mailer/services/mail.service';
 import { SendStudentLoginDetailsDto } from 'src/mailer/dtos/send.mail.dto';
-import * as path from 'path';
-import * as fs from 'fs';
+
 import { studentLoginTemplate } from 'src/mailer/utils/templates/student.login.template';
 import { IParentRepository } from '../repositories/interfaces/parent.repository.interface';
 import { Parent } from '../entities/parent.schema';

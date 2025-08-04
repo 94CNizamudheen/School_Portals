@@ -28,6 +28,12 @@ export class TeacherController{
     verrifyAndCreate(@Param('teacherId')teacherId:string){
         return this.teacherService.verifyAndCreate(teacherId);
     }
+    @Patch('reject-application/:teacherId')
+    @Roles(Role.ADMIN)
+    rejectApplivation(@Param('teacherId')teacherId:string){
+        return this.teacherService.rejectApplication(teacherId);
+    }
+
 
     @Roles(Role.ADMIN,Role.TEACHER)
     @Get()

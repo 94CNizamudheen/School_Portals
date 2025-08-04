@@ -10,7 +10,7 @@ import { CustomPagination, } from "../../components/shared/CustomPagination";
 import { Mail, Phone, GraduationCap, MoreHorizontal, } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from "../../components/ui/dropdown-menu";
 import { toast } from "react-toastify";
-import ConfirmDeleteModal from "../components/modals/ConfirmDeleteModal";
+import ConfirmModal from "../components/modals/ConfirmDeleteModal";
 
 const TeachersPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -137,7 +137,7 @@ const TeachersPage = () => {
             ))}
           </div>
 
-          <ConfirmDeleteModal
+          <ConfirmModal
             open={showConfirm}
             onClose={() => setShowConfirm(false)}
             onConfirm={confirmDelete}

@@ -30,6 +30,19 @@ export const verifyTeacher = createAsyncThunk(
         }
 
     }
+);
+export const rejectApplication= createAsyncThunk(
+    'teacher/rejectApplication',
+    async(teacherId:string,{rejectWithValue})=>{
+        try {
+            const response= await API.patch(`/teachers/reject-application/${teacherId}`);
+            console.log("response data from reject application",response.data)
+            return response.data;
+        } catch (error) {
+            const err= error as AxiosError<{message:string}>;
+            return rejectWithValue(err.response?.data.message)
+        }
+    }
 )
 
 export const sendteacherApplication = createAsyncThunk(
