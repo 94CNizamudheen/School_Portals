@@ -2,11 +2,13 @@ import { FileText, CheckCircle, XCircle, Download, ExternalLink, Badge, X } from
 
 import type { Teacher } from "../../../types/teacher.types";
 import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
-import {  DialogHeader } from "../../../components/ui/dialog";
+import { DialogHeader } from "../../../components/ui/dialog";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { Card } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
+import ConfirmModal from "./ConfirmDeleteModal";
+import { useState } from "react";
 
 interface TeacherDetailsModalProps {
     isOpen: boolean;
@@ -32,6 +34,7 @@ const TeacherDetailsModal: React.FC<TeacherDetailsModalProps> = ({
     onVerify,
     onReject
 }) => {
+    const [confirmOpen, setConfirmOpen] = useState(false);
     const handleDownloadDocument = (docUrl: string, fileName: string) => {
         const link = document.createElement('a');
         link.href = docUrl;
@@ -70,8 +73,14 @@ const TeacherDetailsModal: React.FC<TeacherDetailsModalProps> = ({
 
     const handleRejectAndClose = () => {
         if (teacher) {
+            setConfirmOpen(true);
+        }
+    };
+    const handleConfirmReject = () => {
+        if (teacher) {
             onReject(teacher._id);
-            onClose();
+            setConfirmOpen(false); 
+            onClose();            
         }
     };
 
@@ -81,19 +90,19 @@ const TeacherDetailsModal: React.FC<TeacherDetailsModalProps> = ({
         <Dialog open={isOpen} onOpenChange={onClose}>
             {/* Backdrop with blur effect */}
             {isOpen && (
-                <div 
+                <div
                     className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
                     onClick={onClose}
                 />
             )}
-            
+
             <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-4xl max-h-[90vh] bg-gray-800 rounded-lg shadow-xl z-50 border">
                 <DialogHeader className="relative">
                     <DialogTitle className="flex items-center gap-2 p-6 pb-0">
                         <FileText className="h-5 w-5" />
                         {`${teacher.firstName} ${teacher.lastName} - Documents`}
                     </DialogTitle>
-                    
+
                     {/* Close button */}
                     <button
                         onClick={onClose}
@@ -245,6 +254,13 @@ const TeacherDetailsModal: React.FC<TeacherDetailsModalProps> = ({
                     </div>
                 </ScrollArea>
             </DialogContent>
+            <ConfirmModal
+                open={confirmOpen}
+                onClose={() => setConfirmOpen(false)}
+                onConfirm={handleConfirmReject}
+                title="Reject Application?"
+                description="Are you sure you want to reject this teacher’s application? This action cannot be undone."
+            />
         </Dialog>
     );
 };

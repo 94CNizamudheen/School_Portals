@@ -29,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const isActiveRoute = (route: string) => location.pathname === route;
 
   return (
-    <div className={`fixed left-0 top-0 h-full w-64 bg-gray-800 border-r border-gray-700 transform transition-transform duration-300 ease-in-out z-50 ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+    <div className={`fixed left-0 top-0 h-full w-64 bg-gradient-to-r from-gray-950 to-gray-600 border-gray-700 transform transition-transform duration-300 ease-in-out z-50 ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
       <div className="p-8 border-b border-gray-700">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-white">SchoolAdmin</h1>
@@ -44,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <Link key={index} to={item.route} onClick={onClose}>
             <div
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActiveRoute(item.route)
-                ? 'bg-blue-600 text-white'
+                ? 'bg-gray-600 text-white'
                 : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                 }`}
             >

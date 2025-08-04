@@ -4,7 +4,7 @@
 import { AlertDialog, AlertDialogContent, AlertDialogTitle, AlertDialogCancel, AlertDialogAction, AlertDialogOverlay, } from "@radix-ui/react-alert-dialog";
 import { AlertDialogFooter, AlertDialogHeader } from "../../../components/ui/alert-dialog";
 
-interface ConfirmDeleteModalProps {
+interface ConfirmModalProps {
     open: boolean;
     onClose: () => void;
     onConfirm: () => void;
@@ -12,18 +12,12 @@ interface ConfirmDeleteModalProps {
     description?: string;
 }
 
-const ConfirmDeleteModal = ({
-    open,
-    onClose,
-    onConfirm,
-    title = "Are you sure?",
-    description = "This action cannot be undone.",
-}: ConfirmDeleteModalProps) => {
+const ConfirmModal = ({open,  onClose, onConfirm, title = "Are you sure?", description = "This action cannot be undone."}: ConfirmModalProps) => {
     return (
     <AlertDialog open={open} onOpenChange={onClose}>
       <AlertDialogOverlay className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm" />
       <AlertDialogContent
-        className="fixed left-1/2 top-1/2 z-50 w-[50%] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-xl dark:bg-zinc-900"
+        className="fixed left-1/2 top-1/2 z-50 w-[50%] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-gradient-to-r from-gray-950 to-gray-500 p-6 shadow-xl dark:bg-zinc-900 "
       >
         <AlertDialogHeader>
           <AlertDialogTitle className="text-xl font-bold text-red-600 dark:text-red-500">
@@ -31,7 +25,7 @@ const ConfirmDeleteModal = ({
           </AlertDialogTitle>
         </AlertDialogHeader>
 
-        <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+        <p className="mt-2 text-sm text-gray-400 dark:text-gray-700">
           {description}
         </p>
 
@@ -43,7 +37,7 @@ const ConfirmDeleteModal = ({
             className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
             onClick={onConfirm}
           >
-            Delete
+            Proceed
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -51,4 +45,4 @@ const ConfirmDeleteModal = ({
   );
 };
 
-export default ConfirmDeleteModal;
+export default ConfirmModal;
