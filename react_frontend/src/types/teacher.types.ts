@@ -6,7 +6,7 @@ export interface Teacher {
     email: string;
     mobileNumber: string;
     dob: string;
-    address:{
+    address?:{
         addressLine:string
         city:string
         state:string
