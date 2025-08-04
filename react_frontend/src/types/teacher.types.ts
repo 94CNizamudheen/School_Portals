@@ -6,6 +6,12 @@ export interface Teacher {
     email: string;
     mobileNumber: string;
     dob: string;
+    address:{
+        addressLine:string
+        city:string
+        state:string
+        pincode:string
+    }
     qualification: string;
     university: string;
     experience: string;

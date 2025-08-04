@@ -28,6 +28,12 @@ const filterOptions: Record<string, { label: string; value: string }[]> = {
     { value: "active", label: "Active" },
     { value: "inactive", label: "Inactive" },
   ],
+  '/admin/teachers':[
+    {value:'all',label:"All Teachers"},
+    {value:'maths',label:"Maths"},
+    {value:'social',label:"Social"},
+    {value:'science',label:"Science"},
+  ]
 };
 
 interface Props {

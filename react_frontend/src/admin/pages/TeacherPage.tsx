@@ -4,7 +4,7 @@ import type { RootState, AppDispatch } from "../../store/store";
 import { deleteTeacher, fetchTeachers } from "../../store/teacherThunks";
 import { Card, CardContent, CardHeader, CardTitle, } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import StatusFilterWithSearch from "../../components/shared/filters";
 import { CustomPagination, } from "../../components/shared/CustomPagination";
 import { Mail, Phone, GraduationCap, MoreHorizontal, } from "lucide-react";
@@ -14,6 +14,7 @@ import ConfirmModal from "../components/modals/ConfirmDeleteModal";
 
 const TeachersPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate= useNavigate()
   const teachers = useSelector((state: RootState) => state.teacher.approved);
   const loading = useSelector((state: RootState) => state.teacher.loading);
 
@@ -22,7 +23,7 @@ const TeachersPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterValue, setFilterValue] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 15;
+  const pageSize = 8;
 
   useEffect(() => {
     dispatch(fetchTeachers());
@@ -68,7 +69,7 @@ const TeachersPage = () => {
           onFilterChange={setFilterValue}
         />
         <Link to="/admin/teachers/review-and-verify">
-          <Button>Review and Verify Teacher</Button>
+          <Button className="bg-gradient-to-r from-gray-600 to-gray-700" >Review and Verify Teacher</Button>
         </Link>
       </div>
 
@@ -100,6 +101,12 @@ const TeachersPage = () => {
                     >
                       Remove
                     </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => navigate(`/admin/teachers/${teacher._id}`)}
+                      className="bg-gray-700 text-white"
+                    >
+                      View Details
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
 
@@ -128,8 +135,10 @@ const TeachersPage = () => {
                     <span className="text-sm">{teacher.mobileNumber}</span>
                   </div>
                   <div className="flex items-center justify-center gap-2 text-[#1d1b58]">
-                    <Mail className="w-4 h-4" />
-                    <span className="text-sm">{teacher.email}</span>
+                    <Mail className="w-4 h-4 flex-shrink-0" />
+                    <span className="text-sm truncate max-w-[150px] overflow-hidden whitespace-nowrap">
+                      {teacher.email}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
