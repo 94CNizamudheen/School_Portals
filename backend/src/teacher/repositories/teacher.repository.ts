@@ -62,4 +62,12 @@ export class TeacherRepository implements ITeacherRepository  {
   async deleteTeacher(id: string) {
     await this.teacherModel.deleteOne({ _id: id });
   }
+  async saveTeacher(teacher: Teacher): Promise<Teacher> {
+      return await teacher.save()
+  }
+  async findOneEmailOrMobile(mobileNumber: string, email: string): Promise<Teacher | null> {
+      return await this.teacherModel.findOne({
+        $or:[{mobileNumber},{email}]
+      })
+  }
 }

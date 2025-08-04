@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import StatusFilterWithSearch from '../../components/shared/filters';
 import StudentTableRow from './StudentTableRow';
 import type { Student } from '../../types/student';
-import { Pagination } from '../../components/shared/CustomPagination';
+import { CustomPagination } from '../../components/shared/CustomPagination';
 
 interface StudentTableProps {
   students: Student[];
@@ -12,7 +12,6 @@ const StudentTable: React.FC<StudentTableProps> = ({ students }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>("all")
    const [currentPage, setCurrentPage] = useState(1);
-
   const filteredStudents= students.filter((student)=>{
     const matchesSearch= student.firstName.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus= statusFilter==='all'||student.isActive===(statusFilter==='active');
@@ -59,7 +58,7 @@ const StudentTable: React.FC<StudentTableProps> = ({ students }) => {
           </tbody>
         </table>
       </div>
-       <Pagination
+       <CustomPagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={(page) => setCurrentPage(page)}

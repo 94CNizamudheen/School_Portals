@@ -6,9 +6,9 @@ import InputField from '../components/forms/InputField';
 import SelectField from '../components/forms/SelectField';
 import FileUploadArea from '../components/forms/FileUploadArea';
 import { Check } from 'lucide-react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { sendteacherApplication } from '../store/teacherThunks';
-import type { AppDispatch } from '../store/store';
+import type { AppDispatch, RootState } from '../store/store';
 import ApplicationSuucessModal from '../components/modals/ApplicationSuccessModal';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,7 +17,6 @@ interface FormData {
   lastName: string;
   email: string;
   mobileNumber: string;
-  address: string;
   dob: string;
   university: string;
   qualification: string;
@@ -37,14 +36,14 @@ interface FileData {
 }
 
 export default function TeacherApplicationForm() {
+  const {userName,userEmail}=useSelector((state:RootState)=>state.auth)
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const [formData, setFormData] = useState<FormData>({
-    firstName: '',
+    firstName: userName as string,
     lastName: '',
-    email: '',
+    email: userEmail as string,
     mobileNumber: '',
-    address: '',
     dob: '',
     university: '',
     qualification: '',
@@ -114,7 +113,7 @@ export default function TeacherApplicationForm() {
         formDataToSend.append('photo', files.photo)
       }
       files.documents.forEach((document) => formDataToSend.append('document', document))
-      await dispatch(sendteacherApplication(formDataToSend));
+      await dispatch(sendteacherApplication(formDataToSend)).unwrap();
       setErrors({});
       setIsModalOpen(true);
     } catch (err) {

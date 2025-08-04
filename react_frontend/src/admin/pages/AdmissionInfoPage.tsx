@@ -13,7 +13,7 @@ import type { AdmissionFormData, DocumentPreview, } from "../../types/admission.
 import { handleStatusChange } from "../../store/admissionThunks"
 import { toast } from "react-toastify"
 import type { AxiosError } from "axios"
-import { Pagination } from "../../components/shared/CustomPagination"
+import { CustomPagination } from "../../components/shared/CustomPagination"
 
 
 export default function AdmissionInfoPage() {
@@ -185,7 +185,7 @@ export default function AdmissionInfoPage() {
         onRequestRefill={handleRequestRefill}
         onClose={handleCloseRejectionDialog}
       />
-       <Pagination
+       <CustomPagination
           currentPage={currentPage}
           totalPages={Math.ceil(filteredAdmissions.length / itemsPerPage)}
           onPageChange={(page) => setCurrentPage(page)}

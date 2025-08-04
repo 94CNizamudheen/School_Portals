@@ -5,7 +5,7 @@ import { Document } from "mongoose";
 import { Address } from "src/utils/address";
 
 
-@Schema()
+@Schema({timestamps:true})
 export class Teacher extends Document {
     @Prop({ required: true })
     firstName: string;
@@ -46,7 +46,9 @@ export class Teacher extends Document {
     @Prop({type:[String],default:[]})
     eligibilityDocuments:string
 
-    @Prop({default:'pending',enum:['pending','approved','rejected']})status:string
+    @Prop({default:'pending',enum:['pending','approved','rejected']})status:string;
+
+    @Prop({ required: false }) experienceStartDate?: Date
 
 }
 export const TeacherSchema = SchemaFactory.createForClass(Teacher);
