@@ -16,7 +16,7 @@ const Dashboard = lazy(() => import('./admin/pages/DashboardPage.tsx'))
 const StudentPage = lazy(() => import('./admin/pages/StudentPage.tsx'))
 const StudentDetailPage = lazy(() => import("./admin/pages/StudentDeatailsPage.tsx"))
 const TeachersPage = lazy(() => import('./admin/pages/TeacherPage.tsx'))
-const ReviewAndVerifyTeachersPage = lazy(() => import('./admin/pages/reviewAndVerifyTeacher.tsx'))
+const ReviewAndVerifyTeachersPage = lazy(() => import('./admin/pages/ReviewAndVerifyTeacher.tsx'))
 const ParentPage = lazy(() => import('./admin/pages/ParentPage.tsx'))
 const GuestLogin = lazy(() => import('./pages/Logins/GuestLogin.tsx'))
 const AdmissionPage = lazy(() => import('./pages/AdmissionPage.tsx'))
@@ -25,7 +25,7 @@ const AdmissionInfoPage = lazy(() => import('./admin/pages/AdmissionInfoPage.tsx
 const MyApplications = lazy(() => import('./pages/MyApplications.tsx'))
 const ForgetPassword = lazy(() => import('./pages/ForgotPasswordPage.tsx'))
 const TeacherApplicationForm= lazy(()=>import('./pages/TeacherApplication.tsx'))
-
+const TeacherDetailsPage= lazy(()=>import("./admin/pages/TeacherDetailPage.tsx"))
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home />, errorElement: <RouterErrorFallback /> },
@@ -79,6 +79,7 @@ export const router = createBrowserRouter([
       { path: "teachers", element: <TeachersPage /> },
       { path: "teachers/review-and-verify", element: <ReviewAndVerifyTeachersPage /> },
       { path: "admission", element: <AdmissionInfoPage /> },
+      { path: "/admin/teachers/:id", element: <TeacherDetailsPage /> },
     ],
   },
   { path: "*", element: <NotFound /> },
