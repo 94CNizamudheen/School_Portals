@@ -44,8 +44,8 @@ const TeacherDetailsCard: React.FC<Props> = ({ teacher }) => {
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-red-500" />
               <span>
-                {teacher.address.addressLine}, {teacher.address.city}, {teacher.address.state} -{" "}
-                {teacher.address.pincode}
+                {teacher.address?.addressLine}, {teacher.address?.city}, {teacher.address?.state} -{" "}
+                {teacher.address?.pincode}
               </span>
             </div>
             <div className="flex items-center gap-2">
