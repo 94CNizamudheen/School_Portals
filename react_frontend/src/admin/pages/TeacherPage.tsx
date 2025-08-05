@@ -9,14 +9,15 @@ import StatusFilterWithSearch from "../../components/shared/filters";
 import { CustomPagination, } from "../../components/shared/CustomPagination";
 import { Mail, Phone, GraduationCap, MoreHorizontal, } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from "../../components/ui/dropdown-menu";
-import { toast } from "react-toastify";
 import ConfirmModal from "../components/modals/ConfirmDeleteModal";
+import { useNotification } from "../../context/notification/useNotification";
 
 const TeachersPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate= useNavigate()
   const teachers = useSelector((state: RootState) => state.teacher.approved);
   const loading = useSelector((state: RootState) => state.teacher.loading);
+  const {showNotification}=useNotification()
 
   const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -52,10 +53,16 @@ const TeachersPage = () => {
     if (!selectedTeacherId) return;
     try {
       await dispatch(deleteTeacher(selectedTeacherId)).unwrap();
-      toast.success("Teacher deleted successfully");
+      showNotification('success',{
+        title:"Teacher Remove",
+        message:`Removed teacher successFully `
+      })
       await dispatch(fetchTeachers());
     } catch {
-      toast.error("Delete failed");
+      showNotification('error',{
+        title:"Teacher Remove",
+        message:`Removed teacher failed `
+      })
     } finally {
       setShowConfirm(false);
     }

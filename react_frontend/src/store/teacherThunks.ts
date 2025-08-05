@@ -69,7 +69,7 @@ export const deleteTeacher = createAsyncThunk(
             await API.delete(`/teachers/${id}`);
         } catch (error) {
             const err = error as AxiosError<{ message: string }>
-            rejectWithValue(err.response?.data.message)
+            return rejectWithValue(err.response?.data.message)
         }
 
     }

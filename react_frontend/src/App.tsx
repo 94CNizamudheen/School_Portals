@@ -9,7 +9,7 @@ import { router } from './routes';
 import Loading from './components/Loading';
 import { store, persistor } from './store/store';
 import { ErrorBoundary } from './components/error';
-
+import { NotificationProvider } from './context/notification/NotificationProvider';
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -20,9 +20,12 @@ const App = () => {
       <ErrorBoundary>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
-            <Suspense fallback={<Loading />}>
-              <RouterProvider router={router} />
-            </Suspense>
+            <NotificationProvider>
+              <Suspense fallback={<Loading />}>
+                <RouterProvider router={router} />
+              </Suspense>
+            </NotificationProvider>
+
             <ToastContainer position="top-right" autoClose={2000} hideProgressBar newestOnTop />
           </PersistGate>
         </Provider>

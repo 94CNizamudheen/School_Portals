@@ -20,4 +20,5 @@ export interface Teacher {
     eligibilityDocuments: string[];
     profileImage?: string;
     status: string;
+    experienceStartDate?:string
 }
