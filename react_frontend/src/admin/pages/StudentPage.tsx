@@ -1,23 +1,28 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { toast } from 'react-toastify'
 import StudentStatsCards from '../../admin/components/StudentsStateCards'
 import StudentTable from '../../admin/components/StudentTable'
 import type { RootState, AppDispatch } from '../../store/store'
 import { fetchAllStudents } from '../../store/studentSlice';
+import { useNotification } from '../../context/notification/useNotification'
 
 const StudentsPage = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { students, error } = useSelector((state: RootState) => state.student)
-  
+  const { showNotification } = useNotification()
 
   useEffect(() => {
     dispatch(fetchAllStudents());
   }, [dispatch,])
 
   useEffect(() => {
-    if (error) toast.error(error)
-  }, [error])
+    if (error)
+      showNotification('error', {
+        title:"Failed to Load students",
+        message:error
+        
+  })
+  }, [error,showNotification])
 
   return (
     <div className="p-4 text-white">
@@ -29,7 +34,7 @@ const StudentsPage = () => {
       />
 
       <StudentTable students={students} />
-     
+
     </div>
   )
 }

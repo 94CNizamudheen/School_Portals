@@ -228,3 +228,27 @@ body, html {
   animation: border-spin 6s linear infinite;
   --border-angle: 0deg;
 }
+@keyframes slideInPauseOut {
+  0% {
+    left: -400px;
+    opacity: 0;
+  }
+  15% {
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 1;
+  }
+  85% {
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% + 50px);
+    opacity: 0;
+  }
+}
+
+.animate-slideInPauseOut {
+  animation: slideInPauseOut 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
