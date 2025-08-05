@@ -3,12 +3,12 @@
     45deg,
     #7c3aed,
     #6366f1,
-    #ec4899,
-    #f97316,
+    #9b29ad,
+    #f08132,
     #7c3aed
   );
   background-size: 400% 400%;
-  animation: animatedGradient 6s linear infinite;
+  animation: animatedGradient 5s linear infinite;
   box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
   transition: box-shadow 0.1s ease-in-out;
 }

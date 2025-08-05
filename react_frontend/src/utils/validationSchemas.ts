@@ -126,3 +126,11 @@ export const teacherValidationSchema = Yup.object().shape({
     .matches(/^(KTET|CTET)[A-Z0-9]{6,}$/, 'Invalid certificate number')
     .required('Certificate number is required')
 });
+
+export const getLoginValidationSchema = (role: string) =>
+  Yup.object().shape({
+    identifier: role === "STUDENT"
+      ? Yup.string().required("Student ID is required")
+      : Yup.string().email("Invalid email").required("Email is required"),
+    password: Yup.string().required("Password is required"),
+  })

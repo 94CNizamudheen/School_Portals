@@ -101,7 +101,7 @@ const TeachersPage = () => {
                       <MoreHorizontal className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-24">
+                  <DropdownMenuContent align="end" className="w-24 bg-gray-200 hover:bg-red-100">
                     <DropdownMenuItem
                       onClick={() => handleDeleteClick(teacher._id)}
                       className="text-red-600 hover:bg-red-100"
@@ -110,7 +110,7 @@ const TeachersPage = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => navigate(`/admin/teachers/${teacher._id}`)}
-                      className="bg-gray-700 text-white"
+                      className="hover:bg-red-100"
                     >
                       View Details
                     </DropdownMenuItem>
