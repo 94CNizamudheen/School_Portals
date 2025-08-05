@@ -4,6 +4,10 @@ import AdminLayout from "./layouts/AdminLayout.tsx"
 import AdminProtectedRoute from "./utils/protected/AdminProtection.tsx"
 import PrivateRoute from "./utils/protected/GuestPrivateRoute.tsx"
 import RouterErrorFallback from "./components/error/RouterErrorFallback.tsx"
+import StudentProtectRoute from "./utils/protected/StudentProtection.tsx"
+
+import StudentLayout from "./layouts/StudentLayout.tsx" 
+import StudentDashboard from "./student/pages/StudentDashboard.tsx"
 
 const Home = lazy(() => import("./pages/Home.tsx"))
 const PortalsPage = lazy(() => import("./pages/PortalsPage.tsx"))
@@ -82,5 +86,21 @@ export const router = createBrowserRouter([
       { path: "/admin/teachers/:id", element: <TeacherDetailsPage /> },
     ],
   },
+  {
+
+  },
+    {
+    path:'/student',
+    element:(
+      <StudentProtectRoute allowedRoles={['STUDENT']} >
+        <StudentLayout/>
+      </StudentProtectRoute>
+    ),
+     errorElement: <RouterErrorFallback />,
+     children:[
+      {path:'dashboard',element:<StudentDashboard/>}
+     ]
+  },
+
   { path: "*", element: <NotFound /> },
 ])

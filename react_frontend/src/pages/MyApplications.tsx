@@ -6,9 +6,9 @@ import { FileText, AlertCircle, } from "lucide-react"
 import { completeAdmissionPayment, fetchApplicationsByEmail } from "../store/admissionThunks"
 import ApplicationCard from "../components/ApplicationCard"
 import { AxiosError } from "axios"
-import { toast } from "react-toastify"
 import ComponentLoader from "../components/shared/ComponentLoader"
 import { useNavigate } from "react-router-dom"
+import { useNotification } from "../context/notification/useNotification"
 
 interface StatusCounts {
     total: number
@@ -25,7 +25,8 @@ const MyApplications: React.FC = () => {
     const [expandedApplications, setExpandedApplications] = useState<Set<string>>(new Set())
     const { token, isAuthenticated } = useSelector((state: RootState) => state.auth);
     const userEmail = useSelector((state: RootState) => state.auth.userEmail)
-
+    const {showNotification}=useNotification()
+    const [paymentInProgressId, setPaymentInProgressId] = useState<string | null>(null);
     useEffect(() => {
         const loadApplications = async (): Promise<void> => {
             if (!isAuthenticated || !userEmail) {
@@ -51,17 +52,20 @@ const MyApplications: React.FC = () => {
     }, [userEmail, isAuthenticated, token])
 
     const handlePayment = async (id: string) => {
+         setPaymentInProgressId(id);
         try {
             const amount = 1000;
             const transactionId = 'its_sample_transaction_id'
             await completeAdmissionPayment(id, amount, transactionId);
-            toast.success("Admission payment success, Student registerd")
+            showNotification('success',{title:'Payment',message:"Payment Success"})
             const updatedData = await fetchApplicationsByEmail(userEmail as string);
             setApplications(updatedData ?? []);
         } catch (error) {
             const err = error as AxiosError<{ message: string }>
             console.error("Payment failed:", err);
-            toast.error(`Payment error: ${err.response?.data.message || "Something went wrong"}`);
+            showNotification('error',{title:'Payment',message:"Payment Failed"})
+        }finally{
+            setPaymentInProgressId(null)
         }
     }
 
@@ -174,6 +178,7 @@ const MyApplications: React.FC = () => {
                             onPayment={handlePayment}
                             isExpanded={expandedApplications.has(application._id)}
                             onToggle={() => toggleApplicationExpansion(application._id)}
+                            isPaymentLoading={paymentInProgressId === application._id}
                         />
                     ))}
                 </div>

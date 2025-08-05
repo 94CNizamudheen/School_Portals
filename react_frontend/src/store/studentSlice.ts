@@ -1,11 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit"
-import { isTokenExpired } from "../utils/token"
-import { logout } from "./authSlice"
 import API from "../axios.config";
 import { AxiosError } from "axios"
 import type { Student, } from "../types/student"
-import type { RootState } from "./store"
-// import { createAdmissionData } from "../utils/formUtils"
 
 
 interface StudentState {
@@ -27,18 +23,9 @@ const initialState: StudentState = {
 
 export const fetchAllStudents = createAsyncThunk(
   "student/fetchAll",
-  async (_, { rejectWithValue, getState, dispatch }) => {
-    const state = getState() as RootState
-    const token = state.auth.token
-
-    if (!token || isTokenExpired(token)) {
-      dispatch(logout())
-      return rejectWithValue("Session expired. Please login again.")
-    }
-
+  async (_, { rejectWithValue, }) => {
     try {
-      const response = await API.get(`/students`, {
-      })
+      const response = await API.get(`/students`)
       console.log(" response.data in fetch all student",response.data)
       return response.data
     } catch (error) {
@@ -75,49 +62,14 @@ export const resetPassword = createAsyncThunk(
   }
 )
 
-// export const sendVerificationEmail = createAsyncThunk(
-//   "student/sendVerificationEmail",
-//   async (formData: StudentFormData, { rejectWithValue, getState, dispatch }) => {
-//     const state = getState() as RootState
-//     const token = state.auth.token
-
-//     if (!token || isTokenExpired(token)) {
-//       dispatch(logout())
-//       return rejectWithValue("Session expired. Please login again.")
-//     }
-
-//     try {
-//       const admissionData = createAdmissionData(formData)
-//       const response = await axios.post(`${API}/students/send-verification-email`, admissionData, {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       })
-//       return response.data
-//     } catch (error) {
-//       const err = error as AxiosError<{ message: string }>
-//       return rejectWithValue(err.response?.data?.message || "Failed to send verification email")
-//     }
-//   }
-// )
-
 
 export const verifyOtp = createAsyncThunk(
   "student/verifyOtp",
-  async ({ email, code }: { email: string; code: string }, { rejectWithValue, getState, dispatch }) => {
-    const state = getState() as RootState
-    const token = state.auth.token
+  async ({ email, code }: { email: string; code: string }, { rejectWithValue }) => {
 
-    if (!token || isTokenExpired(token)) {
-      dispatch(logout())
-      return rejectWithValue("Session expired. Please login again.")
-    }
+
     try {
-      const response = await API.post(`/auth/verify-otp`, { email, code }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const response = await API.post(`/auth/verify-otp`, { email, code })
       return response.data
     } catch (error) {
       const err = error as AxiosError<{ message: string }>
@@ -127,20 +79,10 @@ export const verifyOtp = createAsyncThunk(
 );
 export const fetchStudentById = createAsyncThunk(
   "student/fetchById",
-  async (id: string, { rejectWithValue, getState, dispatch }) => {
-    const state = getState() as RootState;
-    const token = state.auth.token;
-
-    if (!token || isTokenExpired(token)) {
-      dispatch(logout());
-    }
-
+  async (id: string, { rejectWithValue }) => {
+    console.log("Student id",id)
     try {
-      const response = await API.get(`/students/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await API.get(`/students/${id}`);
       return response.data;
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
@@ -152,21 +94,9 @@ export const fetchStudentById = createAsyncThunk(
 // Update student
 export const updateStudent = createAsyncThunk(
   "student/update",
-  async ({ id, updates }: { id: string; updates: Partial<Student> }, { rejectWithValue, getState, dispatch }) => {
-    const state = getState() as RootState;
-    const token = state.auth.token;
-
-    if (!token || isTokenExpired(token)) {
-      dispatch(logout());
-    }
-
+  async ({ id, updates }: { id: string; updates: Partial<Student> }, { rejectWithValue }) => {
     try {
-      const response = await API.patch(`/students/${id}`, updates, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await API.patch(`/students/${id}`, updates);
       return response.data;
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
@@ -174,47 +104,6 @@ export const updateStudent = createAsyncThunk(
     }
   }
 );
-
-// export const submitAdmission = createAsyncThunk(
-//   "student/submitAdmission",
-//   async (
-//     { formData, verificationOtp }: { formData: StudentFormData; verificationOtp: string | null },
-//     { rejectWithValue, getState, dispatch }
-//   ) => {
-//     const state = getState() as RootState
-//     const token = state.auth.token
-
-//     if (!token || isTokenExpired(token)) {
-//       dispatch(logout())
-//       return rejectWithValue("Session expired. Please login again.")
-//     }
-
-//     try {
-//       const admissionData = createAdmissionData(formData)
-//       const formDataToSend = new FormData()
-//       formDataToSend.append("student", JSON.stringify(admissionData.student))
-//       formDataToSend.append("parent", JSON.stringify(admissionData.parent))
-//       if (formData.profileImage) {
-//         formDataToSend.append("profileImage", formData.profileImage)
-//       }
-//       formDataToSend.append("verificationOtp", verificationOtp || "")
-
-//       const response = await axios.post(`${API}/students/admission`, formDataToSend, {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           "Content-Type": "multipart/form-data",
-//         },
-//       })
-
-//       return response.data
-//     } catch (error) {
-//       const err = error as AxiosError<{ message: string }>
-//       return rejectWithValue(err.response?.data?.message || "Failed to submit admission")
-//     }
-//   }
-// )
-
-
 
 
 

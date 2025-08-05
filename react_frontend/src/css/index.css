@@ -206,7 +206,7 @@ body, html {
 
 @theme {
   --animate-fade-in-scale: fade-in-scale 0.3s ease-out;
-  
+
   @keyframes fade-in-scale {
     0% {
       opacity: 0;
@@ -251,4 +251,13 @@ body, html {
 
 .animate-slideInPauseOut {
   animation: slideInPauseOut 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

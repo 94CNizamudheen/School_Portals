@@ -11,6 +11,7 @@ import { BlacklistedToken, BlacklistedTokenSchema } from './entities/blacklist.s
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { UserModule } from 'src/user/user.module';
 import { User, UserSchema } from 'src/user/entities/user.schema';
+import { StudentModule } from 'src/student/student.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { User, UserSchema } from 'src/user/entities/user.schema';
       }),
       inject: [ConfigService]
     }),
-    UserModule
+    UserModule,
+    StudentModule,
   ],
   controllers: [AuthController],
   providers: [

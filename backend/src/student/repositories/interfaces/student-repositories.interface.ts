@@ -8,6 +8,7 @@ export interface IStudentRepository {
   createStudent(data: CreateStudentDto,admission:AdmissionType): Promise<Student>;
   findAll(): Promise<Student[]>;
   findById(id: string): Promise<Student | null>;
+  findByIdentity(identity:string):Promise<Student|null>
   updateStudent(id: string, data: UpdateStudentDto): Promise<Student | null>;
   deleteStudent(id: string): Promise<void>;
   saveStudent(student:Student):Promise<Student>

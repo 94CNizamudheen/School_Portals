@@ -2,17 +2,16 @@
 
 import { Injectable, UnauthorizedException, BadRequestException, NotFoundException, Logger, Inject, } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthRepository } from '../repositories/auth.repository';
 import { RegisterDto } from '../dtos/register.dtos';
 import { SignInDto } from '../dtos/signin.dto';
 import { ForgotPasswordDto, ResetPasswordDto, VerifyOtpDto } from '../dtos/password.dtos';
 import { User } from '../../user/entities/user.schema';
 import { JwtPayload } from 'jwt-decode';
 import { ConfigService } from '@nestjs/config';
-import { UserRepository } from 'src/user/repositories/user.repository';
 import { CreateUserDto } from 'src/user/dto/create.user.dto';
 import { IUserRepository } from 'src/user/repositories/interfaces/user.repositoriy.interface';
 import { IAuthRepository } from '../repositories/interfaces/auth-repository.interface';
+import { IStudentRepository } from 'src/student/repositories/interfaces/student-repositories.interface';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +19,7 @@ export class AuthService {
   constructor(
     @Inject('IAuthRepository') private readonly repo: IAuthRepository,
     @Inject("IUserRepository") private readonly userRepo: IUserRepository,
+    @Inject('IStudentRepository') private readonly studentRepo:IStudentRepository,
     private config: ConfigService,
     private readonly jwtService: JwtService
   ) { }
@@ -44,12 +44,22 @@ export class AuthService {
   }
 
   async signIn(dto: SignInDto): Promise<{ access_token: string; refresh_token: string; userId: string, user: User }> {
-    const user = await this.userRepo.findUserByEmail(dto.email);
-    this.logger.log(`user ${user}`)
+    let user;
+    this.logger.debug(dto.studentIdentity)
+    if(dto.studentIdentity){
+        user= await this.studentRepo.findByIdentity(dto.studentIdentity)
+    }else if(dto.email){
+        user = await this.userRepo.findUserByEmail(dto.email);
+    }else{
+      this.logger.debug('cant find user ')
+      throw new BadRequestException("Invalid Credentials")
+    }
+    this.logger.debug("student password",user.password)
+    this.logger.debug(`User found: ${user?.email || user?.studentIdentity}`)
     if (!user || !(await this.repo.comparePasswords(dto.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    const payload = { sub: user._id, email: user.email, role: user.role };
+    const payload = { sub: user._id.toString() , email: user.email, role: user.role };
     const access_token = this.jwtService.sign(payload, {
       expiresIn: this.config.get('JWT_EXPIRES_IN'),
     });
@@ -57,7 +67,7 @@ export class AuthService {
       expiresIn: this.config.get('JWT_REFRESH_EXPIRES_IN'),
     })
 
-    return { access_token, refresh_token, userId: user.id, user };
+    return { access_token, refresh_token, userId: user.id.toString(), user };
   };
   async refreshToken(refresh_token: string): Promise<{ access_token: string, refresh_token: string }> {
     try {

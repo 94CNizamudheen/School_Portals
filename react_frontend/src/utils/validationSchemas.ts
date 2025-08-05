@@ -46,7 +46,16 @@ export const admissionValidationSchema = Yup.object({
   firstName: Yup.string().required('First name is required').trim(),
   lastName: Yup.string().required('Last name is required').trim(),
   address: Yup.string().required('Address is required').trim(),
-  profilePicture: Yup.string().required('Profile picture is required'),
+  profilePicture: Yup.string()
+  .required('Profile picture is required')
+  .test(
+    'is-valid-image',
+    'Only .jpg, .jpeg, or .png formats are allowed',
+    (value) => {
+      if (!value) return false;
+      return /\.(jpe?g|png)$/i.test(value);
+    }
+  ),
   bloodGroup: Yup.string().required('Blood group is required'),
   aadharDocument: Yup.string().required('Aadhar document is required'),
   birthCertificate: Yup.string().required('Birth certificate is required'),

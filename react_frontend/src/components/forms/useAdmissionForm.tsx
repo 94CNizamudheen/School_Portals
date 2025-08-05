@@ -3,11 +3,11 @@ import type { AdmissionFiles, AdmissionFormBody, AdmissionFormErrors, HandleFile
 import { ValidationError } from "yup";
 
 import { admissionValidationSchema } from "../../utils/validationSchemas";
-import { toast } from "react-toastify";
 import { createAdmission } from "../../store/admissionThunks";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { useNavigate } from "react-router-dom";
+import { useNotification } from "../../context/notification/useNotification";
 
 const useAdmissionForm = () => {
     const userEmail = useSelector((state: RootState) => state.auth.userEmail);
@@ -16,6 +16,7 @@ const useAdmissionForm = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate= useNavigate()
+    const {showNotification}=useNotification()
 
     const [formData, setFormData] = useState<AdmissionFormBody>({
         firstName: '',
@@ -107,10 +108,16 @@ const useAdmissionForm = () => {
                 birthCertificate: formFile.birthCertificate,
                 transferCertificate: formFile.transferCertificate
             })
-            toast.success("Admission submitted successfully!");
+            showNotification('success',{
+                title:"Admission Submition",
+                message:"Successfully submitted Admission form"
+            })
             setShowSuccessModal(true);
         } catch {
-            toast.error("Error submitting admission form.");
+              showNotification('error',{
+                title:"Admission Submition",
+                message:"Failed to submit Admission form"
+            })
         } finally {
             setIsSubmitting(false);
         }
