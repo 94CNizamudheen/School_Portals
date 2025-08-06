@@ -11,20 +11,15 @@ const StudentLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false); // toggle state
 
   return (
-    <div className="student-layout flex min-h-screen bg-purple-100 relative">
-      {/* Sidebar */}
-      <StudentSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    <div className="student-layout flex min-h-screen bg-purple-500/70 relative">
 
-      {/* Main content */}
+      <StudentSidebar  isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
       <div className="flex-1 flex flex-col lg:ml-64">
-        {/* Header with menu toggle */}
+      
         <StudentHeader onMenuClick={() => setSidebarOpen(true)} />
 
-        {/* Updates bar */}
-        {/* <ScrollingUpdates /> */}
-
-        {/* Page content */}
-        <main className="p-4 bg-gradient-to-r from-purple-950 to-purple-700 min-h-[100%] ">
+        <main className="p-4  ">
           <Outlet />
         </main>
       </div>

@@ -105,6 +105,44 @@ export const updateStudent = createAsyncThunk(
   }
 );
 
+export const requestStudentOtp = createAsyncThunk(
+  'student/sendOtp',
+  async(data: { email: string; identity: string },{rejectWithValue})=>{
+    try {
+      console.log("hitted sendotp")
+       return await API.post(`auth/send-student-otp`,data);
+
+    } catch (error) {
+       const err = error as AxiosError<{ message: string }>
+       return rejectWithValue(err.response?.data.message)
+    }
+  }
+);
+
+// export const verifyStudentOtp= createAsyncThunk(
+//   'sudent/verifyOtp',
+//   async(data:{ email: string; identity: string; otp: string },{rejectWithValue})=>{
+//     try {
+//       return await API.post(`auth/verify-otp`,data);
+//     } catch (error) {
+//       const err = error as AxiosError<{ message: string }>
+//        return rejectWithValue(err.response?.data.message)
+//     }
+//   }
+// );
+
+
+export const changeStudentPassword = createAsyncThunk(
+  'student/changePassword',
+  async(data: { email: string; identity: string; password: string },{rejectWithValue})=>{
+    try {
+      return await API.post(`change-student-password`,data);
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>
+       return rejectWithValue(err.response?.data.message)
+    }
+  }
+)
 
 
 

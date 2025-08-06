@@ -47,15 +47,15 @@ export const admissionValidationSchema = Yup.object({
   lastName: Yup.string().required('Last name is required').trim(),
   address: Yup.string().required('Address is required').trim(),
   profilePicture: Yup.string()
-  .required('Profile picture is required')
-  .test(
-    'is-valid-image',
-    'Only .jpg, .jpeg, or .png formats are allowed',
-    (value) => {
-      if (!value) return false;
-      return /\.(jpe?g|png)$/i.test(value);
-    }
-  ),
+    .required('Profile picture is required')
+    .test(
+      'is-valid-image',
+      'Only .jpg, .jpeg, or .png formats are allowed',
+      (value) => {
+        if (!value) return false;
+        return /\.(jpe?g|png)$/i.test(value);
+      }
+    ),
   bloodGroup: Yup.string().required('Blood group is required'),
   aadharDocument: Yup.string().required('Aadhar document is required'),
   birthCertificate: Yup.string().required('Birth certificate is required'),
@@ -143,3 +143,15 @@ export const getLoginValidationSchema = (role: string) =>
       : Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string().required("Password is required"),
   })
+
+export const step1Schema = Yup.object({
+  email: Yup.string().email('Invalid email').required('Required'),
+  identity: Yup.string().required('Required'),
+});
+
+export const passwordSchema = Yup.object({
+  password: Yup.string().min(6, 'Min 6 characters').required('Required'),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref('password')], 'Passwords must match')
+    .required('Required'),
+});

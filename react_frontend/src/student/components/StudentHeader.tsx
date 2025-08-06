@@ -1,7 +1,6 @@
 import type { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
-
-
+import { Bell, Settings, HelpCircle } from "lucide-react";
 
 interface Props {
     onMenuClick: () => void;
@@ -10,8 +9,9 @@ interface Props {
 const StudentHeader: React.FC<Props> = ({ onMenuClick }) => {
     const student = useSelector((state: RootState) => state.student.student);
 
+
     return (
-        <header className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-purple-500 to-purple-950 text-white shadow-md ">
+        <header className="flex items-center justify-between px-4 py-3  text-white  mt-1">
             <button
                 onClick={onMenuClick}
                 className="lg:hidden text-2xl focus:outline-none"
@@ -19,14 +19,16 @@ const StudentHeader: React.FC<Props> = ({ onMenuClick }) => {
                 ☰
             </button>
 
-            {/* Right-side controls */}
             <div className="flex items-center space-x-4 ml-auto">
                 <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow text-black text-lg">
-                    🔔
+                    <Bell size={20} />
                 </div>
-                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow text-black text-lg">
-                    ⚙️
-                </div>
+                <button
+                 
+                    className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow text-black"
+                >
+                    <Settings size={20} />
+                </button>
 
                 {/* Student info */}
                 <div className="flex items-center space-x-2">
@@ -41,10 +43,12 @@ const StudentHeader: React.FC<Props> = ({ onMenuClick }) => {
                     />
                 </div>
 
-                <button className="bg-white px-3 py-1 text-sm rounded-full shadow text-black hidden sm:inline-block">
-                    ❓ Help Lines
+                <button className="bg-white px-3 py-1 text-sm rounded-full shadow text-black hidden sm:inline-flex items-center gap-1">
+                    <HelpCircle size={16} />
+                    Help Lines
                 </button>
             </div>
+
         </header>
     );
 };

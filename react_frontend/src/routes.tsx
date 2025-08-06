@@ -7,7 +7,7 @@ import RouterErrorFallback from "./components/error/RouterErrorFallback.tsx"
 import StudentProtectRoute from "./utils/protected/StudentProtection.tsx"
 
 import StudentLayout from "./layouts/StudentLayout.tsx" 
-import StudentDashboard from "./student/pages/StudentDashboard.tsx"
+
 
 const Home = lazy(() => import("./pages/Home.tsx"))
 const PortalsPage = lazy(() => import("./pages/PortalsPage.tsx"))
@@ -30,6 +30,8 @@ const MyApplications = lazy(() => import('./pages/MyApplications.tsx'))
 const ForgetPassword = lazy(() => import('./pages/ForgotPasswordPage.tsx'))
 const TeacherApplicationForm= lazy(()=>import('./pages/TeacherApplication.tsx'))
 const TeacherDetailsPage= lazy(()=>import("./admin/pages/TeacherDetailPage.tsx"))
+const StudentProfilePage= lazy(()=>import("./student/pages/StudentProfilePage.tsx"))
+const StudentDashboard = lazy(()=>import("./student/pages/StudentDashboard.tsx")) 
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home />, errorElement: <RouterErrorFallback /> },
@@ -98,7 +100,8 @@ export const router = createBrowserRouter([
     ),
      errorElement: <RouterErrorFallback />,
      children:[
-      {path:'dashboard',element:<StudentDashboard/>}
+      {path:'dashboard',element:<StudentDashboard/>},
+      {path:'profile',element:<StudentProfilePage/>}
      ]
   },
 

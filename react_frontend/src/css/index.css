@@ -261,3 +261,6 @@ body, html {
     @apply bg-background text-foreground;
   }
 }
+.student-card-bg {
+  @apply bg-[#2c1c5b] text-white rounded-xl shadow-lg;
+}

@@ -11,6 +11,7 @@ export default function StudentDashboard() {
   const dispatch = useDispatch<AppDispatch>()
   const studentId= useSelector((state:RootState)=>state.auth.userId)
   const { student, loading } = useSelector((state: RootState) => state.student)
+  console.log(student)
 
   useEffect(()=>{
        dispatch(fetchStudentById(studentId as string))
@@ -39,13 +40,13 @@ export default function StudentDashboard() {
     <div className="min-h-full p-4">
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Dashboard</h1>
-          <p className="text-purple-200">Welcome back, {student?.firstName || "Student"}! Here is your academic overview.</p>
+          <h1 className="text-4xl font-bold tracking-tight text-white">Dashboard</h1>
+          <p className="">Welcome back, {student?.firstName || "Student"}! Here is your academic overview.</p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (
-            <Card key={stat.title} className="bg-purple-400/60 border-purple-600/10 ">
+            <Card key={stat.title} className="student-card-bg border-purple-50 ">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-purple-100">{stat.title}</CardTitle>
                 <stat.icon className={`h-4 w-4 ${stat.color}`} />

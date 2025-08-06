@@ -42,8 +42,8 @@ export interface Student {
   bloodGroup?: string;
   nationality?: string;
   religion?: string;
-  grade?: string;
-  class?: string;
+  classLevel?: string;
+  division?: string;
   rollNumber?: string;
   previousSchool?: string;
   address?: string;
@@ -57,4 +57,5 @@ export interface Student {
   isActive?: boolean;
   parentIds?: string[]; 
   cast:string
+  identity?:string
 }

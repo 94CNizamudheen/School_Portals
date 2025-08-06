@@ -11,7 +11,7 @@ import admissionReducer from './admissionSlice';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth'], 
+  whitelist: ['auth','student'], 
 };
 
 const rootReducer = combineReducers({
