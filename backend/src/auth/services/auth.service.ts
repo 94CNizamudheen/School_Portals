@@ -19,7 +19,7 @@ export class AuthService {
   constructor(
     @Inject('IAuthRepository') private readonly repo: IAuthRepository,
     @Inject("IUserRepository") private readonly userRepo: IUserRepository,
-    @Inject('IStudentRepository') private readonly studentRepo:IStudentRepository,
+    @Inject('IStudentRepository') private readonly studentRepo: IStudentRepository,
     private config: ConfigService,
     private readonly jwtService: JwtService
   ) { }
@@ -46,20 +46,29 @@ export class AuthService {
   async signIn(dto: SignInDto): Promise<{ access_token: string; refresh_token: string; userId: string, user: User }> {
     let user;
     this.logger.debug(dto.studentIdentity)
-    if(dto.studentIdentity){
-        user= await this.studentRepo.findByIdentity(dto.studentIdentity)
-    }else if(dto.email){
-        user = await this.userRepo.findUserByEmail(dto.email);
-    }else{
-      this.logger.debug('cant find user ')
+    if (dto.studentIdentity) {
+      user = await this.studentRepo.findByIdentity(dto.studentIdentity)
+    } else if (dto.email) {
+      user = await this.userRepo.findUserByEmail(dto.email);
+    } else {
+      this.logger.debug('No identifier provided')
       throw new BadRequestException("Invalid Credentials")
     }
-    this.logger.debug("student password",user.password)
-    this.logger.debug(`User found: ${user?.email || user?.studentIdentity}`)
-    if (!user || !(await this.repo.comparePasswords(dto.password, user.password))) {
+
+    if (!user) {
+      this.logger.warn(`No user found for identifier: ${dto.studentIdentity || dto.email}`);
       throw new UnauthorizedException('Invalid credentials');
     }
-    const payload = { sub: user._id.toString() , email: user.email, role: user.role };
+
+    this.logger.debug("student password", user.password)
+    this.logger.debug(`User found: ${user?.email || user?.studentIdentity}`)
+    const passwordMatch = await this.repo.comparePasswords(dto.password, user.password);
+    if (!passwordMatch) {
+      this.logger.warn(`Password mismatch for user: ${user.email || user.studentIdentity}`);
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = { sub: user._id.toString(), email: user.email, role: user.role };
     const access_token = this.jwtService.sign(payload, {
       expiresIn: this.config.get('JWT_EXPIRES_IN'),
     });
@@ -140,12 +149,12 @@ export class AuthService {
   async handleGoogleLogin(body: { name: string, email: string, role: string }) {
     let user = await this.userRepo.findUserByEmail(body.email);
     if (!user) {
-         const createUserDto: CreateUserDto = {
-      name: body.name,
-      email: body.email,
-      password: 'google-oauth',
-      role: body.role
-    };
+      const createUserDto: CreateUserDto = {
+        name: body.name,
+        email: body.email,
+        password: 'google-oauth',
+        role: body.role
+      };
       user = await this.userRepo.createUser(createUserDto);
     }
     const payload = { sub: user.id, email: user.email, role: user.role };

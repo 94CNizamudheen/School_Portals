@@ -18,7 +18,7 @@ import { StudentModule } from 'src/student/student.module';
     MongooseModule.forFeature([
       { name: Otp.name, schema: OtpSchema },
       { name: User.name, schema: UserSchema },
-      { name: BlacklistedToken.name, schema: BlacklistedTokenSchema }
+      {name:BlacklistedToken.name,schema:BlacklistedTokenSchema}
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -32,10 +32,16 @@ import { StudentModule } from 'src/student/student.module';
     StudentModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthRepository, { provide: 'IAuthRepository', useClass: AuthRepository, },
+  providers: [
+    AuthService,
+    AuthRepository,
+    {
+      provide: 'IAuthRepository',
+      useClass: AuthRepository,
+    },
     JwtStrategy,
     JwtAuthGuard,
   ],
-  exports: [AuthService, JwtModule, JwtStrategy, JwtAuthGuard, 'IAuthRepository',],
+  exports: [AuthService,JwtModule,JwtStrategy,JwtAuthGuard,'IAuthRepository',],
 })
 export class AuthModule { }

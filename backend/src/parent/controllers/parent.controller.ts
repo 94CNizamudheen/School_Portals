@@ -4,11 +4,11 @@ import { CreateParentDto } from "../dtos/create-parent.dto";
 import { UpdateParentDto } from "../dtos/update-parent.dto";
 import { Roles } from "src/auth/roles.decorator";
 import { Role } from "src/auth/dtos/register.dtos";
-import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
+import { AuthGuard } from "@nestjs/passport";
 
 
 @Controller('parents')
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard('jwt'))
 export class ParentController {
   private readonly logger= new Logger(ParentController.name)
   constructor(private readonly parentService: ParentService) {}

@@ -1,9 +1,15 @@
 
 
+import { useNotification } from "../context/notification/useNotification"
+import type { RootState } from "../store/store"
 import { ArrowLeft } from "lucide-react"
-import { Link } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { Link, useNavigate } from "react-router-dom"
 
 const PortalsPage = () => {
+  const { role, userName } = useSelector((state: RootState) => state.auth);
+  const { showNotification } = useNotification()
+  const navigate = useNavigate()
   const userRoles = [
     {
       id: "student",
@@ -26,6 +32,16 @@ const PortalsPage = () => {
       image: "/images/parent.png",
     },
   ]
+  const handleClick = (selectedRole: string) => {
+    if (role === null) {
+      navigate(`/${selectedRole.toLowerCase()}/login`)
+    } else {
+      showNotification("info", {
+        title: "Unauthorized",
+        message: `Hello ${userName}, you can only access the ${role} portal. To use the ${selectedRole} portal, please logout first.`,
+      })
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple via-purple-700 to-purple relative overflow-hidden">
@@ -65,6 +81,7 @@ const PortalsPage = () => {
             <div key={role.id} className="flex flex-col items-center">
               {/* Card */}
               <div className="rounded-3xl shadow-2xl hover:scale-105 transform transition-all duration-300 hover:shadow-3xl w-full max-w-xs aspect-square relative overflow-hidden group">
+
                 <img
                   src={role.image}
                   alt={`${role.title} portal`}
@@ -76,11 +93,10 @@ const PortalsPage = () => {
 
               {/* Label */}
               <div className="mt-4">
-                <Link to={`/${role.id}/login`}>
-                  <button className="bg-white text-purple-800 px-6 py-2 rounded-full font-semibold shadow-lg hover:bg-gray-100 hover:scale-105 transform transition-all duration-300">
-                    {role.title}
-                  </button>
-                </Link>
+
+                <button onClick={() => handleClick(role.title.toUpperCase())} className="bg-white text-purple-800 px-6 py-2 rounded-full font-semibold shadow-lg hover:bg-gray-100 hover:scale-105 transform transition-all duration-300">
+                  {role.title}
+                </button>
               </div>
             </div>
           ))}

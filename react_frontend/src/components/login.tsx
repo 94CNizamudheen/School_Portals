@@ -51,8 +51,10 @@ const Login = () => {
   }, [role, dispatch])
 
   const onFormSubmit = async (data: { identifier: string; password: string }) => {
+    console.log(data.password)
     try {
       const response = await axios.post(`${API}/auth/login`, {
+        
         [role === "STUDENT" ? "studentIdentity" : "email"]: data.identifier,
         password: data.password,
         role,

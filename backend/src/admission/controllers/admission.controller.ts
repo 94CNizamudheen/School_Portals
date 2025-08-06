@@ -3,10 +3,10 @@ import { AdmissionService } from '../services/admission.service';
 import { CreateAdmissionDto } from '../dtos/create-admission.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('admissions')
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard('jwt'))
 export class AdmissionController {
   private readonly logger = new Logger(AdmissionController.name)
   constructor(private readonly admissionService: AdmissionService) { }

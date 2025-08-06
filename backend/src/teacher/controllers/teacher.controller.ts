@@ -8,10 +8,9 @@ import { Roles } from "src/auth/roles.decorator";
 import { Role } from "src/auth/dtos/register.dtos"; 
 import { AnyFilesInterceptor, FileInterceptor } from "@nestjs/platform-express";
 import { AuthGuard } from "@nestjs/passport";
-import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
 @Controller("teachers")
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard('jwt'))
 export class TeacherController{
     private readonly logger= new Logger(TeacherController.name)
     constructor(private readonly teacherService:TeacherService){}
