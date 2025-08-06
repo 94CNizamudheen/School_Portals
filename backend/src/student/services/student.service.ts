@@ -25,7 +25,7 @@ export class StudentService {
     return this.repo.findAll();
   }
 
-  async findOne(id: string) {
+  async findById(id: string) {
     const student = await this.repo.findById(id);
     if (!student) throw new NotFoundException('Student not found');
     return student;

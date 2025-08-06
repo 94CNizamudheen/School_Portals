@@ -10,7 +10,6 @@ import { TeacherModule } from 'src/teacher/teacher.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Admission.name, schema: AdmissionSchema }]),
-    TeacherModule,
 
   ],
   controllers: [AdmissionController,],

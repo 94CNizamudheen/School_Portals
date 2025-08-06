@@ -1,5 +1,4 @@
 import { AlertCircle, BookOpen, Calendar, CheckCircle, ChevronDown, ChevronUp, Clock, Eye, FileText, MapPin, Phone, Smile, User, Users, XCircle, Loader2 } from "lucide-react";
-import { useState } from "react";
 import type { AdmissionFormData } from "../types/admission.types";
 
 interface ApplicationCardProps {
@@ -7,6 +6,7 @@ interface ApplicationCardProps {
     isExpanded: boolean
     onToggle: () => void
     onPayment:(id:string)=>void
+     isPaymentLoading: boolean
 }
 
 interface StatusConfig {
@@ -54,8 +54,7 @@ const getStatusConfig = (status: AdmissionFormData['status']): StatusConfig => {
     }
 }
 
-const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpanded, onToggle, onPayment }) => {
-    const [isPaymentLoading, setIsPaymentLoading] = useState(false);
+const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpanded, onToggle, onPayment,isPaymentLoading }) => {
     const statusConfig = getStatusConfig(application.status)
     const StatusIcon = statusConfig.icon
 
@@ -79,15 +78,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, isExpand
 
     const handlePayment = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        setIsPaymentLoading(true);
-        
-        try {
-             onPayment(application._id);
-        } catch (error) {
-            console.error('Payment error:', error);
-        } finally {
-            setIsPaymentLoading(false);
-        }
+        onPayment(application._id);
     }
 
     return (

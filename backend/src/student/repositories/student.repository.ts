@@ -54,6 +54,9 @@ export class StudentRepository implements IStudentRepository {
   async findById(id: string) {
     return this.studentModel.findById(id).lean();
   }
+  async findByIdentity(identity: string): Promise<Student | null> {
+      return await this.studentModel.findOne({identity})
+  }
 
   async updateStudent(id: string, dto: UpdateStudentDto) {
     const payload = {

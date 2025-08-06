@@ -28,7 +28,7 @@ const DocumentsSection:React.FC<DocumentSectionProps> = ({ formfile, handleFileC
             name="profilePicture"
             label="Profile Picture"
             required
-            accept="image/*"
+            accept=".jpg,.jpeg,.png"
             formfile={formfile}
             handleFileChange={handleFileChange}
             errors={errors}

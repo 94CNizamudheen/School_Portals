@@ -53,7 +53,7 @@ const Login = () => {
   const onFormSubmit = async (data: { identifier: string; password: string }) => {
     try {
       const response = await axios.post(`${API}/auth/login`, {
-        [role === "STUDENT" ? "studentId" : "email"]: data.identifier,
+        [role === "STUDENT" ? "studentIdentity" : "email"]: data.identifier,
         password: data.password,
         role,
       })
@@ -158,8 +158,8 @@ const Login = () => {
             <button
               type="submit"
               className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
-            >a
-              Sign In
+            >
+             Sign In
             </button>
           </form>
 
