@@ -5,12 +5,15 @@ import { uploadImage } from 'src/utils/upload.image';
 import { uploadDocument } from 'src/utils/upload.document';
 import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
 
+type CreateAdmissionFormDto = Omit<CreateAdmissionDto, 'profilePicture' | 'aadharDocument' | 'birthCertificate' | 'transferCertificate'>;
+
+
 @Injectable()
 export class AdmissionService {
   private readonly logger= new Logger(AdmissionService.name)
   constructor(@Inject('IAdmissionRepository') private readonly repo: IAdmissionRepository) {}
 
-  async submitApplication(dto: Omit<CreateAdmissionDto, | 'profilePicture'| 'aadharDocument'| 'birthCertificate'| 'transferCertificate'>,files:Record<string,Express.Multer.File[]>) {
+  async submitApplication(dto: CreateAdmissionFormDto,files:Record<string,Express.Multer.File[]>) {
     this.logger.log(`submit application invoked with ${JSON.stringify(dto)}`)
     const profilePictureUrl=await uploadImage(files.profilePicture![0])
     const aadharDocumentUrl= await uploadDocument(files.aadharDocument![0]);
@@ -48,4 +51,4 @@ export class AdmissionService {
     const admission= await this.repo.findById(id)
     return admission
   }
-}
+};
