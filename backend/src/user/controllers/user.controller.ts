@@ -1,11 +1,10 @@
 import { Controller, Get, Param, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
-import { AuthService } from "src/auth/services/auth.service";
 import { UserService } from "../services/user.service";
+import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
 
 @Controller('user')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 
 export class UserControllers{
     constructor(

@@ -8,10 +8,9 @@ import { Roles } from 'src/auth/roles.decorator';
 import { Role } from 'src/auth/dtos/register.dtos'; 
 import { CreateStudentDto } from '../dtos/create-student.dto';
 import { UpdateStudentDto } from '../dtos/update-student.dto';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('students')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 
 export class StudentController {
   private readonly logger= new Logger(StudentController.name)

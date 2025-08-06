@@ -18,7 +18,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ trigger }) => {
   const handleLogout = async () => {
     try {
       await dispatch(logoutThunk()).unwrap(); 
-      navigate('/admin/login');
+      navigate('/portals');
     } catch (error) {
       console.error('Logout failed:', error);
     }
