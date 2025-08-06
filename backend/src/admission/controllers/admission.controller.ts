@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Get, Param, UseInterceptors, UploadedFiles, BadRequestException, Patch, UseGuards, Logger } from '@nestjs/common';
 import { AdmissionService } from '../services/admission.service';
 import { CreateAdmissionDto } from '../dtos/create-admission.dto';
-import { AnyFilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -13,9 +13,9 @@ export class AdmissionController {
 
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
-  async apply( @Body() body: CreateAdmissionDto,@UploadedFiles() files: Array<Express.Multer.File>,) {
-    this.logger.log('controller invoked with ', body);
-    this.logger.log('received files: ', files);
+  async apply( @Body() body: Omit<CreateAdmissionDto, 'profilePicture' | 'aadharDocument' | 'birthCertificate' | 'transferCertificate'>,@UploadedFiles() files: Array<Express.Multer.File>,) {
+    this.logger.debug('controller invoked with ', body);
+    this.logger.debug('received files: ', files);
 
     const fileMap: Record<string, Express.Multer.File[]> = {};
     for (const file of files) {
