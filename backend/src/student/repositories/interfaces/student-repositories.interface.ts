@@ -12,4 +12,5 @@ export interface IStudentRepository {
   updateStudent(id: string, data: UpdateStudentDto): Promise<Student | null>;
   deleteStudent(id: string): Promise<void>;
   saveStudent(student:Student):Promise<Student>
+  updatePassword(identity:string,password:string):Promise<void>
 } 

@@ -2,7 +2,7 @@ import { BadRequestException, Body, Controller, Get, Logger, Param, Post, Req } 
 import { AuthService } from '../services/auth.service';
 import { RegisterDto } from '../dtos/register.dtos';
 import { SignInDto } from '../dtos/signin.dto';
-import { ResetPasswordDto, VerifyOtpDto } from '../dtos/password.dtos';
+import { ResetPasswordDto, StudentGenarteOtpDto, VerifyOtpDto } from '../dtos/password.dtos';
 
 @Controller('auth')
 export class AuthController {
@@ -58,4 +58,9 @@ export class AuthController {
   googleLogin(@Body() body: { email: string, name: string, role: string }) {
     return this.authService.handleGoogleLogin(body);
   }
+  @Post('generate-sudent-otp')
+  generateStudentOtp(@Body()body:StudentGenarteOtpDto){
+    return this.authService.generateSudentOtp(body)
+  }
+  
 }

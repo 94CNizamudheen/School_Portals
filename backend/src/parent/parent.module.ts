@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 
 import { Parent, ParentSchema } from "./entities/parent.schema";
@@ -21,7 +21,6 @@ import { AdmissionModule } from "src/admission/admission.module";
       { name: Student.name, schema: StudentSchema },
       { name: Parent.name, schema: ParentSchema },
     ]),
-    AuthModule,
     MailerModule,
     StudentModule,
     AdmissionModule
@@ -29,6 +28,6 @@ import { AdmissionModule } from "src/admission/admission.module";
   ],
   controllers: [ParentController],
   providers: [ParentService, ParentRepository,MailService,{provide:"IParentRepository",useClass:ParentRepository}],
-  exports: [ParentService],
+  exports: [ParentService,"IParentRepository"],
 })
 export class ParentModule {}

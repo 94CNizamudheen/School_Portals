@@ -4,7 +4,7 @@ import { Injectable, UnauthorizedException, BadRequestException, NotFoundExcepti
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from '../dtos/register.dtos';
 import { SignInDto } from '../dtos/signin.dto';
-import { ForgotPasswordDto, ResetPasswordDto, VerifyOtpDto } from '../dtos/password.dtos';
+import { ForgotPasswordDto, ResetPasswordDto, StudentGenarteOtpDto, VerifyOtpDto } from '../dtos/password.dtos';
 import { User } from '../../user/entities/user.schema';
 import { JwtPayload } from 'jwt-decode';
 import { ConfigService } from '@nestjs/config';
@@ -12,6 +12,9 @@ import { CreateUserDto } from 'src/user/dto/create.user.dto';
 import { IUserRepository } from 'src/user/repositories/interfaces/user.repositoriy.interface';
 import { IAuthRepository } from '../repositories/interfaces/auth-repository.interface';
 import { IStudentRepository } from 'src/student/repositories/interfaces/student-repositories.interface';
+import { IParentRepository } from 'src/parent/repositories/interfaces/parent.repository.interface';
+import { studentOtpTemplate } from 'src/mailer/utils/templates/studentPasswordChangeOtp';
+import { MailService } from 'src/mailer/services/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +23,8 @@ export class AuthService {
     @Inject('IAuthRepository') private readonly repo: IAuthRepository,
     @Inject("IUserRepository") private readonly userRepo: IUserRepository,
     @Inject('IStudentRepository') private readonly studentRepo: IStudentRepository,
+    @Inject("IParentRepository") private readonly parentRepo: IParentRepository,
+    private readonly mailService: MailService,
     private config: ConfigService,
     private readonly jwtService: JwtService
   ) { }
@@ -29,13 +34,7 @@ export class AuthService {
     const existing = await this.userRepo.findUserByEmail(dto.email);
     if (existing) throw new BadRequestException('Email already exists');
 
-    const createUserDto: CreateUserDto = {
-      name: dto.name,
-      email: dto.email,
-      password: dto.password,
-      role: dto.role
-    };
-
+    const createUserDto: CreateUserDto = { name: dto.name, email: dto.email, password: dto.password, role: dto.role };
     const user = await this.userRepo.createUser(createUserDto);
 
     this.logger.log(`User registered successfully: ${user.email} (ID: ${user._id}) `);
@@ -96,7 +95,6 @@ export class AuthService {
       }
       return { access_token: newAccessToken, refresh_token: newRefreshToken };
     } catch (error) {
-      console.error(error)
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
   }
@@ -141,20 +139,22 @@ export class AuthService {
   }
 
   async resetPassword(dto: ResetPasswordDto): Promise<void> {
-    const user = await this.userRepo.findUserByEmail(dto.email);
-    if (!user) throw new NotFoundException('User not found');
-    this.logger.log(`new password is ${dto.password}`)
-    await this.repo.updatePassword(dto.email, dto.password);
+    if (dto.email) {
+      const user = await this.userRepo.findUserByEmail(dto.email);
+      if (!user) throw new NotFoundException('User not found');
+      await this.repo.updatePassword(dto.email, dto.password);
+    }else if(dto.identity){
+      const student= await this.studentRepo.findByIdentity(dto.identity);
+      if(!student) throw new NotFoundException('Student not found');
+      await this.studentRepo.updatePassword(dto.identity,dto.password)
+    }
+
   }
+
   async handleGoogleLogin(body: { name: string, email: string, role: string }) {
     let user = await this.userRepo.findUserByEmail(body.email);
     if (!user) {
-      const createUserDto: CreateUserDto = {
-        name: body.name,
-        email: body.email,
-        password: 'google-oauth',
-        role: body.role
-      };
+      const createUserDto: CreateUserDto = { name: body.name, email: body.email, password: 'google-oauth', role: body.role };
       user = await this.userRepo.createUser(createUserDto);
     }
     const payload = { sub: user.id, email: user.email, role: user.role };
@@ -163,5 +163,22 @@ export class AuthService {
       userId: user._id,
       user
     }
+  };
+  async generateSudentOtp(dto: StudentGenarteOtpDto) {
+    const parent = await this.parentRepo.findByEmail(dto.email);
+    if (!parent) throw new NotFoundException("Parent not found");
+    const student = await this.studentRepo.findByIdentity(dto.identity);
+    if (!student) throw new NotFoundException('Student Not found');
+    const otp = await this.repo.createOtp(dto.email)
+    const subject = "Otp for change Student password";
+    const text = `Dear ${parent.name} `;
+    const html = studentOtpTemplate(student.firstName, otp)
+    try {
+      await this.mailService.sendMail({ to: dto.email, subject, text, html })
+    } catch (error) {
+      this.logger.error(`Failed to send  email to ${dto.email}`)
+      error.stack || error.messag
+    }
+    return { message: "Otp shared successfully" }
   }
 }

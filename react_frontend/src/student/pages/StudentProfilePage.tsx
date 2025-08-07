@@ -22,7 +22,7 @@ const StudentProfilePage = () => {
                         <img
                             src={student.profilePicture || '/default-avatar.png'}
                             alt="Profile"
-                            className="w-40 h-40 rounded-full border-4 border-white"
+                            className="w-40 bg-fuchsia-300 h-40 rounded-full border-4 border-white"
                         />
                         <div className="text-center mt-8">
                             <h2 className="text-xl font-bold">{student.firstName} {student.lastName}</h2>

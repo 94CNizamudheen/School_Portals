@@ -1,4 +1,4 @@
-import { IsEmail, IsString } from "class-validator"
+import { IsEmail, IsOptional, IsString, MinLength } from "class-validator"
 
 
 export class ForgotPasswordDto{
@@ -6,12 +6,18 @@ export class ForgotPasswordDto{
 }
 
 export class ResetPasswordDto{
-    @IsEmail()email:string
-    @IsString()password:string
+    @IsOptional() @IsEmail()email?:string
+    @IsString() @MinLength(6, { message: 'Password must be at least 6 characters' })password: string;
+    @IsOptional() @IsString()identity?: string;
 }
 
 export class VerifyOtpDto{
 
     @IsEmail()email:string
     @IsString()code:string
+}
+
+export class StudentGenarteOtpDto{
+    @IsEmail() email:string;
+    @IsString() identity:string;
 }

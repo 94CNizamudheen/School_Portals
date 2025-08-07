@@ -6,7 +6,7 @@ const url = process.env.FRONTEND_URL
 import * as express from 'express';
 import helmet from "helmet";
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule,);
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
     app.use(helmet({

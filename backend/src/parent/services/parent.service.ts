@@ -93,7 +93,7 @@ export class ParentService {
   async sendStudentLoginDetailsMail(dto: SendStudentLoginDetailsDto): Promise<boolean> {
     const { toEmail, studentIdentity, password } = dto;
     const subject = 'Your Student Login Details';
-    const text = `Student ID: ${studentIdentity}, Password: ${password}`;
+    const text = `Dear Parent`;
     const html = studentLoginTemplate(studentIdentity, password);
     try {
       await this.mailService.sendMail({ to: toEmail, subject, text, html });

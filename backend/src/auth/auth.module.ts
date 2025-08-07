@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
@@ -12,6 +12,8 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { UserModule } from 'src/user/user.module';
 import { User, UserSchema } from 'src/user/entities/user.schema';
 import { StudentModule } from 'src/student/student.module';
+import { ParentModule } from 'src/parent/parent.module';
+import { MailerModule } from 'src/mailer/mailer.module';
 
 @Module({
   imports: [
@@ -30,17 +32,16 @@ import { StudentModule } from 'src/student/student.module';
     }),
     UserModule,
     StudentModule,
+    ParentModule,
+    MailerModule
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    AuthRepository,
+  providers: [AuthService,AuthRepository,
     {
       provide: 'IAuthRepository',
       useClass: AuthRepository,
     },
-    JwtStrategy,
-    JwtAuthGuard,
+    JwtStrategy,JwtAuthGuard,
   ],
   exports: [AuthService,JwtModule,JwtStrategy,JwtAuthGuard,'IAuthRepository',],
 })

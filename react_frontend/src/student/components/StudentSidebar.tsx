@@ -1,4 +1,4 @@
-import { Home, User, Calendar, BookOpen, Users, FileText, X, LogOut } from "lucide-react";
+import { Home, User, Calendar, BookOpen, Users, FileText, X, LogOut, Clock } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import React from "react";
 import LogoutModal from "../../components/LogoutModal";
@@ -16,6 +16,7 @@ const StudentSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { icon: User, label: "Profile", route: "/student/profile" },
     { icon: Calendar, label: "Attendance", route: "/student/attendance" },
     { icon: BookOpen, label: "Tasks/Homework", route: "/student/tasks" },
+    { icon: Clock, label: "TimeTable", route: "/student/tasks" },
     { icon: Users, label: "Teachers", route: "/student/teachers" },
     { icon: FileText, label: "Exams / Results", route: "/student/results" },
   ];

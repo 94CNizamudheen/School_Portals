@@ -110,7 +110,7 @@ export const requestStudentOtp = createAsyncThunk(
   async(data: { email: string; identity: string },{rejectWithValue})=>{
     try {
       console.log("hitted sendotp")
-       return await API.post(`auth/send-student-otp`,data);
+       return await API.post(`auth/generate-sudent-otp`,data);
 
     } catch (error) {
        const err = error as AxiosError<{ message: string }>
@@ -119,24 +119,13 @@ export const requestStudentOtp = createAsyncThunk(
   }
 );
 
-// export const verifyStudentOtp= createAsyncThunk(
-//   'sudent/verifyOtp',
-//   async(data:{ email: string; identity: string; otp: string },{rejectWithValue})=>{
-//     try {
-//       return await API.post(`auth/verify-otp`,data);
-//     } catch (error) {
-//       const err = error as AxiosError<{ message: string }>
-//        return rejectWithValue(err.response?.data.message)
-//     }
-//   }
-// );
 
 
 export const changeStudentPassword = createAsyncThunk(
   'student/changePassword',
   async(data: { email: string; identity: string; password: string },{rejectWithValue})=>{
     try {
-      return await API.post(`change-student-password`,data);
+      return await API.post(`reset-password`,data);
     } catch (error) {
       const err = error as AxiosError<{ message: string }>
        return rejectWithValue(err.response?.data.message)

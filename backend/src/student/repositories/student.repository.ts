@@ -8,7 +8,7 @@ import { CreateStudentDto } from '../dtos/create-student.dto';
 import { UpdateStudentDto } from '../dtos/update-student.dto';
 import { IStudentRepository } from './interfaces/student-repositories.interface';
 import { AdmissionType } from 'src/admission/repositories/admission.type';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 
 export class StudentRepository implements IStudentRepository {
@@ -71,5 +71,9 @@ export class StudentRepository implements IStudentRepository {
   }
   async saveStudent(student: Student) {
     return await student.save()
+  }
+  async updatePassword(identity: string, password: string): Promise<void> {
+      const hashedPassword= await bcrypt.hash(password,10)
+      await this.studentModel.updateOne({identity},{password:hashedPassword})
   }
 }
