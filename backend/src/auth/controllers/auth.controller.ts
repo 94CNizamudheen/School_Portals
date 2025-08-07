@@ -7,9 +7,7 @@ import { ResetPasswordDto, StudentGenarteOtpDto, VerifyOtpDto } from '../dtos/pa
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthService.name)
-
   constructor(private readonly authService: AuthService) { }
-
 
   @Post('register')
   register(@Body() dto: RegisterDto) {
@@ -23,8 +21,8 @@ export class AuthController {
     return this.authService.signIn(dto);
   };
   @Post('refresh')
-  refresh(@Body('refreshToken')token:string){
-    this.logger.log("refresh invoked with token",token)
+  refresh(@Body('refreshToken') token: string) {
+    this.logger.log("refresh invoked with token", token)
     return this.authService.refreshToken(token)
   }
 
@@ -50,17 +48,19 @@ export class AuthController {
 
   @Post('reset-password')
   async resetPassword(@Body() dto: ResetPasswordDto) {
-    await this.authService.resetPassword(dto);
-    return { message: 'Password updated successfully' };
+    this.logger.debug('reset password with ',JSON.stringify(dto))
+    return await this.authService.resetPassword(dto);
+
   }
 
   @Post('google-login')
   googleLogin(@Body() body: { email: string, name: string, role: string }) {
     return this.authService.handleGoogleLogin(body);
   }
-  @Post('generate-sudent-otp')
-  generateStudentOtp(@Body()body:StudentGenarteOtpDto){
-    return this.authService.generateSudentOtp(body)
+  @Post('generate-student-otp')
+  generateStudentOtp(@Body() body: StudentGenarteOtpDto) {
+
+    return this.authService.generateStudentOtp(body)
   }
-  
+
 }
