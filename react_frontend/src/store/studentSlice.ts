@@ -26,7 +26,7 @@ export const fetchAllStudents = createAsyncThunk(
   async (_, { rejectWithValue, }) => {
     try {
       const response = await API.get(`/students`)
-      console.log(" response.data in fetch all student",response.data)
+      console.log(" response.data in fetch all student", response.data)
       return response.data
     } catch (error) {
       const err = error as AxiosError<{ message: string }>
@@ -49,20 +49,6 @@ export const fetchStudentByEmail = createAsyncThunk(
   }
 )
 
-export const resetPassword = createAsyncThunk(
-  "student/resetPassword",
-  async (email: string, { rejectWithValue }) => {
-    try {
-      const response = await API.post("/student/reset-password", { email })
-      return response.data.message
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>
-      return rejectWithValue(err.response?.data?.message || "Failed to reset password")
-    }
-  }
-)
-
-
 export const verifyOtp = createAsyncThunk(
   "student/verifyOtp",
   async ({ email, code }: { email: string; code: string }, { rejectWithValue }) => {
@@ -80,7 +66,7 @@ export const verifyOtp = createAsyncThunk(
 export const fetchStudentById = createAsyncThunk(
   "student/fetchById",
   async (id: string, { rejectWithValue }) => {
-    console.log("Student id",id)
+    console.log("Student id", id)
     try {
       const response = await API.get(`/students/${id}`);
       return response.data;
@@ -91,7 +77,7 @@ export const fetchStudentById = createAsyncThunk(
   }
 );
 
-// Update student
+
 export const updateStudent = createAsyncThunk(
   "student/update",
   async ({ id, updates }: { id: string; updates: Partial<Student> }, { rejectWithValue }) => {
@@ -107,14 +93,14 @@ export const updateStudent = createAsyncThunk(
 
 export const requestStudentOtp = createAsyncThunk(
   'student/sendOtp',
-  async(data: { email: string; identity: string },{rejectWithValue})=>{
+  async (data: { email: string; identity: string }, { rejectWithValue }) => {
     try {
-      console.log("hitted sendotp")
-       return await API.post(`auth/generate-sudent-otp`,data);
+      const response = await API.post(`/auth/generate-student-otp`, data);
+      return response.data;
 
     } catch (error) {
-       const err = error as AxiosError<{ message: string }>
-       return rejectWithValue(err.response?.data.message)
+      const err = error as AxiosError<{ message: string }>
+      return rejectWithValue(err.response?.data.message)
     }
   }
 );
@@ -123,12 +109,13 @@ export const requestStudentOtp = createAsyncThunk(
 
 export const changeStudentPassword = createAsyncThunk(
   'student/changePassword',
-  async(data: { email: string; identity: string; password: string },{rejectWithValue})=>{
+  async (data: { identity: string; password: string }, { rejectWithValue }) => {
     try {
-      return await API.post(`reset-password`,data);
+      console.log("hitted change password")
+      return await API.post(`/auth/reset-password`, data);
     } catch (error) {
       const err = error as AxiosError<{ message: string }>
-       return rejectWithValue(err.response?.data.message)
+      return rejectWithValue(err.response?.data.message)
     }
   }
 )
@@ -175,27 +162,27 @@ const studentSlice = createSlice({
         state.error = action.payload as string
       })
 
-      .addCase(resetPassword.pending, (state) => {
+      .addCase(requestStudentOtp.pending, (state) => {
         state.loading = true
         state.error = null
       })
-      .addCase(resetPassword.fulfilled, (state) => {
+      .addCase(requestStudentOtp.fulfilled, (state) => {
         state.loading = false
       })
-      .addCase(resetPassword.rejected, (state, action) => {
+      .addCase(requestStudentOtp.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload as string
       })
-      // .addCase(sendVerificationEmail.pending, (state) => {
-      //   state.loading = true;
-      // })
-      // .addCase(sendVerificationEmail.fulfilled, (state) => {
-      //   state.loading = false;
-      // })
-      // .addCase(sendVerificationEmail.rejected, (state, action) => {
-      //   state.loading = false;
-      //   state.error = action.payload as string;
-      // })
+      .addCase(changeStudentPassword.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(changeStudentPassword.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(changeStudentPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
 
       .addCase(verifyOtp.pending, (state) => {
         state.loading = true;
@@ -208,16 +195,6 @@ const studentSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // .addCase(submitAdmission.pending, (state) => {
-      //   state.loading = true;
-      // })
-      // .addCase(submitAdmission.fulfilled, (state) => {
-      //   state.loading = false;
-      // })
-      // .addCase(submitAdmission.rejected, (state, action) => {
-      //   state.loading = false;
-      //   state.error = action.payload as string;
-      // })
       .addCase(fetchStudentById.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -243,7 +220,7 @@ const studentSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      
+
 
   },
 })

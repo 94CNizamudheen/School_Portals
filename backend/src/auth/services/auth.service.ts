@@ -1,6 +1,6 @@
 
 
-import { Injectable, UnauthorizedException, BadRequestException, NotFoundException, Logger, Inject, } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, NotFoundException, Logger, Inject, ForbiddenException, } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from '../dtos/register.dtos';
 import { SignInDto } from '../dtos/signin.dto';
@@ -139,16 +139,19 @@ export class AuthService {
   }
 
   async resetPassword(dto: ResetPasswordDto): Promise<void> {
+    this.logger.debug("invoked reset password")
     if (dto.email) {
       const user = await this.userRepo.findUserByEmail(dto.email);
       if (!user) throw new NotFoundException('User not found');
-      await this.repo.updatePassword(dto.email, dto.password);
+      return  await this.repo.updatePassword(dto.email, dto.password);
     }else if(dto.identity){
       const student= await this.studentRepo.findByIdentity(dto.identity);
+      this.logger.debug(student)
       if(!student) throw new NotFoundException('Student not found');
-      await this.studentRepo.updatePassword(dto.identity,dto.password)
+      return await this.studentRepo.updatePassword(dto.identity,dto.password)
+    }else{
+      throw new ForbiddenException('failed to reset')
     }
-
   }
 
   async handleGoogleLogin(body: { name: string, email: string, role: string }) {
@@ -164,7 +167,7 @@ export class AuthService {
       user
     }
   };
-  async generateSudentOtp(dto: StudentGenarteOtpDto) {
+  async generateStudentOtp(dto: StudentGenarteOtpDto) {
     const parent = await this.parentRepo.findByEmail(dto.email);
     if (!parent) throw new NotFoundException("Parent not found");
     const student = await this.studentRepo.findByIdentity(dto.identity);

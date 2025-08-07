@@ -2,34 +2,32 @@ import { useState } from 'react';
 import { X } from 'lucide-react';
 import { useNotification } from '../../context/notification/useNotification';
 
-import {requestStudentOtp, verifyOtp,changeStudentPassword,} from '../../store/studentSlice';
+import { requestStudentOtp, verifyOtp, changeStudentPassword, } from '../../store/studentSlice';
 
 import { step1Schema, passwordSchema } from '../../utils/validationSchemas';
 import type { AxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '@/store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '@/store/store';
+import LoadingIndicator from '../../components/shared/LoadingIndicator';
+
 
 
 const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
+    const loading = useSelector((state: RootState) => state.student.loading)
     const [step, setStep] = useState(1);
     const [emailAndIdentity, setEmailAndIdentity] = useState({ email: '', identity: '' });
     const [otp, setOtp] = useState('');
     const { showNotification } = useNotification();
-    const dispatch= useDispatch<AppDispatch>()
-
-    const {
-        register: registerStep1,
-        handleSubmit: handleSubmitStep1,
-        formState: { errors: step1Errors },
-    } = useForm({
+    const dispatch = useDispatch<AppDispatch>()
+    console.log("Current loading:", loading);
+    const { register: registerStep1, handleSubmit: handleSubmitStep1, formState: { errors: step1Errors }, } = useForm({
         resolver: yupResolver(step1Schema),
     });
 
     const handleStep1Submit = async (data: { email: string; identity: string }) => {
         try {
-
             await dispatch(requestStudentOtp(data)).unwrap();
             setEmailAndIdentity(data);
             setStep(2);
@@ -44,7 +42,7 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
 
     const handleVerifyOtp = async () => {
         try {
-            await dispatch(verifyOtp({ email:emailAndIdentity.email, code: otp }))  ;
+            await dispatch(verifyOtp({ email: emailAndIdentity.email, code: otp }));
             setStep(3);
         } catch {
             showNotification('error', { title: 'OTP', message: 'Invalid OTP' });
@@ -58,7 +56,7 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
 
     const handlePasswordSubmit = async (data: { password: string; confirmPassword: string }) => {
         try {
-            await dispatch(changeStudentPassword({...emailAndIdentity, password: data.password})) ;
+            await dispatch(changeStudentPassword({ identity:emailAndIdentity.identity, password: data.password }));
             showNotification('success', {
                 title: 'Success',
                 message: 'Password changed!',
@@ -82,7 +80,7 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
                 {step === 1 && (
                     <form onSubmit={handleSubmitStep1(handleStep1Submit)} className="space-y-4" noValidate>
                         <div>
-                            <input 
+                            <input
                                 type="email"
                                 placeholder="Parent Email"
                                 {...registerStep1('email')}
@@ -98,14 +96,15 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
                                 placeholder="Student Identity"
                                 {...registerStep1('identity')}
                                 className="w-full border p-2 border-amber-50 rounded-2xl"
-                                
+
                             />
                             {step1Errors.identity && (
                                 <p className="text-red-500 text-sm mt-1">{step1Errors.identity.message}</p>
                             )}
                         </div>
-                        <button type="submit" className="w-full bg-purple-700 text-white py-2 rounded">
-                            Send OTP
+
+                        <button type="submit" className="w-full bg-purple-700 text-white py-2 rounded flex items-center justify-center" disabled={loading} >
+                            {loading ? <LoadingIndicator /> : 'Send OTP'}
                         </button>
                     </form>
                 )}
@@ -120,11 +119,11 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
                             onChange={(e) => setOtp(e.target.value)}
                             className="w-full border p-2 rounded"
                         />
-                        <button
-                            onClick={handleVerifyOtp}
+                        <button onClick={handleVerifyOtp}
                             className="w-full bg-purple-700 text-white py-2 rounded"
+                            disabled={loading}
                         >
-                            Verify OTP
+                            {loading ? <LoadingIndicator /> : "Verify OTP"}
                         </button>
                     </div>
                 )}
@@ -156,8 +155,8 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
                                 </p>
                             )}
                         </div>
-                        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded">
-                            Change Password
+                        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded" disabled={loading}>
+                            {loading ? <LoadingIndicator /> : "Change Password"}
                         </button>
                     </form>
                 )}
