@@ -62,5 +62,9 @@ export class AuthController {
 
     return this.authService.generateStudentOtp(body)
   }
+  @Post('send-student-password')
+  sendStudentPassword(@Body()body:StudentGenarteOtpDto){
+    return this.authService.sendStudentPassword(body);
+  }
 
 }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { X } from 'lucide-react';
 import { useNotification } from '../../context/notification/useNotification';
 
-import { requestStudentOtp, verifyOtp, changeStudentPassword, } from '../../store/studentSlice';
+import { requestStudentOtp, verifyStudentOtp, changeStudentPassword, } from '../../store/studentThunks';
 
 import { step1Schema, passwordSchema } from '../../utils/validationSchemas';
 import type { AxiosError } from 'axios';
@@ -42,7 +42,7 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
 
     const handleVerifyOtp = async () => {
         try {
-            await dispatch(verifyOtp({ email: emailAndIdentity.email, code: otp }));
+            await dispatch(verifyStudentOtp({ email: emailAndIdentity.email, code: otp })).unwrap();
             setStep(3);
         } catch {
             showNotification('error', { title: 'OTP', message: 'Invalid OTP' });
@@ -56,7 +56,7 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
 
     const handlePasswordSubmit = async (data: { password: string; confirmPassword: string }) => {
         try {
-            await dispatch(changeStudentPassword({ identity:emailAndIdentity.identity, password: data.password }));
+            await dispatch(changeStudentPassword({ identity:emailAndIdentity.identity, password: data.password })).unwrap();
             showNotification('success', {
                 title: 'Success',
                 message: 'Password changed!',

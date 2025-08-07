@@ -6,133 +6,136 @@ import { Label } from "../components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 import { Alert, AlertDescription } from "../components/ui/alert"
 import { Eye, EyeOff, Mail, Shield, Lock, ArrowLeft } from "lucide-react"
-import { toast } from "react-toastify"
 import { generateOtp, resetPassword, verifyOtp } from "../store/api"
 import type { AxiosError } from "axios"
+import { useNotification } from "../context/notification/useNotification"
 
 
 type StepType = "email" | "otp" | "reset"
 
 const ForgotPasswordPage = () => {
-    const [email, setEmail] = useState("")
-    const [otp, setOtp] = useState("")
-    const [newPassword, setNewPassword] = useState("")
-    const [confirmPassword, setConfirmPassword] = useState("")
-    const [showPassword, setShowPassword] = useState(false)
-    const [step, setStep] = useState<StepType>("email")
-    const [error, setError] = useState("")
-    const [loading, setLoading] = useState(false)
-    const navigate = useNavigate()
 
-    const handleSendOtp = async () => {
-        if (!email.trim()) {
-            setError("Please enter your email address")
-            return
-        }
+  const [email, setEmail] = useState("")
+  const [otp, setOtp] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [step, setStep] = useState<StepType>("email")
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+  const {showNotification} = useNotification()
 
-        setLoading(true)
-        setError("")
+  const handleSendOtp = async () => {
 
-        try {
-            await generateOtp(email)
-            setStep("otp")
-            toast.success("OTP sent to your email successfully")
-        } catch (err) {
-            const error = err as AxiosError<{ message: string }>
-            setError(error.response?.data.message || "Failed to send otp")
-        } finally {
-            setLoading(false)
-        }
+    if (!email.trim()) {
+      setError("Please enter your email address")
+      return
     }
 
-    const handleVerifyOtp = async () => {
-        if (!otp.trim()) {
-            setError("Please enter the OTP")
-            return
-        }
+    setLoading(true)
+    setError("")
 
-        setLoading(true)
-        setError("")
+    try {
+      await generateOtp(email)
+      setStep("otp")
+      showNotification('success', { title: 'OTP', message: "OTP sent to your email successfully" })
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>
+      setError(error.response?.data.message || "Failed to send otp")
+    } finally {
+      setLoading(false)
+    }
+  }
 
-        try {
-            await verifyOtp(otp, email)
-            setStep("reset")
-            toast.success("OTP verified successfully")
-        } catch (err) {
-            const error = err as AxiosError<{ message: string }>
-            setError(error.response?.data.message || "Failed to send otp")
-        } finally {
-            setLoading(false)
-        }
+  const handleVerifyOtp = async () => {
+    if (!otp.trim()) {
+      setError("Please enter the OTP")
+      return
     }
 
-    const handleResetPassword = async () => {
-        if (!newPassword.trim() || !confirmPassword.trim()) {
-            setError("Please fill in both password fields")
-            return
-        }
+    setLoading(true)
+    setError("")
 
-        if (newPassword !== confirmPassword) {
-            setError("Passwords do not match")
-            return
-        }
+    try {
+      await verifyOtp(otp, email)
+      setStep("reset")
+      showNotification('success', { title: 'Otp validate', message: "OTP verified successfully" })
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>
+      setError(error.response?.data.message || "Failed to send otp")
+    } finally {
+      setLoading(false)
+    }
+  }
 
-        if (newPassword.length < 6) {
-            setError("Password must be at least 6 characters long")
-            return
-        }
-
-        setLoading(true)
-        setError("")
-
-        try {
-
-            await resetPassword(email, newPassword,)
-            toast.success("Password reset successful! Redirecting to login...")
-            setTimeout(() => navigate("/guest/login"), 2000)
-        } catch (err) {
-            const error = err as AxiosError<{ message: string }>
-            setError(error.response?.data.message || "Failed to send otp")
-        } finally {
-            setLoading(false)
-        }
+  const handleResetPassword = async () => {
+    if (!newPassword.trim() || !confirmPassword.trim()) {
+      setError("Please fill in both password fields")
+      return
     }
 
-    const handleBack = () => {
-        if (step === "otp") {
-            setStep("email")
-            setOtp("")
-        } else if (step === "reset") {
-            setStep("otp")
-            setNewPassword("")
-            setConfirmPassword("")
-        }
-        setError("")
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match")
+      return
     }
 
-    const getStepIcon = () => {
-        switch (step) {
-            case "email":
-                return <Mail className="w-6 h-6 text-primary" />
-            case "otp":
-                return <Shield className="w-6 h-6 text-primary" />
-            case "reset":
-                return <Lock className="w-6 h-6 text-primary" />
-        }
+    if (newPassword.length < 6) {
+      setError("Password must be at least 6 characters long")
+      return
     }
 
-    const getStepDescription = () => {
-        switch (step) {
-            case "email":
-                return "Enter your email address to receive a verification code"
-            case "otp":
-                return "Enter the verification code sent to your email"
-            case "reset":
-                return "Create a new secure password for your account"
-        }
-    }
+    setLoading(true)
+    setError("")
 
-    return (
+    try {
+
+      await resetPassword(email, newPassword,)
+      showNotification('success', { title: 'Reset password', message: "Password reset successful! Redirecting to login..." })
+      setTimeout(() => navigate("/guest/login"), 2000)
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>
+      setError(error.response?.data.message || "Failed to send otp")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleBack = () => {
+    if (step === "otp") {
+      setStep("email")
+      setOtp("")
+    } else if (step === "reset") {
+      setStep("otp")
+      setNewPassword("")
+      setConfirmPassword("")
+    }
+    setError("")
+  }
+
+  const getStepIcon = () => {
+    switch (step) {
+      case "email":
+        return <Mail className="w-6 h-6 text-primary" />
+      case "otp":
+        return <Shield className="w-6 h-6 text-primary" />
+      case "reset":
+        return <Lock className="w-6 h-6 text-primary" />
+    }
+  }
+
+  const getStepDescription = () => {
+    switch (step) {
+      case "email":
+        return "Enter your email address to receive a verification code"
+      case "otp":
+        return "Enter the verification code sent to your email"
+      case "reset":
+        return "Create a new secure password for your account"
+    }
+  }
+
+  return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center p-4">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -154,18 +157,15 @@ const ForgotPasswordPage = () => {
               {getStepDescription()}
             </CardDescription>
           </div>
-          
+
           {/* Progress indicator */}
           <div className="flex justify-center space-x-2">
-            <div className={`w-2 h-2 rounded-full transition-colors ${
-              step === "email" ? "bg-purple-300" : "bg-purple-500/50"
-            }`} />
-            <div className={`w-2 h-2 rounded-full transition-colors ${
-              step === "otp" ? "bg-purple-300" : "bg-purple-500/50"
-            }`} />
-            <div className={`w-2 h-2 rounded-full transition-colors ${
-              step === "reset" ? "bg-purple-300" : "bg-purple-500/50"
-            }`} />
+            <div className={`w-2 h-2 rounded-full transition-colors ${step === "email" ? "bg-purple-300" : "bg-purple-500/50"
+              }`} />
+            <div className={`w-2 h-2 rounded-full transition-colors ${step === "otp" ? "bg-purple-300" : "bg-purple-500/50"
+              }`} />
+            <div className={`w-2 h-2 rounded-full transition-colors ${step === "reset" ? "bg-purple-300" : "bg-purple-500/50"
+              }`} />
           </div>
         </CardHeader>
 

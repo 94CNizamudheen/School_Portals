@@ -15,7 +15,9 @@ import { IStudentRepository } from 'src/student/repositories/interfaces/student-
 import { IParentRepository } from 'src/parent/repositories/interfaces/parent.repository.interface';
 import { studentOtpTemplate } from 'src/mailer/utils/templates/studentPasswordChangeOtp';
 import { MailService } from 'src/mailer/services/mail.service';
-
+import { studentForgotTemplate } from 'src/mailer/utils/templates/student.forgot.password.template';
+import * as bcrypt from 'bcrypt'
+import { generateRandomPassword } from 'src/utils/generate.random.password';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name)
@@ -143,13 +145,13 @@ export class AuthService {
     if (dto.email) {
       const user = await this.userRepo.findUserByEmail(dto.email);
       if (!user) throw new NotFoundException('User not found');
-      return  await this.repo.updatePassword(dto.email, dto.password);
-    }else if(dto.identity){
-      const student= await this.studentRepo.findByIdentity(dto.identity);
+      return await this.repo.updatePassword(dto.email, dto.password);
+    } else if (dto.identity) {
+      const student = await this.studentRepo.findByIdentity(dto.identity);
       this.logger.debug(student)
-      if(!student) throw new NotFoundException('Student not found');
-      return await this.studentRepo.updatePassword(dto.identity,dto.password)
-    }else{
+      if (!student) throw new NotFoundException('Student not found');
+      return await this.studentRepo.updatePassword(dto.identity, dto.password)
+    } else {
       throw new ForbiddenException('failed to reset')
     }
   }
@@ -183,5 +185,21 @@ export class AuthService {
       error.stack || error.messag
     }
     return { message: "Otp shared successfully" }
+  }
+  async sendStudentPassword(dto: StudentGenarteOtpDto) {
+    const parent = await this.parentRepo.findByEmail(dto.email);
+    if (!parent) throw new NotFoundException("Parent not found");
+    const student = await this.studentRepo.findByIdentity(dto.identity);
+    if (!student) throw new NotFoundException('Student Not found');
+    const tempPassword = generateRandomPassword();
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    student.password=hashedPassword
+    await this.studentRepo.saveStudent(student)
+    const subject = "Student forgot password";
+    const text = `Dear ${parent.name} `;
+    const html = studentForgotTemplate(student.identity, student.firstName, tempPassword)
+    await this.mailService.sendMail({to:dto.email,subject,text,html})
+    
+    return { message: "Temporary password sent to parent's email." };
   }
 }

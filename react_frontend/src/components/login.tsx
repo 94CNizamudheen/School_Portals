@@ -13,11 +13,13 @@ const API = import.meta.env.VITE_BACKEND_URL
 import { getLoginValidationSchema } from "..//utils/validationSchemas"
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
+import StudentForgotPassword from "../student/modals/ForgotPasswordModal"
 
 
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
+  const [isShowStudentForgot,setIsShowStudentForgot]= useState(false)
   const [error, setError] = useState("")
 
   const location = useLocation()
@@ -107,6 +109,13 @@ const Login = () => {
 
   const googleAllowedRoles = ["PARENT", "ADMIN", "TEACHER", "GUEST"];
   const isGoogleAllowed = googleAllowedRoles.includes(role);
+  const handleForgotPassword=()=>{
+    if(role=="STUDENT"){
+      setIsShowStudentForgot(true)
+    }else{
+      navigate("/forgot-password");
+    }
+  }
 
   return (
 
@@ -194,7 +203,7 @@ const Login = () => {
 
           <div className="text-center mt-6 space-y-3">
             <button
-              onClick={() => navigate(`/forgot-password`)}
+              onClick={ handleForgotPassword}
               className="text-blue-400 hover:text-blue-300 font-medium transition-colors block"
             >
               Forgot Password?
@@ -212,7 +221,9 @@ const Login = () => {
 
 
         </div>
+
       </AnimatedBorderWrapper>
+      {isShowStudentForgot&&(<StudentForgotPassword isOpen={isShowStudentForgot} onClose={()=>setIsShowStudentForgot(false)}/> )}
     </div >
   )
 
