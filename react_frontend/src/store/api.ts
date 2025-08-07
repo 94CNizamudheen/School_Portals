@@ -7,9 +7,15 @@ import type { RootState } from "./store";
 
 
 export const registerUser = async (name: string, email: string, password: string, role: string) => {
-  const response = await API.post('/auth/register', { name, email, password, role });
-  return response.data
-}
+  try {
+     const response = await API.post('/auth/register', { name, email, password, role });
+      return response.data
+  } catch (error) {
+     const err = error as AxiosError<{ message: string }>
+    throw new Error(err.response?.data.message || "Failed to Signup")
+  }
+};
+
 export const fetchUser = async (id: string) => {
   const response = await API.get(`/auth/${id}`)
   console.log("fetch user Response", response)

@@ -15,6 +15,7 @@ import { useState } from "react"
 import { jwtDecode } from 'jwt-decode';
 import { GoogleLogin } from '@react-oauth/google';
 import type { CredentialResponse } from '@react-oauth/google'
+import { useNotification } from "../context/notification/useNotification"
 
 
 type SignUpFormData = {
@@ -29,7 +30,7 @@ const SignupPage = () => {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignUpFormData>({
     resolver: yupResolver(signupSchema),
   })
-
+  const { showNotification } = useNotification()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
@@ -41,36 +42,36 @@ const SignupPage = () => {
 
     try {
       const res = await registerUser(name, email, password, role)
-      toast.success("Registration Successful")
-      dispatch(login({ access_token: res.access_token, role: res.role, userId: res.userId }))
+      showNotification('success',{title:'Sign up',message:'Signup compleated welcome to AUP'})
+      dispatch(login({ access_token: res.access_token  , role: res.role, userId: res.userId ,refresh_token:res.refresh_token}))
       dispatch(userInfo({ name: res.user.name, email: res.user.email }))
       navigate("/")
     } catch (error) {
       const err = error as AxiosError<{ message: string }>
-      toast.error(err.response?.data.message || "Failed to sign up")
+      showNotification('error',{title:'Sign up',message:err.response?.data.message || "Failed to sign up"})
     }
   }
 
   const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
     const role = "GUEST"
     if (!credentialResponse.credential) {
-      toast.error("Google login failed")
+      showNotification('error',{title:'Sign up',message: "Google login failed"})
       return
     }
 
     const decoded = jwtDecode<{ email: string; name: string; sub: string }>(credentialResponse.credential)
     try {
-      const { access_token, userId, user } = await googleLogin(
+      const { access_token, userId, user,refresh_token } = await googleLogin(
         decoded.email,
         decoded.name,
         role
       );
-      dispatch(login({ access_token, role: user.role, userId }))
+      dispatch(login({ access_token, role: user.role, userId ,refresh_token}))
       dispatch(userInfo({ name: user.name, email: user.email }))
       navigate('/')
     } catch (error) {
       const err = error as AxiosError<{ message: string }>
-      toast.error(err.response?.data.message || "Google login failed")
+      showNotification('error',{title:'Sign up',message:err.response?.data.message || "Google login failed"})
     }
   }
 
