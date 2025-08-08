@@ -1,0 +1,120 @@
+
+import { useSelector } from "react-redux";
+import { Bell, HelpCircle, Lock, Menu, Settings } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import ChangePasswordModal from "../../student/components/StudentPasswordChange";
+import type { RootState } from "../../store/store";
+
+
+interface Props {
+    onMenuClick: () => void;
+}
+
+const CommonHeader: React.FC<Props> = ({ onMenuClick }) => {
+    const student = useSelector((state: RootState) => state.student.student);
+    const teacher = useSelector((state: RootState) => state.teacher.teacher);
+    const parent = useSelector((state: RootState) => state.parent.parent);
+    const role = useSelector((state: RootState) => state.auth.role);
+
+    
+
+    let displayName :string|undefined = "";
+    let profileImage:string|undefined = "";
+
+    if (role === "STUDENT" && student) {
+        displayName = `${student.firstName} ${student.lastName}`;
+        profileImage = student.profilePicture;
+    } else if (role === "TEACHER" && teacher) {
+        displayName = `${teacher.firstName} ${teacher.lastName}`;
+        profileImage = teacher.profileImage;
+    } else if (role === "PARENT" && parent) {
+        displayName = parent.name;
+        profileImage = "/default-avatar.png";
+    }
+
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [isModalOpen, setModalOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    return (
+        <header className="flex items-center justify-between px-4 lg:px-6 py-4 text-white">
+            <button onClick={onMenuClick} className="lg:hidden p-2 rounded-lg hover:bg-white/10">
+                <Menu size={24} />
+            </button>
+
+            <div className="flex items-center space-x-3 ml-auto">
+                <div className="relative">
+                    <button className="w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                        <Bell size={20} />
+                    </button>
+                </div>
+
+                <div className="relative" ref={dropdownRef}>
+                    <button
+                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                        className="w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shadow-lg"
+                    >
+                        <Settings size={20} />
+                    </button>
+                    {dropdownOpen && (
+                        <div className="absolute right-0 mt-3 w-56 rounded-t-2xl bg-white shadow-xl">
+                            <div className="px-4 py-3 border-b border-gray-100">
+                                <div className="flex items-center space-x-3">
+                                    <img className="w-10 h-10 rounded-full" src={profileImage || "/default-avatar.png"} />
+                                    <div>
+                                        <div className="font-semibold text-gray-900 text-sm">
+                                            {displayName}
+                                        </div>
+                                        <div className="text-xs text-gray-500 capitalize">{role} Portal</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="py-1">
+                                <button
+                                    onClick={() => {
+                                        setDropdownOpen(false);
+                                        setModalOpen(true);
+                                    }}
+                                    className="w-full text-left flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-fuchsia-200"
+                                >
+                                    <Lock size={16} /> Change Password
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <div className="hidden sm:flex items-center space-x-3">
+                    <div className="text-right">
+                        <div className="font-semibold text-white text-sm">{displayName}</div>
+                        <div className="text-xs text-blue-100 capitalize">{role} Portal</div>
+                    </div>
+                    <img
+                        className="w-11 h-11 rounded-full border-2 border-white/20"
+                        src={profileImage|| "/default-avatar.png"}
+                    />
+                </div>
+
+                <button className="hidden md:inline-flex items-center gap-2 bg-white/10 px-4 py-2 text-sm rounded-full text-white">
+                    <HelpCircle size={16} />
+                    Help & Support
+                </button>
+            </div>
+
+            {isModalOpen && <ChangePasswordModal onClose={() => setModalOpen(false)} />}
+        </header>
+    );
+};
+
+export default CommonHeader;

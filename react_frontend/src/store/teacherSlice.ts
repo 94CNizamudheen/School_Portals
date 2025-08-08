@@ -26,6 +26,7 @@ interface Teacher {
 interface TeacherState {
   approved: Teacher[];
   applied: Teacher[];
+  teacher:Teacher|null
   loading: boolean;
   error: string | null;
 }
@@ -33,6 +34,7 @@ interface TeacherState {
 const initialState: TeacherState = {
   approved: [],
   applied: [],
+  teacher:null,
   loading: false,
   error: null,
 };

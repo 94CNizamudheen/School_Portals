@@ -15,7 +15,7 @@ const StudentHeader: React.FC<Props> = ({ onMenuClick }) => {
     const [isModalOpen,setModalOpen]= useState(false)
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    // Close dropdown on outside click
+    
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {

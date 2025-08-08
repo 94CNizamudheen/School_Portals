@@ -22,6 +22,7 @@ export interface Parent {
 
 interface ParentState {
     parents: Parent[];
+    parent:Parent|null;
     loading: boolean;
     error: string | null;
 }
@@ -29,9 +30,10 @@ export interface Child {
     _id: string;
     firstName: string;
     lastName: string;
+    
 }
 
-const initial: ParentState = { parents: [], loading: false, error: null };
+const initial: ParentState = { parents: [], loading: false, error: null ,parent:null};
 
 
 export const fetchChildrenOfParent = createAsyncThunk(

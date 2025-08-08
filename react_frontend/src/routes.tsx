@@ -6,7 +6,7 @@ import PrivateRoute from "./utils/protected/GuestPrivateRoute.tsx"
 import RouterErrorFallback from "./components/error/RouterErrorFallback.tsx"
 import StudentProtectRoute from "./utils/protected/StudentProtection.tsx"
 
-import StudentLayout from "./layouts/StudentLayout.tsx" 
+import StudentLayout from "./layouts/CommenLayout.tsx" 
 
 
 const Home = lazy(() => import("./pages/Home.tsx"))
