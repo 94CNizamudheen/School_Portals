@@ -32,7 +32,7 @@ const TeacherDetailsPage= lazy(()=>import("./admin/pages/TeacherDetailPage.tsx")
 const StudentProfilePage= lazy(()=>import("./student/pages/StudentProfilePage.tsx"))
 const StudentDashboard = lazy(()=>import("./student/pages/StudentDashboard.tsx")) ;
 const ParentDashboard = lazy(()=>import('./parent/pages/ParentDashboardPage.tsx'))
-
+const StudentParentProfile= lazy(()=>import('./parent/pages/StudentParentProfile.tsx'))
 export const router = createBrowserRouter([
   { path: "/", element: <Home />, errorElement: <RouterErrorFallback /> },
   { path: "/portals", element: <PortalsPage /> },
@@ -114,7 +114,7 @@ export const router = createBrowserRouter([
     errorElement:<RouterErrorFallback/>,
     children:[
     {path:'dashboard',element:<ParentDashboard/>},
-    // {path:'profile',element}
+    {path:'student-info',element:<StudentParentProfile/>}
 
     ]
   },

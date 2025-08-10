@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 import API from '../axios.config';
+import type { Student } from '@/types/student';
 
 interface AssignParentPayload {
     parentId: string;
@@ -25,15 +26,16 @@ interface ParentState {
     parent: Parent | null;
     loading: boolean;
     error: string | null;
+    childrens:Student[]
 }
-export interface Child {
-    _id: string;
-    firstName: string;
-    lastName: string;
+// export interface Child {
+//     _id: string;
+//     firstName: string;
+//     lastName: string;
 
-}
+// }
 
-const initial: ParentState = { parents: [],parent: null , loading: false, error: null, };
+const initial: ParentState = { parents: [],parent: null , loading: false, error: null, childrens:[]};
 
 
 export const fetchChildrenOfParent = createAsyncThunk(
@@ -41,7 +43,7 @@ export const fetchChildrenOfParent = createAsyncThunk(
     async (parentId: string, { rejectWithValue, }) => {
         try {
             const res = await API.get(`/parents/${parentId}/children`)
-            return res.data as Child[];
+            return res.data ;
 
         } catch (err) {
             const error = err as AxiosError<{ message: string }>;
@@ -178,6 +180,18 @@ const slice = createSlice({
                 s.parent = a.payload;
             })
             .addCase(fetchParentByEmail.rejected, (s, a) => {
+                s.loading = false;
+                s.error = a.payload as string;
+            })
+            .addCase(fetchChildrenOfParent.pending, (s) => {
+                s.loading = true;
+                s.error = null;
+            })
+            .addCase(fetchChildrenOfParent.fulfilled, (s, a) => {
+                s.loading = false;
+                s.childrens = a.payload;
+            })
+            .addCase(fetchChildrenOfParent.rejected, (s, a) => {
                 s.loading = false;
                 s.error = a.payload as string;
             })

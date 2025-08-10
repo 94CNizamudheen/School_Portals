@@ -44,7 +44,7 @@ export class ParentController {
   //   return this.parentService.delete(id);
   // }
 
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN,Role.PARENT)
   @Get(":id/children")
   findChildrens(@Param('id') id: string) {
     return this.parentService.findChildrens(id);

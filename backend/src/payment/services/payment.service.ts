@@ -50,10 +50,11 @@ export class PaymentService {
             password: hashedPassword
         });
         if (!student) throw new InternalServerErrorException("Student creation failed");
-
+        if (!student._id) throw new Error("Student _id is missing");
         const parent = await this.ParentService.findOrCreateParent({
-            studentIds: [student._id as string],
-            admissionId: dto.admissionId,
+            studentIds: [student._id?.toString()],
+            admissionIds: [dto.admissionId],
+            relations: [{ admissionId: dto.admissionId, relationship: admission.relationToStudent }],
         });
         if (!parent) throw new InternalServerErrorException("Failed to create or find parent");
 

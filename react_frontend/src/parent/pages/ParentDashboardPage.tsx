@@ -4,35 +4,16 @@
 import { Bar, Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, } from "chart.js";
 import { Star } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store/store";
-import { useEffect } from "react";
 
-import type { AxiosError } from "axios";
-import { useNotification } from "../../context/notification/useNotification";
-import { fetchParentByEmail } from "../../store/parentSlice";
+// import { useEffect } from "react";
+
+// import type { AxiosError } from "axios";
+// import { useNotification } from "../../context/notification/useNotification";
+// import { fetchParentByEmail } from "../../store/parentSlice";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend);
 
 export default function ParentDashboard() {
-  const parentEmail = useSelector((state: RootState) => state.auth.userEmail)
-  const parent = useSelector((state: RootState) => state.parent.parent)
-  console.log("parent in dashboard redux",parent)
-
-  console.log("ParentEmail",parentEmail)
-  const dispatch = useDispatch<AppDispatch>()
-  const { showNotification } = useNotification()
-
-  useEffect(() => {
-    try {
-      dispatch(fetchParentByEmail(parentEmail as string)).unwrap()
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>
-      showNotification('error', { message: err.response?.data.message })
-    }
-
-  }, [dispatch, parentEmail, showNotification])
-
   const barData = {
     labels: ["10-20", "20-30", "30-40", "40-50", "50-60"],
     datasets: [
