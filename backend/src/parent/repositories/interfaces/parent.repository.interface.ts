@@ -8,7 +8,7 @@ import { ParentMatchCriteria } from './parent.type.inerface';
 
 export interface IParentRepository {
   findByEmail(email: string): Promise<Parent | null>;
-  createParent(dto: CreateParentDto,admission:AdmissionType): Promise<Parent>;
+  createParent(dto: CreateParentDto,admission?:AdmissionType): Promise<Parent>;
   findByMultipleFields(criteria: ParentMatchCriteria): Promise<Parent | null>;
   findAllParents(): Promise<Parent[]>;
   findParentById(id: string): Promise<Parent | null>;

@@ -3,7 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { IParentRepository } from "./interfaces/parent.repository.interface";
 import { Parent } from "../entities/parent.schema";
 import { User } from "src/user/entities/user.schema";
-import { Student } from "src/student/entities/student.schema"; 
+import { Student } from "src/student/entities/student.schema";
 import { Model, Types } from "mongoose";
 import { CreateParentDto } from "../dtos/create-parent.dto";
 import { UpdateParentDto } from "../dtos/update-parent.dto";
@@ -16,26 +16,31 @@ export class ParentRepository implements IParentRepository {
     @InjectModel(Parent.name) private readonly parentModel: Model<Parent>,
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Student.name) private readonly studentModel: Model<Student>
-  ) {}
+  ) { }
 
   async findByEmail(email: string) {
     return this.parentModel.findOne({ email }).exec();
   }
+  async createParent(dto: CreateParentDto, admission: AdmissionType): Promise<Parent> {
+    const payload = {
+      name: dto.name ?? admission.parentName,
+      email: dto.email ?? admission.email,
+      mobileNumber: dto.mobileNumber ?? admission.mobileNumber,
+      occupation: dto.occupation ?? admission.parentOccupation,
+      admissionIds: dto.admissionIds?.map(id => new Types.ObjectId(id)) ?? [new Types.ObjectId(admission._id)],
+      studentIds: dto.studentIds?.map(id => new Types.ObjectId(id)) ?? [],
+      relations: dto.relations?.map(rel => ({
+        admissionId: new Types.ObjectId(rel.admissionId),
+        relationship: rel.relationship,
+      })) ?? [{ admissionId: new Types.ObjectId(admission._id), relationship: admission.relationToStudent }],
+      emergencyContactName: dto.emergencyContactName,
+      emergencyContactPhone: dto.emergencyContactPhone,
+    };
 
-async createParent(dto: CreateParentDto, admission: AdmissionType) {
-  const payload = {
-    name: admission.parentName,
-    email: admission.email,
-    mobileNumber: admission.mobileNumber,
-    occupation: admission.parentOccupation,
-    relationship: admission.relationToStudent,
-    admissionId: admission._id,
-    studentIds: dto.studentIds?.map(id => new Types.ObjectId(id)) ?? []
-  };
+    const parent = new this.parentModel(payload);
+    return await parent.save();
+  }
 
-  const parent = new this.parentModel(payload);
-  return await parent.save();
-}
 
   async findAllParents() {
     return this.parentModel.find().lean();
@@ -96,15 +101,15 @@ async createParent(dto: CreateParentDto, admission: AdmissionType) {
   async findChildrens(ids: Types.ObjectId[]) {
     return this.studentModel.find(
       { _id: { $in: ids } },
-      'firstName lastName' 
+      'firstName lastName'
     ).lean();
   }
-  async pushStudentIds(parentId: string, studentIds: string[]){
-    const updated= await this.parentModel.findByIdAndUpdate(parentId,{$addToSet:{studentIds:{$each:studentIds.map(id=>new Types.ObjectId(id))}}},{new:true});
-    if(!updated) throw new NotFoundException("Parent Not found with this id")
+  async pushStudentIds(parentId: string, studentIds: string[]) {
+    const updated = await this.parentModel.findByIdAndUpdate(parentId, { $addToSet: { studentIds: { $each: studentIds.map(id => new Types.ObjectId(id)) } } }, { new: true });
+    if (!updated) throw new NotFoundException("Parent Not found with this id")
     return updated
   }
-   async findByMultipleFields(criteria: ParentMatchCriteria): Promise<Parent | null> {
+  async findByMultipleFields(criteria: ParentMatchCriteria): Promise<Parent | null> {
     return await this.parentModel.findOne(criteria);
   }
 }

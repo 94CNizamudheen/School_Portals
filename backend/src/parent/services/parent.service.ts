@@ -1,9 +1,9 @@
 
 
-import { Injectable, NotFoundException, ForbiddenException, Inject, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Inject, Logger, BadRequestException } from '@nestjs/common';
 import { ParentRepository } from '../repositories/parent.repository';
 import { CreateParentDto, } from '../dtos/create-parent.dto';
-import { UpdateParentDto } from '../dtos/update-parent.dto';
+
 import { IStudentRepository } from 'src/student/repositories/interfaces/student-repositories.interface';
 import { MailService } from 'src/mailer/services/mail.service';
 import { SendStudentLoginDetailsDto } from 'src/mailer/dtos/send.mail.dto';
@@ -12,6 +12,7 @@ import { studentLoginTemplate } from 'src/mailer/utils/templates/student.login.t
 import { IParentRepository } from '../repositories/interfaces/parent.repository.interface';
 import { Parent } from '../entities/parent.schema';
 import { IAdmissionRepository } from 'src/admission/repositories/interfaces/admission.repositoriy.interface';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class ParentService {
@@ -71,24 +72,58 @@ export class ParentService {
   }
 
   async findOrCreateParent(dto: CreateParentDto) {
-    const admission = await this.admissionRepo.findById(dto.admissionId);
+    if (!dto.admissionIds || dto.admissionIds.length === 0) {
+      throw new BadRequestException('admissionIds is required');
+    }
+    const admission = await this.admissionRepo.findById(dto.admissionIds?.[0]);
     if (!admission) throw new NotFoundException("Admission not found");
 
     let parent = await this.repo.findByMultipleFields({
       email: admission.email,
       mobileNumber: admission.mobileNumber,
       name: admission.parentName,
-      relationToStudent: admission.relationToStudent
     });
 
+    const newAdmissionIdStr = (admission._id as Types.ObjectId | string).toString();
+    const newStudentIdsStr = dto.studentIds ?? [];
+
     if (!parent) {
-      parent = await this.repo.createParent(dto, admission.toObject());
+      parent = await this.repo.createParent({
+        name: admission.parentName,
+        email: admission.email,
+        mobileNumber: admission.mobileNumber,
+        occupation: admission.parentOccupation,
+        admissionIds: [newAdmissionIdStr],
+        studentIds: newStudentIdsStr,
+        relations: [{ admissionId: newAdmissionIdStr, relationship: admission.relationToStudent }],
+      });
     } else {
-      await this.repo.pushStudentIds(parent._id as string, dto.studentIds ?? []);
+      // Update arrays without duplicates
+      const updatedAdmissionIds = new Set(parent.admissionIds.map(id => id.toString()));
+      updatedAdmissionIds.add(newAdmissionIdStr);
+
+      const updatedStudentIds = new Set(parent.studentIds.map(id => id.toString()));
+      newStudentIdsStr.forEach(id => updatedStudentIds.add(id));
+
+      const hasRelation = parent.relations.some(
+        r => r.admissionId.toString() === newAdmissionIdStr
+      );
+      if (!hasRelation) {
+        parent.relations.push({
+          admissionId: new Types.ObjectId(newAdmissionIdStr),
+          relationship: admission.relationToStudent,
+        });
+      }
+
+      parent.admissionIds = Array.from(updatedAdmissionIds).map(id => new Types.ObjectId(id));
+      parent.studentIds = Array.from(updatedStudentIds).map(id => new Types.ObjectId(id));
+
+      parent = await parent.save();
     }
 
     return parent;
   }
+
 
   async sendStudentLoginDetailsMail(dto: SendStudentLoginDetailsDto): Promise<boolean> {
     const { toEmail, studentIdentity, password } = dto;
@@ -109,7 +144,7 @@ export class ParentService {
     if (!parents || parents.length === 0) throw new NotFoundException("parents not found");
     return parents
   }
-  async findByEmail(email: string): Promise<Parent|null> {
+  async findByEmail(email: string): Promise<Parent | null> {
     if (!email) throw new ForbiddenException('please provide email')
     const parent = await this.repo.findByEmail(email);
     if (!parent) throw new NotFoundException('Parent not found');

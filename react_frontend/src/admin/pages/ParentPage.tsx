@@ -12,7 +12,7 @@ import { toast } from 'react-toastify';
 import { AxiosError, isAxiosError } from 'axios';
 import { CustomPagination } from '../../components/shared/CustomPagination';
 import { AssignChildrenModal } from '../components/AssignChildrenModal';
-import { fetchAllStudents } from '../../store/studentSlice';
+import { fetchAllStudents } from '../../store/studentThunks';
 import { assignParent } from '../../store/parentSlice';
 import StatusFilterWithSearch from '../../components/shared/filters';
 

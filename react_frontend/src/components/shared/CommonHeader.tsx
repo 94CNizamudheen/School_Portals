@@ -1,9 +1,13 @@
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Bell, HelpCircle, Lock, Menu, Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ChangePasswordModal from "../../student/components/StudentPasswordChange";
-import type { RootState } from "../../store/store";
+import type { AppDispatch, RootState } from "../../store/store";
+import { fetchStudentById } from "../../store/studentThunks";
+import { useNotification } from "../../context/notification/useNotification";
+import { fetchParentByEmail } from "../../store/parentSlice";
+import type { AxiosError } from "axios";
 
 
 interface Props {
@@ -13,7 +17,29 @@ const CommonHeader: React.FC<Props> = ({ onMenuClick }) => {
     const student = useSelector((state: RootState) => state.student.student);
     const teacher = useSelector((state: RootState) => state.teacher.teacher);
     const parent = useSelector((state: RootState) => state.parent.parent);
-    const role = useSelector((state: RootState) => state.auth.role);
+    const { role, userEmail, userId } = useSelector((state: RootState) => state.auth);
+    const dispatch = useDispatch<AppDispatch>()
+    const { showNotification } = useNotification()
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (role === "STUDENT" && userId) {
+                    await dispatch(fetchStudentById(userId));
+                } else if (role === "PARENT" && userEmail) {
+                    await dispatch(fetchParentByEmail(userEmail));
+                } else if (role === "TEACHER") {
+                    console.log("hello");
+                }
+            } catch (error) {
+                const err = error as AxiosError<{ message: string }>;
+                showNotification('error', { message: err.response?.data.message || "Something went wrong" });
+            }
+        };
+
+        fetchData();
+    }, [dispatch, role, userId, userEmail, showNotification]);
+
 
     let displayName: string | undefined = "";
     let profileImage: string | undefined = "";
@@ -25,11 +51,11 @@ const CommonHeader: React.FC<Props> = ({ onMenuClick }) => {
         displayName = `${teacher.firstName} ${teacher.lastName}`;
         profileImage = teacher.profileImage;
     } else if (role === "PARENT" && parent) {
-        console.log(" name",parent.name)
+        console.log(" name", parent.name)
         displayName = parent.name;
         profileImage = "/default-avatar.png";
     }
-    console.log("Display name",displayName)
+    console.log("Display name", displayName)
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isModalOpen, setModalOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -46,7 +72,7 @@ const CommonHeader: React.FC<Props> = ({ onMenuClick }) => {
 
     return (
         <header className="flex items-center justify-between px-4 lg:px-6 py-4 text-white"
-            >
+        >
             <button onClick={onMenuClick} className="lg:hidden p-2 rounded-lg hover:bg-white/10">
                 <Menu size={24} />
             </button>
