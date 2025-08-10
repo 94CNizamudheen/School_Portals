@@ -5,9 +5,8 @@ import AdminProtectedRoute from "./utils/protected/AdminProtection.tsx"
 import PrivateRoute from "./utils/protected/GuestPrivateRoute.tsx"
 import RouterErrorFallback from "./components/error/RouterErrorFallback.tsx"
 import StudentProtectRoute from "./utils/protected/StudentProtection.tsx"
-
-import StudentLayout from "./layouts/CommenLayout.tsx" 
-
+import ParentProtectRoute from "./utils/protected/ParentProtection.tsx"
+import CommonLayout from "./layouts/CommenLayout.tsx"
 
 const Home = lazy(() => import("./pages/Home.tsx"))
 const PortalsPage = lazy(() => import("./pages/PortalsPage.tsx"))
@@ -31,7 +30,8 @@ const ForgetPassword = lazy(() => import('./pages/ForgotPasswordPage.tsx'))
 const TeacherApplicationForm= lazy(()=>import('./pages/TeacherApplication.tsx'))
 const TeacherDetailsPage= lazy(()=>import("./admin/pages/TeacherDetailPage.tsx"))
 const StudentProfilePage= lazy(()=>import("./student/pages/StudentProfilePage.tsx"))
-const StudentDashboard = lazy(()=>import("./student/pages/StudentDashboard.tsx")) 
+const StudentDashboard = lazy(()=>import("./student/pages/StudentDashboard.tsx")) ;
+const ParentDashboard = lazy(()=>import('./parent/pages/ParentDashboardPage.tsx'))
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home />, errorElement: <RouterErrorFallback /> },
@@ -95,7 +95,7 @@ export const router = createBrowserRouter([
     path:'/student',
     element:(
       <StudentProtectRoute allowedRoles={['STUDENT']} >
-        <StudentLayout/>
+        <CommonLayout/>
       </StudentProtectRoute>
     ),
      errorElement: <RouterErrorFallback />,
@@ -103,6 +103,20 @@ export const router = createBrowserRouter([
       {path:'dashboard',element:<StudentDashboard/>},
       {path:'profile',element:<StudentProfilePage/>}
      ]
+  },
+  {
+    path:'/parent',
+    element:(
+      <ParentProtectRoute allowedRoles={["PARENT"]}>
+        <CommonLayout/>
+      </ParentProtectRoute>
+    ),
+    errorElement:<RouterErrorFallback/>,
+    children:[
+    {path:'dashboard',element:<ParentDashboard/>},
+    // {path:'profile',element}
+
+    ]
   },
 
   { path: "*", element: <NotFound /> },

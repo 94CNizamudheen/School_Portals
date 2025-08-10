@@ -39,7 +39,7 @@ const NotFound = () => {
       </motion.div>
 
       <motion.img
-        src="https://illustrations.popsy.co/gray/astronaut-floating.svg"
+        src="/public/images/Adobe Express - file.png"
         alt="Lost Astronaut"
         className="mt-10 w-72"
         initial={{ y: -20 }}

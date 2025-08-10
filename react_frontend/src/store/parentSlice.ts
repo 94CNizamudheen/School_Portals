@@ -22,7 +22,7 @@ export interface Parent {
 
 interface ParentState {
     parents: Parent[];
-    parent:Parent|null;
+    parent: Parent | null;
     loading: boolean;
     error: string | null;
 }
@@ -30,10 +30,10 @@ export interface Child {
     _id: string;
     firstName: string;
     lastName: string;
-    
+
 }
 
-const initial: ParentState = { parents: [], loading: false, error: null ,parent:null};
+const initial: ParentState = { parents: [],parent: null , loading: false, error: null, };
 
 
 export const fetchChildrenOfParent = createAsyncThunk(
@@ -55,7 +55,7 @@ export const fetchParents = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const res = await API.get(`/parents`,);
-            console.log('parents data ',res.data)
+            console.log('parents data ', res.data)
             return res.data as Parent[];
         } catch (err) {
             const e = err as AxiosError<{ message: string }>;
@@ -123,6 +123,20 @@ export const assignParent = createAsyncThunk(
     }
 );
 
+export const fetchParentByEmail = createAsyncThunk(
+    'parent/fetchByEmail',
+    async (email: string, { rejectWithValue }) => {
+        try {
+            const response = await API.get(`/parents/find-by-email/${email}`);
+            console.log("response from fetch parent by id",response)
+            return response.data
+        } catch (err) {
+            const error = err as AxiosError<{ message: string }>
+            return rejectWithValue(error.response?.data.message || 'failed to fetch parent')
+        }
+
+    }
+)
 
 const slice = createSlice({
     name: 'parent',
@@ -153,6 +167,18 @@ const slice = createSlice({
                 s.parents = s.parents.filter(p => p._id !== a.payload);
             })
             .addCase(deleteParent.rejected, (s, a) => {
+                s.error = a.payload as string;
+            })
+            .addCase(fetchParentByEmail.pending, (s) => {
+                s.loading = true;
+                s.error = null;
+            })
+            .addCase(fetchParentByEmail.fulfilled, (s, a) => {
+                s.loading = false;
+                s.parent = a.payload;
+            })
+            .addCase(fetchParentByEmail.rejected, (s, a) => {
+                s.loading = false;
                 s.error = a.payload as string;
             })
     }

@@ -10,9 +10,10 @@ import type{ RootState } from "../../store/store";
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  bgColor :string
 }
 
-const CommonSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+const CommonSidebar: React.FC<SidebarProps> = ({ isOpen, onClose ,bgColor }) => {
   const location = useLocation();
   const role = useSelector((state: RootState) => state.auth.role);
   const tokenKey = 
@@ -21,15 +22,16 @@ const CommonSidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   role === "PARENT"  ? "PARENTtoken" :
   "ADMINtoken"; 
 
-  const navItems = role ? navConfig[role] || [] : [];
+  const navItems = role ? navConfig[role.toLowerCase()] || [] : [];
 
   const isActive = (route: string) => location.pathname === route;
 
   return (
     <aside
-      className={`fixed top-2 left-2 h-[95vh] w-64 bg-[#2c1c5b] text-white transform transition-transform z-40
+      className={`fixed top-2 left-2 h-[95vh] w-64 text-white transform transition-transform z-40
         ${isOpen ? "translate-x-0" : "-translate-x-full"} 
         lg:translate-x-0 rounded-3xl shadow-2xl`}
+      style={{ backgroundColor: bgColor }}
     >
       <div className="p-6 flex items-center space-x-3">
         <div className="w-6 h-6 rounded-full bg-gradient-to-br from-red-500 to-blue-500" />

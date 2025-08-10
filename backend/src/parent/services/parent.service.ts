@@ -109,4 +109,11 @@ export class ParentService {
     if (!parents || parents.length === 0) throw new NotFoundException("parents not found");
     return parents
   }
+  async findByEmail(email: string): Promise<Parent|null> {
+    if (!email) throw new ForbiddenException('please provide email')
+    const parent = await this.repo.findByEmail(email);
+    if (!parent) throw new NotFoundException('Parent not found');
+    return parent
+  }
+
 }

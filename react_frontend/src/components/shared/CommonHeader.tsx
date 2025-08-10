@@ -9,17 +9,14 @@ import type { RootState } from "../../store/store";
 interface Props {
     onMenuClick: () => void;
 }
-
 const CommonHeader: React.FC<Props> = ({ onMenuClick }) => {
     const student = useSelector((state: RootState) => state.student.student);
     const teacher = useSelector((state: RootState) => state.teacher.teacher);
     const parent = useSelector((state: RootState) => state.parent.parent);
     const role = useSelector((state: RootState) => state.auth.role);
 
-    
-
-    let displayName :string|undefined = "";
-    let profileImage:string|undefined = "";
+    let displayName: string | undefined = "";
+    let profileImage: string | undefined = "";
 
     if (role === "STUDENT" && student) {
         displayName = `${student.firstName} ${student.lastName}`;
@@ -28,10 +25,11 @@ const CommonHeader: React.FC<Props> = ({ onMenuClick }) => {
         displayName = `${teacher.firstName} ${teacher.lastName}`;
         profileImage = teacher.profileImage;
     } else if (role === "PARENT" && parent) {
+        console.log(" name",parent.name)
         displayName = parent.name;
         profileImage = "/default-avatar.png";
     }
-
+    console.log("Display name",displayName)
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isModalOpen, setModalOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -47,14 +45,15 @@ const CommonHeader: React.FC<Props> = ({ onMenuClick }) => {
     }, []);
 
     return (
-        <header className="flex items-center justify-between px-4 lg:px-6 py-4 text-white">
+        <header className="flex items-center justify-between px-4 lg:px-6 py-4 text-white"
+            >
             <button onClick={onMenuClick} className="lg:hidden p-2 rounded-lg hover:bg-white/10">
                 <Menu size={24} />
             </button>
 
             <div className="flex items-center space-x-3 ml-auto">
                 <div className="relative">
-                    <button className="w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                    <button className="w-11 h-11 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 text-gray-700 hover:text-gray-900">
                         <Bell size={20} />
                     </button>
                 </div>
@@ -62,12 +61,12 @@ const CommonHeader: React.FC<Props> = ({ onMenuClick }) => {
                 <div className="relative" ref={dropdownRef}>
                     <button
                         onClick={() => setDropdownOpen(!dropdownOpen)}
-                        className="w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shadow-lg"
+                        className={`w-11 h-11 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 text-gray-700 hover:text-gray-900 ${dropdownOpen ? 'ring-2 ring-white/50 scale-105' : ''}`}
                     >
                         <Settings size={20} />
                     </button>
                     {dropdownOpen && (
-                        <div className="absolute right-0 mt-3 w-56 rounded-t-2xl bg-white shadow-xl">
+                        <div className="absolute right-0 mt-3 w-56 rounded-t-2xl bg-white shadow-xl ring-1 ring-black/10 z-50" style={{ minWidth: "13rem" }}>
                             <div className="px-4 py-3 border-b border-gray-100">
                                 <div className="flex items-center space-x-3">
                                     <img className="w-10 h-10 rounded-full" src={profileImage || "/default-avatar.png"} />
@@ -102,7 +101,7 @@ const CommonHeader: React.FC<Props> = ({ onMenuClick }) => {
                     </div>
                     <img
                         className="w-11 h-11 rounded-full border-2 border-white/20"
-                        src={profileImage|| "/default-avatar.png"}
+                        src={profileImage || "/public/images/parent.png"}
                     />
                 </div>
 

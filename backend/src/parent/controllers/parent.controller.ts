@@ -49,4 +49,11 @@ export class ParentController {
   findChildrens(@Param('id') id: string) {
     return this.parentService.findChildrens(id);
   }
+
+  
+  @Roles(Role.PARENT,Role.ADMIN)
+  @Get("find-by-email/:email")
+  findByemail(@Param("email")email:string){
+    return this.parentService.findByEmail(email)
+  }
 }
