@@ -146,7 +146,17 @@ export const getLoginValidationSchema = (role: string) =>
 
 export const step1Schema = Yup.object({
   email: Yup.string().email('Invalid email').required('Required'),
-  identity: Yup.string().required('Required'),
+  identity: Yup.string().test(
+    'identity-required-for-student',
+    'Required',
+    function (value) {
+      const role = this.options.context?.role;
+      if (role === 'STUDENT') {
+        return !!value; 
+      }
+      return true;
+    }
+  ),
 });
 
 export const passwordSchema = Yup.object({

@@ -14,10 +14,12 @@ import { IAuthRepository } from '../repositories/interfaces/auth-repository.inte
 import { IStudentRepository } from 'src/student/repositories/interfaces/student-repositories.interface';
 import { IParentRepository } from 'src/parent/repositories/interfaces/parent.repository.interface';
 import { studentOtpTemplate } from 'src/mailer/utils/templates/studentPasswordChangeOtp';
+
 import { MailService } from 'src/mailer/services/mail.service';
 import { studentForgotTemplate } from 'src/mailer/utils/templates/student.forgot.password.template';
 import * as bcrypt from 'bcrypt'
 import { generateRandomPassword } from 'src/utils/generate.random.password';
+import { userOtpTemplate } from 'src/mailer/utils/templates/userOtpTemplate ';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name)
@@ -119,6 +121,16 @@ export class AuthService {
 
     const code = await this.repo.createOtp(email);
     this.logger.log(`OTP sent to ${email}: ${code}`);
+
+    const subject = "Otp for change password";
+    const text = `Dear ${user.name} `;
+    const html = userOtpTemplate(user.name, code)
+    try {
+      await this.mailService.sendMail({ to: user.email, subject, text, html })
+    } catch (error) {
+      this.logger.error(`Failed to send  email to ${user.email}`)
+      error.stack || error.messag
+    }
   }
 
   async verifyOtp(dto: VerifyOtpDto): Promise<boolean> {
@@ -193,13 +205,13 @@ export class AuthService {
     if (!student) throw new NotFoundException('Student Not found');
     const tempPassword = generateRandomPassword();
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
-    student.password=hashedPassword
+    student.password = hashedPassword
     await this.studentRepo.saveStudent(student)
     const subject = "Student forgot password";
     const text = `Dear ${parent.name} `;
     const html = studentForgotTemplate(student.identity, student.firstName, tempPassword)
-    await this.mailService.sendMail({to:dto.email,subject,text,html})
-    
+    await this.mailService.sendMail({ to: dto.email, subject, text, html })
+
     return { message: "Temporary password sent to parent's email." };
   }
 }
