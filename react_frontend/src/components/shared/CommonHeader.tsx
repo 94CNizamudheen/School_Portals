@@ -2,12 +2,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Bell, HelpCircle, Lock, Menu, Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import ChangePasswordModal from "../../student/components/StudentPasswordChange";
+import ChangePasswordModal from "../ChangePasswordModal";
 import type { AppDispatch, RootState } from "../../store/store";
 import { fetchStudentById } from "../../store/studentThunks";
 import { useNotification } from "../../context/notification/useNotification";
 import { fetchParentByEmail } from "../../store/parentSlice";
 import type { AxiosError } from "axios";
+import { findTeacherByEmail } from "../../store/teacherThunks";
 
 
 interface Props {
@@ -29,7 +30,7 @@ const CommonHeader: React.FC<Props> = ({ onMenuClick }) => {
                 } else if (role === "PARENT" && userEmail) {
                     await dispatch(fetchParentByEmail(userEmail));
                 } else if (role === "TEACHER") {
-                    console.log("hello");
+                    await dispatch(findTeacherByEmail(userEmail as string)).unwrap()
                 }
             } catch (error) {
                 const err = error as AxiosError<{ message: string }>;
@@ -48,10 +49,11 @@ const CommonHeader: React.FC<Props> = ({ onMenuClick }) => {
         displayName = `${student.firstName} ${student.lastName}`;
         profileImage = student.profilePicture;
     } else if (role === "TEACHER" && teacher) {
+        console.log(" name", teacher.firstName)
         displayName = `${teacher.firstName} ${teacher.lastName}`;
         profileImage = teacher.profileImage;
     } else if (role === "PARENT" && parent) {
-        console.log(" name", parent.name)
+
         displayName = parent.name;
         profileImage = "/default-avatar.png";
     }

@@ -7,6 +7,7 @@ import RouterErrorFallback from "./components/error/RouterErrorFallback.tsx"
 import StudentProtectRoute from "./utils/protected/StudentProtection.tsx"
 import ParentProtectRoute from "./utils/protected/ParentProtection.tsx"
 import CommonLayout from "./layouts/CommenLayout.tsx"
+import TeacherProtectRoute from "./utils/protected/TeacherProtection.tsx"
 
 const Home = lazy(() => import("./pages/Home.tsx"))
 const PortalsPage = lazy(() => import("./pages/PortalsPage.tsx"))
@@ -31,8 +32,11 @@ const TeacherApplicationForm= lazy(()=>import('./pages/TeacherApplication.tsx'))
 const TeacherDetailsPage= lazy(()=>import("./admin/pages/TeacherDetailPage.tsx"))
 const StudentProfilePage= lazy(()=>import("./student/pages/StudentProfilePage.tsx"))
 const StudentDashboard = lazy(()=>import("./student/pages/StudentDashboard.tsx")) ;
-const ParentDashboard = lazy(()=>import('./parent/pages/ParentDashboardPage.tsx'))
-const StudentParentProfile= lazy(()=>import('./parent/pages/StudentParentProfile.tsx'))
+const ParentDashboard = lazy(()=>import('./parent/pages/ParentDashboardPage.tsx'));
+const StudentParentProfile= lazy(()=>import('./parent/pages/StudentParentProfile.tsx'));
+const TeacherDashboard= lazy(()=>import('./teacher/pages/TeacherrDashboard.tsx'));
+const TeacherProfile = lazy(()=>import('./teacher/pages/TeacherProfile.tsx'))
+
 export const router = createBrowserRouter([
   { path: "/", element: <Home />, errorElement: <RouterErrorFallback /> },
   { path: "/portals", element: <PortalsPage /> },
@@ -118,6 +122,20 @@ export const router = createBrowserRouter([
 
     ]
   },
+  {
+    path:'/teacher',
+    element:(
+      <TeacherProtectRoute allowedRoles={["TEACHER"]} >
+        <CommonLayout/>
+      </TeacherProtectRoute>
+    ),
+    errorElement:<RouterErrorFallback/>,
+    children:[
+      {path:'dashboard',element:<TeacherDashboard/>},
+      {path:'profile',element:<TeacherProfile/>}
+    ]
+  },
+
 
   { path: "*", element: <NotFound /> },
 ])

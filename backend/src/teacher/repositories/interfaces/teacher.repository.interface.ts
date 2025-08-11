@@ -10,7 +10,7 @@ export interface ITeacherRepository{
     findOneEmailOrMobile(mobileNumber:string,email:string):Promise<Teacher|null>
     findAll():Promise<Teacher[]|null>;
     // createTeacher(data:Partial<Teacher>):Promise<Teacher>;
-    // updateTeacher(id:string,data:Partial<Teacher>):Promise<Teacher|null>;
+    updateTeacher(id:string,data:Partial<Teacher>):Promise<Teacher|null>;
     deleteTeacher(id:string):Promise<void>
     saveTeacher(teacher:Teacher):Promise<Teacher>
 

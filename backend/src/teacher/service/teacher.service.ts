@@ -8,6 +8,7 @@ import { ITeacherRepository } from '../repositories/interfaces/teacher.repositor
 import { uploadDocument } from 'src/utils/upload.document';
 import { rejectTeacherTemplate } from 'src/mailer/utils/templates/teacher.reject.mail.template';
 import { MailService } from 'src/mailer/services/mail.service';
+import { Teacher } from '../entities/teacher.schema';
 
 @Injectable()
 export class TeacherService {
@@ -74,21 +75,25 @@ export class TeacherService {
   async findAll() {
     return this.repo.findAll();
   }
+  async findByEmail(email:string):Promise<Teacher|null>{
+    if(!email) throw new ForbiddenException('Email not provided');
+    return await this.repo.findByEmail(email)
+  }
 
-  // async findOne(id: string) {
-  //   const teacher = await this.repo.findById(id);
-  //   if (!teacher) throw new NotFoundException('Teacher not found');
-  //   return teacher;
-  // }
+  async findOne(id: string) {
+    const teacher = await this.repo.findById(id);
+    if (!teacher) throw new NotFoundException('Teacher not found');
+    return teacher;
+  }
 
-  // async update(id: string, dto: UpdateTeacherDto) {
-  //   const existing = await this.repo.findByEmail(dto.email);
-  //   if (existing && (existing._id as string).toString() !== id) {
-  //     throw new ForbiddenException('Email already exists');
-  //   }
+  async update(id: string, dto: UpdateTeacherDto) {
+    const existing = await this.repo.findByEmail(dto.email);
+    if (existing && (existing._id as string).toString() !== id) {
+      throw new ForbiddenException('Email already exists');
+    }
 
-  //   return this.repo.updateTeacher(id, dto);
-  // }
+    return this.repo.updateTeacher(id,dto );
+  }
 
   async delete(id: string) {
     const teacher = await this.repo.findById(id);

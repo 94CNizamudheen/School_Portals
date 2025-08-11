@@ -1,60 +1,67 @@
 
 
-import { Put,Post,Get,Body,Param,Controller,UseGuards,Delete, UseInterceptors, UploadedFile, UploadedFiles, Logger, Patch } from "@nestjs/common";
+import { Put, Post, Get, Body, Param, Controller, UseGuards, Delete, UseInterceptors, UploadedFile, UploadedFiles, Logger, Patch } from "@nestjs/common";
 import { TeacherService } from "../service/teacher.service";
-import { CreateTeacherDto } from "../dtos/create-teacher.dto"; 
+import { CreateTeacherDto } from "../dtos/create-teacher.dto";
 import { UpdateTeacherDto } from "../dtos/update-teacher.dto";
 import { Roles } from "src/auth/roles.decorator";
-import { Role } from "src/auth/dtos/register.dtos"; 
+import { Role } from "src/auth/dtos/register.dtos";
 import { AnyFilesInterceptor, FileInterceptor } from "@nestjs/platform-express";
 import { AuthGuard } from "@nestjs/passport";
 
 @Controller("teachers")
 @UseGuards(AuthGuard('jwt'))
-export class TeacherController{
-    private readonly logger= new Logger(TeacherController.name)
-    constructor(private readonly teacherService:TeacherService){}
+export class TeacherController {
+    private readonly logger = new Logger(TeacherController.name)
+    constructor(private readonly teacherService: TeacherService) { }
 
-    
+
     @Post('apply')
     @UseInterceptors(AnyFilesInterceptor())
-    aplly(@UploadedFiles()files:Array<Express.Multer.File>, @Body()body:CreateTeacherDto){
-        this.logger.log("files ",files);
-        this.logger.log("body ",body);
-        return this.teacherService.apply(body,files)
+    aplly(@UploadedFiles() files: Array<Express.Multer.File>, @Body() body: CreateTeacherDto) {
+        this.logger.log("files ", files);
+        this.logger.log("body ", body);
+        return this.teacherService.apply(body, files)
     };
     @Patch('verify-and-create/:teacherId')
     @Roles(Role.ADMIN)
-    verrifyAndCreate(@Param('teacherId')teacherId:string){
+    verrifyAndCreate(@Param('teacherId') teacherId: string) {
         return this.teacherService.verifyAndCreate(teacherId);
     }
     @Patch('reject-application/:teacherId')
     @Roles(Role.ADMIN)
-    rejectApplivation(@Param('teacherId')teacherId:string){
+    rejectApplivation(@Param('teacherId') teacherId: string) {
         return this.teacherService.rejectApplication(teacherId);
     }
 
 
-    @Roles(Role.ADMIN,Role.TEACHER)
+    @Roles(Role.ADMIN, Role.TEACHER)
     @Get()
-    findAll(){
+    findAll() {
         return this.teacherService.findAll();
     }
 
-    // @Roles(Role.TEACHER,Role.ADMIN)
-    // @Get(':id')
-    // findOne(@Param('id')id:string){
-    //     return this.teacherService.findOne(id);
-    // };
+    @Roles(Role.TEACHER, Role.ADMIN)
+    @Get(':id')
+    findOne(@Param('id') id: string) {
+        this.logger.debug("teacher id", id)
+        return this.teacherService.findOne(id);
+    };
+    @Roles(Role.TEACHER, Role.ADMIN)
+    @Get('find-by-email/:email')
+    findByEmail(@Param('email') email: string) {
+        this.logger.debug("teacher email", email)
+        return this.teacherService.findByEmail(email);
+    };
 
-    // @Roles(Role.ADMIN)
-    // @Put(":id")
-    // update(@Param('id')id:string,@Body()update_dto:UpdateTeacherDto){
-    //     return this.teacherService.update(id,update_dto)
-    // }
+    @Roles(Role.ADMIN,Role.TEACHER)
+    @Patch(":id")
+    update(@Param('id')id:string,@Body()update_dto:UpdateTeacherDto){
+        return this.teacherService.update(id,update_dto)
+    }
     @Roles(Role.ADMIN)
     @Delete(":id")
-    delete(@Param('id')id:string){
+    delete(@Param('id') id: string) {
         return this.teacherService.delete(id);
     }
 

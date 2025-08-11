@@ -70,4 +70,7 @@ export class TeacherRepository implements ITeacherRepository  {
         $or:[{mobileNumber},{email}]
       })
   }
+  async updateTeacher(id: string, data: Partial<Teacher>): Promise<Teacher | null> {
+      return this.teacherModel.findByIdAndUpdate(id,data,{new:true}).exec()
+  }
 }

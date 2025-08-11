@@ -3,6 +3,7 @@ import { AxiosError } from "axios";
 
 import { toast } from "react-toastify";
 import API from "../axios.config";
+import type { Teacher } from "@/types/teacher.types";
 
 
 export const fetchTeachers = createAsyncThunk(
@@ -31,15 +32,15 @@ export const verifyTeacher = createAsyncThunk(
 
     }
 );
-export const rejectApplication= createAsyncThunk(
+export const rejectApplication = createAsyncThunk(
     'teacher/rejectApplication',
-    async(teacherId:string,{rejectWithValue})=>{
+    async (teacherId: string, { rejectWithValue }) => {
         try {
-            const response= await API.patch(`/teachers/reject-application/${teacherId}`);
-            console.log("response data from reject application",response.data)
+            const response = await API.patch(`/teachers/reject-application/${teacherId}`);
+            console.log("response data from reject application", response.data)
             return response.data;
         } catch (error) {
-            const err= error as AxiosError<{message:string}>;
+            const err = error as AxiosError<{ message: string }>;
             return rejectWithValue(err.response?.data.message)
         }
     }
@@ -73,5 +74,41 @@ export const deleteTeacher = createAsyncThunk(
         }
 
     }
+);
 
+export const findTeacherByEmail = createAsyncThunk(
+    'teacher/findTeacherByEmail',
+    async (email: string, { rejectWithValue }) => {
+        try {
+            const response = await API.get(`/teachers/find-by-email/${email}`)
+            console.log("response fetch teacher by  email", response.data)
+            return response.data
+        } catch (error) {
+            const err = error as AxiosError<{ message: string }>
+            return rejectWithValue(err.response?.data.message)
+        }
+
+    }
+);
+export const updateTeacher = createAsyncThunk(
+    'teacher/updateTeacher',
+    async ({ id, updates }: { id: string; updates: Partial<Record<keyof Teacher, unknown>> }, { rejectWithValue }) => {
+        const formData = new FormData()
+        Object.entries(updates).forEach(([key, val]) => {
+            if (val !== undefined && val !== null) {
+                if (val instanceof Blob) {
+                    formData.append(key, val)
+                } else {
+                    formData.append(key, String(val))
+                }
+            }
+        });
+        try {
+            const response = await API.patch(`/teachers/${id}`, formData)
+            return response.data
+        } catch (error) {
+            const err = error as AxiosError<{ message: string }>
+            return rejectWithValue(err.response?.data.message)
+        }
+    }
 )

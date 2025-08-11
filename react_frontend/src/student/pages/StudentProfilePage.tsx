@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { FileUser, Hospital } from 'lucide-react';
 import { useState } from 'react';
-import ChangePasswordModal from '../components/StudentPasswordChange';
+import ChangePasswordModal from '../../components/ChangePasswordModal';
 
  
 const StudentProfilePage = () => {

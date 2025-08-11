@@ -23,9 +23,7 @@ const CommonSidebar: React.FC<SidebarProps> = ({ isOpen, onClose ,bgColor }) => 
   "ADMINtoken"; 
 
   const navItems = role ? navConfig[role.toLowerCase()] || [] : [];
-
   const isActive = (route: string) => location.pathname === route;
-
   return (
     <aside
       className={`fixed top-2 left-2 h-[95vh] w-64 text-white transform transition-transform z-40

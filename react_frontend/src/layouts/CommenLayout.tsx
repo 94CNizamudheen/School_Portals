@@ -22,7 +22,7 @@ const CommonLayout = () => {
     mainBg = "bg-[#353D61]";
   } else if (role === "TEACHER") {
     sidebarBg = "#353D61";
-    mainBg = "bg-[#353D61]";
+    mainBg = "bg-[#090625]";
   }
 
    return (
