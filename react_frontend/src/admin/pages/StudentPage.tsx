@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import StudentStatsCards from '../../admin/components/StudentsStateCards'
 import StudentTable from '../../admin/components/StudentTable'
 import type { RootState, AppDispatch } from '../../store/store'
-import { fetchAllStudents } from '../../store/studentSlice';
+import { fetchAllStudents } from '../../store/studentThunks' 
 import { useNotification } from '../../context/notification/useNotification'
 
 const StudentsPage = () => {

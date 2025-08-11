@@ -2,7 +2,7 @@ import React, { useEffect, useState,  } from 'react';
 import type { ChangeEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllStudents, updateStudent } from '../../store/studentSlice';
+import { fetchAllStudents,updateStudent } from '../../store/studentThunks'; 
 import { InfoCard } from '../components/Infocard';
 //  import { EditModal } from '../components/EditInfoModal';
 import type { RootState, AppDispatch } from '../../store/store';
@@ -54,7 +54,7 @@ const StudentDetailPage: React.FC = () => {
 
   const handleToggleStatus = () => {
     if (student) {
-      dispatch(updateStudent({ id: student._id, updates: { isActive: !student.isActive } }));
+      dispatch(updateStudent({ id: student._id as string, updates: { isActive: !student.isActive } }));
     }
   };
 
@@ -65,7 +65,7 @@ const StudentDetailPage: React.FC = () => {
       reader.onloadend = () => {
         const base64 = reader.result as string;
         setPreviewImage(base64);
-        dispatch(updateStudent({ id: student._id, updates: { profilePicture: base64 } }));
+        dispatch(updateStudent({ id: student._id as string, updates: { profilePicture: base64 } }));
       };
       reader.readAsDataURL(file);
     }
@@ -183,7 +183,7 @@ const StudentDetailPage: React.FC = () => {
             title="Academic Information"
             data={[
               { label: 'Roll Number', value: student.rollNumber },
-              { label: 'Grade', value: student.class },
+              { label: 'Class', value: student.classLevel },
               { label: 'Previous School', value: student.previousSchool },
               { label: 'Enrollment Date', value: formatDate(student.enrollmentDate) },
             ]}

@@ -21,26 +21,28 @@ const StudentParentProfile = () => {
 
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
 
-  // ✅ Only set initial selection when data is available
   useEffect(() => {
     if (studentsData.length > 0 && !selectedStudentId) {
       setSelectedStudentId(studentsData[0]?._id ?? null);
     }
   }, [studentsData, selectedStudentId]);
 
+
   console.log("Parent in parent student info", parent);
+
+
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const selectedStudent = studentsData.find(
-    (student) => student._id === selectedStudentId
-  );
-
+  const selectedStudent = studentsData.find((student) => student._id === selectedStudentId);
+  const selectedRelation = parent?.relations?.find((rel) => rel.admissionId === selectedStudent?.admissionId);
+    console.log("Selected student", selectedStudent);
   const formatDate = (dateString: string) => {
     return dateString
       ? new Date(dateString).toLocaleDateString("en-GB")
       : "";
   };
+
 
   return (
     <div className="min-h-screen  p-6">
@@ -136,8 +138,11 @@ const StudentParentProfile = () => {
               <h3 className="text-white text-lg font-semibold mb-4">{parent?.name}</h3>
               <div className="text-white/70 text-sm space-y-2">
                 <div>
-                  <div className="font-medium text-white/90">Relation:  {parent?.relationship}</div>
+                  <div className="font-medium text-white/90">
+                    Relation: {selectedRelation ? selectedRelation.relationship : "N/A"}
+                  </div>
                 </div>
+
 
                 <div className="mt-3">
                   <div className="font-medium text-white/50 text-xs mb-1">Mobile:</div>
@@ -162,14 +167,13 @@ const StudentParentProfile = () => {
 
           {/* Right Column - Student Details */}
           <div className="flex-1 space-y-6">
-            {/* General Information */}
 
             {/* General Information */}
             <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-white/10">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-white text-lg font-semibold flex items-center space-x-2">
-                    <FileUser/>
+                    <FileUser />
                     <span>General Information</span>
                   </h3>
                   <button className="bg-red-600/80 hover:bg-red-600 text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors flex items-center space-x-2">
@@ -198,7 +202,7 @@ const StudentParentProfile = () => {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-white text-lg font-semibold flex items-center space-x-2">
-                    <Hospital/>
+                    <Hospital />
                     <span>Medical Information</span>
                   </h3>
                   <button className="bg-red-600/80 hover:bg-red-600 text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors flex items-center space-x-2">

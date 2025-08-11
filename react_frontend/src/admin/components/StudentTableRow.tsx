@@ -40,7 +40,7 @@ const StudentTableRow: React.FC<StudentTableRowProps> = ({ student }) => {
         {student.rollNumber || 'Not assigned'}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        {student.grade && student.class ? `${student.grade} - ${student.class}` : 'Not specified'}
+        {student.classLevel && student.division ? `${student.classLevel} - ${student.division}` : 'Not specified'}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
         {student.mobileNumber}

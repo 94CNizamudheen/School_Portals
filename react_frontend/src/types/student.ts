@@ -58,4 +58,5 @@ export interface Student {
   parentIds?: string[]; 
   cast:string
   identity?:string
+  admissionId?:string
 }

@@ -100,9 +100,7 @@ export class ParentRepository implements IParentRepository {
 
   async findChildrens(ids: Types.ObjectId[]) {
     return this.studentModel.find(
-      { _id: { $in: ids } },
-      'firstName lastName'
-    ).lean();
+      { _id: { $in: ids } } ).lean();
   }
   async pushStudentIds(parentId: string, studentIds: string[]) {
     const updated = await this.parentModel.findByIdAndUpdate(parentId, { $addToSet: { studentIds: { $each: studentIds.map(id => new Types.ObjectId(id)) } } }, { new: true });

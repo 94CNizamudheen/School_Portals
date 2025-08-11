@@ -1,10 +1,10 @@
 
 
+import type { Student } from '../../types/student';
 import { Button } from '../../components/ui/button';
-import type { Child } from '../../store/parentSlice';
 interface Props {
     name: string;
-    childrenList:Child[];
+    childrenList:Student[];
     onClose: () => void;
 }
 
