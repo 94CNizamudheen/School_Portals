@@ -5,11 +5,20 @@ import { useEffect, useState } from 'react';
 import { ChevronDown, Edit, FileUser, Hospital } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../store/store';
-import { fetchChildrenOfParent } from '../../store/parentSlice';
+import { fetchChildrenOfParent, updateParent } from '../../store/parentSlice';
+import EditMedicalInfoModal from '../modals/EditMedicalnfoModal';
+import ParentEditModal from '../modals/EditParentModal';
+import { useNotification } from '../../context/notification/useNotification';
+import type { AxiosError } from 'axios';
+import ChangePasswordModal from '../../components/ChangePasswordModal';
 
 const StudentParentProfile = () => {
   const parent = useSelector((state: RootState) => state.parent.parent);
   const studentsData = useSelector((state: RootState) => state.parent.childrens);
+  const [isOpenMedicalinfoModal, setOpenMedicalinfoModal] = useState(false)
+  const [isOpenParentEditModal, setOpenParentEditModal] = useState(false)
+  const [isChangePasswordModalOpen,setChangePasswordModalOpen]= useState(false)
+  const { showNotification } = useNotification()
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -27,22 +36,27 @@ const StudentParentProfile = () => {
     }
   }, [studentsData, selectedStudentId]);
 
-
-  console.log("Parent in parent student info", parent);
-
-
-
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const selectedStudent = studentsData.find((student) => student._id === selectedStudentId);
   const selectedRelation = parent?.relations?.find((rel) => rel.admissionId === selectedStudent?.admissionId);
-    console.log("Selected student", selectedStudent);
+
   const formatDate = (dateString: string) => {
     return dateString
       ? new Date(dateString).toLocaleDateString("en-GB")
       : "";
   };
 
+  const handleSave = async (updates: { email?: string; mobileNumber?: string }) => {
+    try {
+      await dispatch(updateParent({ id: parent?._id as string, updates })).unwrap()
+      showNotification('success', { message: "Parent data updated" })
+      setOpenParentEditModal(false)
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>
+      showNotification('error', { message: err.response?.data.message })
+    }
+  };
 
   return (
     <div className="min-h-screen  p-6">
@@ -117,10 +131,6 @@ const StudentParentProfile = () => {
                 </h2>
 
                 <div className="space-y-2 text-white/70 text-sm">
-                  {/* <div className="flex justify-between">
-                    <span className="font-medium">AGE:</span>
-                    <span>{selectedStudent?.age}</span>
-                  </div> */}
                   <div className="flex justify-between">
                     <span className="font-medium">CLASS:</span>
                     <span>{selectedStudent?.classLevel ? selectedStudent.classLevel.split(' ')[1] : ''}</span>
@@ -155,10 +165,10 @@ const StudentParentProfile = () => {
               </div>
 
               <div className="flex space-x-2 mt-6">
-                <button className="flex-1 bg-emerald-600/80 hover:bg-emerald-600 text-white rounded-lg px-3 py-2 text-sm font-medium transition-colors">
+                <button onClick={() => setOpenParentEditModal(true)} className="flex-1 bg-emerald-600/80 hover:bg-emerald-600 text-white rounded-lg px-3 py-2 text-sm font-medium transition-colors">
                   Edit
                 </button>
-                <button className="flex-1 bg-orange-500/80 hover:bg-orange-500 text-white rounded-lg px-3 py-2 text-sm font-medium transition-colors">
+                <button onClick={()=>setChangePasswordModalOpen(true)} className="flex-1 bg-orange-500/80 hover:bg-orange-500 text-white rounded-lg px-3 py-2 text-sm font-medium transition-colors">
                   Change Password
                 </button>
               </div>
@@ -176,10 +186,10 @@ const StudentParentProfile = () => {
                     <FileUser />
                     <span>General Information</span>
                   </h3>
-                  <button className="bg-red-600/80 hover:bg-red-600 text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors flex items-center space-x-2">
+                  {/* <button className="bg-red-600/80 hover:bg-red-600 text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors flex items-center space-x-2">
                     <Edit className="w-4 h-4" />
                     <span>Edit</span>
-                  </button>
+                  </button> */}
                 </div>
 
                 <div className="bg-white/5 rounded-xl p-6 space-y-3 text-white text-sm">
@@ -187,8 +197,6 @@ const StudentParentProfile = () => {
                   <p><strong>DOB:</strong> {formatDate(selectedStudent?.dob as string)}</p>
                   <p><strong>Gender:</strong> {selectedStudent?.gender}</p>
                   <p><strong>Blood Group:</strong> {selectedStudent?.bloodGroup}</p>
-                  <p><strong>Parent Mobile:</strong> {parent?.mobileNumber}</p>
-                  <p><strong>Parent Email:</strong> {parent?.email}</p>
                   <p><strong>Nationality:</strong> {selectedStudent?.nationality}</p>
                   <p><strong>Religion:</strong> {selectedStudent?.religion}</p>
                   <p><strong>Cast:</strong> {selectedStudent?.cast}</p>
@@ -206,7 +214,7 @@ const StudentParentProfile = () => {
                     <span>Medical Information</span>
                   </h3>
                   <button className="bg-red-600/80 hover:bg-red-600 text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors flex items-center space-x-2">
-                    <Edit className="w-4 h-4" />
+                    <Edit onClick={() => setOpenMedicalinfoModal(true)} className="w-4 h-4" />
                     <span>Edit</span>
                   </button>
                 </div>
@@ -216,8 +224,27 @@ const StudentParentProfile = () => {
                 </div>
               </div>
             </div>
-
-
+            {isOpenMedicalinfoModal && selectedStudent && (
+              <EditMedicalInfoModal
+                isOpen={isOpenMedicalinfoModal}
+                onClose={() => setOpenMedicalinfoModal(false)}
+                studentId={selectedStudent._id as string}
+                initialData={selectedStudent.medicalInformation}
+              />
+            )}
+            {isOpenParentEditModal && (
+              <ParentEditModal
+                parent={parent}
+                isOpen={isOpenParentEditModal}
+                onClose={() => setOpenParentEditModal(false)}
+                onSave={handleSave}
+              />
+            )}
+            {isChangePasswordModalOpen&&(
+              <ChangePasswordModal
+              onClose={()=>setChangePasswordModalOpen(false)}
+              />
+            )}
 
           </div>
         </div>

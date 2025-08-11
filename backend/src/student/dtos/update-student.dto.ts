@@ -10,4 +10,5 @@ export class UpdateStudentDto {
   @IsOptional() @IsBoolean() isActive?:boolean;
   @IsOptional() @IsString() classLevel?: string;
   @IsOptional() @IsArray() @IsMongoId({ each: true }) parentIds?: string[];
+  @IsOptional() @IsString() medicalInformation?:string;
 }

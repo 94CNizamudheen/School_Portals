@@ -57,7 +57,6 @@ export class ParentRepository implements IParentRepository {
     };
     return this.parentModel.findByIdAndUpdate(id, payload, { new: true }).lean();
   }
-
   async updateUserEmail(profileId: string, newEmail: string) {
     const user = await this.userModel.findOne({ profileId: new Types.ObjectId(profileId) });
     if (user) {

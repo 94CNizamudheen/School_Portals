@@ -19,11 +19,11 @@ export class ParentController {
   //   return this.parentService.create(createParentDto);
   // }
 
-  // @Roles(Role.ADMIN)
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateParentDto: UpdateParentDto) {
-  //   return this.parentService.update(id, updateParentDto);
-  // }
+  @Roles(Role.ADMIN,Role.PARENT)
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateParentDto: UpdateParentDto) {
+    return this.parentService.update(id, updateParentDto);
+  }
 
   @Roles(Role.ADMIN,)
   @Get()

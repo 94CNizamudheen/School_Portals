@@ -32,9 +32,9 @@ export class StudentService {
   }
 
   async update(id: string, dto: UpdateStudentDto) {
-    const updated = await this.repo.updateStudent(id, dto);
-    if (!updated) throw new NotFoundException('Student not found');
-    return updated;
+    const student= await this.repo.findById(id);
+    if(!student) throw new NotFoundException('Student not found');
+    return await this.repo.updateStudent(id, dto);
   }
 
   async delete(id: string) {

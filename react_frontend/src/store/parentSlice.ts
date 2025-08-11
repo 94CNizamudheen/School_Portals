@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 import API from '../axios.config';
-import type { Student } from '@/types/student';
+import type { Student } from '../types/student';
+import { updateStudent } from './studentThunks';
 
 interface AssignParentPayload {
     parentId: string;
@@ -9,22 +10,22 @@ interface AssignParentPayload {
 }
 
 export interface Relation {
-  admissionId: string;
-  relationship: string;
+    admissionId: string;
+    relationship: string;
 }
 
 export interface Parent {
-  _id: string;
-  name: string;
-  email: string;
-  mobileNumber: string;
-  occupation?: string;
-  relationship?: string;
-  emergencyContactName?: string;
-  emergencyContactPhone?: string;
-  emergencyContactRelationship?: string;
-  studentIds?: string[];
-  relations: Relation[]; 
+    _id: string;
+    name: string;
+    email: string;
+    mobileNumber: string;
+    occupation?: string;
+    relationship?: string;
+    emergencyContactName?: string;
+    emergencyContactPhone?: string;
+    emergencyContactRelationship?: string;
+    studentIds?: string[];
+    relations: Relation[];
 }
 
 
@@ -33,16 +34,11 @@ interface ParentState {
     parent: Parent | null;
     loading: boolean;
     error: string | null;
-    childrens:Student[]
+    childrens: Student[]
 }
-// export interface Child {
-//     _id: string;
-//     firstName: string;
-//     lastName: string;
 
-// }
 
-const initial: ParentState = { parents: [],parent: null , loading: false, error: null, childrens:[]};
+const initial: ParentState = { parents: [], parent: null, loading: false, error: null, childrens: [] };
 
 
 export const fetchChildrenOfParent = createAsyncThunk(
@@ -50,7 +46,7 @@ export const fetchChildrenOfParent = createAsyncThunk(
     async (parentId: string, { rejectWithValue, }) => {
         try {
             const res = await API.get(`/parents/${parentId}/children`)
-            return res.data ;
+            return res.data;
 
         } catch (err) {
             const error = err as AxiosError<{ message: string }>;
@@ -88,15 +84,12 @@ export const addParent = createAsyncThunk(
     }
 );
 
-// Update parent
+
 export const updateParent = createAsyncThunk(
     'parent/update',
-    async (
-        { id, updates }: { id: string; updates: Partial<Parent> },
-        { rejectWithValue }
-    ) => {
+    async ({ id, updates }: { id: string; updates: Partial<Parent> }, { rejectWithValue }) => {
         try {
-            const res = await API.put(`/parents/${id}`, updates,);
+            const res = await API.patch(`/parents/${id}`, updates,);
             return res.data as Parent;
         } catch (err) {
             const e = err as AxiosError<{ message: string }>;
@@ -137,7 +130,7 @@ export const fetchParentByEmail = createAsyncThunk(
     async (email: string, { rejectWithValue }) => {
         try {
             const response = await API.get(`/parents/find-by-email/${email}`);
-            console.log("response from fetch parent by id",response)
+            console.log("response from fetch parent by id", response)
             return response.data
         } catch (err) {
             const error = err as AxiosError<{ message: string }>
@@ -169,8 +162,12 @@ const slice = createSlice({
                 s.parents.push(a.payload);
             })
             .addCase(updateParent.fulfilled, (s, a) => {
-                const idx = s.parents.findIndex(p => p._id === a.payload._id);
-                if (idx !== -1) s.parents[idx] = a.payload;
+                s.parent = a.payload;
+                const index = s.parents.findIndex(p => p._id === a.payload._id);
+                if (index !== -1) {
+                    s.parents[index] = a.payload;
+                }
+                s.loading = false;
             })
             .addCase(deleteParent.fulfilled, (s, a) => {
                 s.parents = s.parents.filter(p => p._id !== a.payload);
@@ -201,6 +198,22 @@ const slice = createSlice({
             .addCase(fetchChildrenOfParent.rejected, (s, a) => {
                 s.loading = false;
                 s.error = a.payload as string;
+            })
+            .addCase(updateStudent.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateStudent.fulfilled, (state, action) => {
+                state.loading = false;
+                const updatedStudent = action.payload;
+                const index = state.childrens.findIndex(s => s._id === updatedStudent._id);
+                if (index !== -1) {
+                    state.childrens[index] = updatedStudent;
+                }
+            })
+            .addCase(updateStudent.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
             })
     }
 });

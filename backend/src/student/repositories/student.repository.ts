@@ -59,8 +59,7 @@ export class StudentRepository implements IStudentRepository {
   }
 
   async updateStudent(id: string, dto: UpdateStudentDto) {
-    const payload = {
-      ...dto,
+    const payload = {...dto,
       parentIds: dto.parentIds?.map(id => new Types.ObjectId(id))
     };
     return this.studentModel.findByIdAndUpdate(id, payload, { new: true }).lean();
