@@ -1,12 +1,14 @@
-import { Mail, Phone, MapPin, FileText, CalendarDays, BadgeCheck } from "lucide-react";
+import { Mail, Phone, MapPin, FileText, CalendarDays, BadgeCheck, ArrowLeft } from "lucide-react";
 import { Card } from "../../components/ui/card";
 import type { Teacher } from "../../types/teacher.types";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   teacher: Teacher;
 }
 
 const TeacherDetailsCard: React.FC<Props> = ({ teacher }) => {
+  const navigate = useNavigate();
   if (!teacher) return <p>No teacher data provided</p>;
 
   const isImageFile = (url: string): boolean => {
@@ -27,6 +29,15 @@ const TeacherDetailsCard: React.FC<Props> = ({ teacher }) => {
         {/* Header */}
         <div className="bg-gradient-to-r from-gray-850 to-gray-500 text-white p-6 rounded-t-xl border-1 border-gray-500">
           <div className="flex items-center gap-6">
+            {/* Back Button */}
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 rounded-full hover:bg-white/10 transition-colors"
+            >
+              <ArrowLeft className="w-6 h-6 text-white" />
+            </button>
+
+            {/* Profile Image + Info */}
             <img
               src={teacher.profileImage}
               alt="Profile"
@@ -36,7 +47,9 @@ const TeacherDetailsCard: React.FC<Props> = ({ teacher }) => {
               <h1 className="text-2xl font-bold">
                 {teacher.firstName} {teacher.lastName}
               </h1>
-              <p className="text-gray-200 text-sm capitalize">{teacher.subject} Teacher</p>
+              <p className="text-gray-200 text-sm capitalize">
+                {teacher.subject} Teacher
+              </p>
             </div>
           </div>
         </div>

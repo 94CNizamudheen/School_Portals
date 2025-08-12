@@ -33,7 +33,8 @@ const PortalsPage = () => {
     },
   ]
   const handleClick = (selectedRole: string) => {
-    if (role === null) {
+    console.log("selected role",selectedRole)
+    if (role === selectedRole||role===null) {
       navigate(`/${selectedRole.toLowerCase()}/login`)
     } else {
       showNotification("info", {

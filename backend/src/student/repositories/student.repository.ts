@@ -28,7 +28,6 @@ export class StudentRepository implements IStudentRepository {
       religion:admission.religion,
       cast:admission.cast,
       rollNumber: admission.rollNumber || undefined,
-      class: admission.classApplied || undefined,
       dob: admission.dob,
       gender: admission.gender,
       bloodGroup: admission.bloodGroup,
@@ -41,6 +40,7 @@ export class StudentRepository implements IStudentRepository {
       previousSchool: admission.previousSchool,
       medicalInformation: admission.medicalInformation,
       profilePicture: admission.profilePicture || undefined,
+      enrollmentDate:new Date(),
       isActive: true
     });
 

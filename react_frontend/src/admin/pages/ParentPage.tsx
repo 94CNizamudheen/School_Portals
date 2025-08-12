@@ -7,7 +7,6 @@ import { Button } from '../../components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Trash2, /*Pencil*/ } from 'lucide-react';
 import { ViewChildrenModal } from '../components/ViewChildrenModal';
-import type { Child } from '../../store/parentSlice';
 import { toast } from 'react-toastify';
 import { AxiosError, isAxiosError } from 'axios';
 import { CustomPagination } from '../../components/shared/CustomPagination';
@@ -15,6 +14,8 @@ import { AssignChildrenModal } from '../components/AssignChildrenModal';
 import { fetchAllStudents } from '../../store/studentThunks';
 import { assignParent } from '../../store/parentSlice';
 import StatusFilterWithSearch from '../../components/shared/filters';
+import type { Student } from '@/types/student';
+// import { AddParentModal } from '../components/modals/AddParentModal';
 
 
 const ParentPage: React.FC = () => {
@@ -22,11 +23,12 @@ const ParentPage: React.FC = () => {
     const { parents, loading, error } = useSelector((s: RootState) => s.parent);
     const students = useSelector((state: RootState) => state.student.students)
     const [viewing, setViewing] = useState<Parent | null>(null);
-    const [childrenList, setChildrenList] = useState<Child[]>([]);
+    const [childrenList, setChildrenList] = useState<Student[]>([]);
     const [assigningParent, setAssigningParent] = useState<Parent | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [statusFilter, setStatusFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('')
+    // const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     const filterdParents = parents.filter((parent) => {
         const matchStatus = statusFilter === 'all' || parent.relationship?.toLocaleLowerCase() === statusFilter.toLowerCase();
@@ -54,15 +56,32 @@ const ParentPage: React.FC = () => {
 
 
     const handleDelete = (p: Parent) => {
-        const count = p.studentIds?.length ?? 0;
-        if (count > 0 && count === 1) {
-            alert('Cannot delete parent linked as the only parent of a student.');
+        const childrenIds = p.studentIds || [];
+
+        if (childrenIds.length === 0) {
+            if (confirm('Delete this parent?')) {
+                dispatch(deleteParent(p._id));
+            }
             return;
         }
+        const childrenWithSingleParent = childrenIds.filter(childId => {
+            const child = students.find(s => s._id === childId);
+            if (!child) return false;
+            const parentCount = child.parentIds?.length ?? 0;
+
+            return parentCount === 1 && child.parentIds?.[0] === p._id;
+        });
+
+        if (childrenWithSingleParent.length > 0) {
+            alert('Cannot delete parent because some children have no other parent assigned.');
+            return;
+        }
+
         if (confirm('Delete this parent?')) {
             dispatch(deleteParent(p._id));
         }
     };
+
 
     const handleViewChildren = async (p: Parent) => {
         try {
@@ -101,12 +120,21 @@ const ParentPage: React.FC = () => {
         <div className="min-h-screen bg-gray-800 p-8">
             <h1 className="text-3xl text-white font-bold mb-4">Manage Parents</h1>
 
+            {/* <div className="flex justify-between items-center mb-4">
+                <Button
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                    Add Parent
+                </Button>
+            </div> */}
             {loading && <p className="text-white">Loading...</p>}
             {error && <p className="text-red-400">{error}</p>}
             <StatusFilterWithSearch
                 onFilterChange={handleStatusChange}
                 onSearchChange={handleSearchQuery}
             />
+
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 pt-2">
                 {currentParents.map(p => (
@@ -154,6 +182,13 @@ const ParentPage: React.FC = () => {
                     onAssign={(selectedIds) => { handleAssignChildren(assigningParent, selectedIds); }}
                 />
             )}
+            {/* {isAddModalOpen && (
+                <AddParentModal
+                    open={isAddModalOpen}
+                    onClose={() => setIsAddModalOpen(false)}
+                />
+            )} */}
+
 
         </div>
     );

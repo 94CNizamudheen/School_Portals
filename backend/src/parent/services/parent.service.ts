@@ -21,6 +21,7 @@ export class ParentService {
   constructor(
     @Inject("IParentRepository") private readonly repo: IParentRepository,
     @Inject("IAdmissionRepository") private readonly admissionRepo: IAdmissionRepository,
+    @Inject("IStudentRepository") private readonly studentRepo: IStudentRepository,
     private readonly mailService: MailService
 
   ) { }
@@ -34,17 +35,32 @@ export class ParentService {
     const parent = await this.repo.findParentById(id);
     if (!parent) throw new NotFoundException('Parent not found');
 
-    return await this.repo.updateParent(id,dto)
-    
+    return await this.repo.updateParent(id, dto)
+
   }
 
-  // async delete(id: string) {
-  //   const parent = await this.repo.findParentById(id);
-  //   if (!parent) throw new NotFoundException('Parent not found');
+  async delete(id: string) {
+    const parent = await this.repo.findParentById(id);
+    if (!parent) throw new NotFoundException('Parent not found');
+    if (!parent.studentIds || parent.studentIds.length === 0) {
+      await this.repo.deleteParent(id);
+      return { message: 'Parent deleted successfully' };
+    }
+    for (const studentId of parent.studentIds) {
+      const student = await this.studentRepo.findById(studentId.toString());
+      if (!student) continue;
 
-  //   await this.repo.removeParentFromAllStudents(id, parent?.studentIds);
-  //   await this.repo.deleteParent(id);
-  // }
+      const parentCount = student.parentIds?.length ?? 0;
+      if (parentCount === 1 && student.parentIds?.[0].toString() === id) {
+        throw new BadRequestException(
+          `Cannot delete parent. Child ${student.firstName} has no other parent assigned.`
+        );
+      }
+    }
+
+    await this.repo.removeParentFromAllStudents(id, parent?.studentIds);
+    await this.repo.deleteParent(id);
+  }
 
   async findChildrens(id: string) {
     const parent = await this.repo.findParentById(id);

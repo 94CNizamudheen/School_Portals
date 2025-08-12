@@ -1,4 +1,4 @@
-import { Prop } from "@nestjs/mongoose";
+import { Prop, SchemaFactory } from "@nestjs/mongoose";
 
 
 export class Address {
@@ -14,3 +14,5 @@ export class Address {
     @Prop({ required: true })
     pincode: string;
 }
+
+export const AddressSchema = SchemaFactory.createForClass(Address);

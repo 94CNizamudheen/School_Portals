@@ -11,7 +11,6 @@ const TeacherDetailsPage = () => {
   );
 
   if (!teacher) return <div className="p-6 text-center text-gray-600">Teacher not found</div>;
-
   return (
     <div className="p-6">
       <TeacherDetailsCard teacher={teacher} />

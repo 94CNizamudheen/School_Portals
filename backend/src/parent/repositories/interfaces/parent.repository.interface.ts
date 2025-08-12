@@ -14,7 +14,7 @@ export interface IParentRepository {
   findParentById(id: string): Promise<Parent | null>;
   updateParent(id: string, dto: UpdateParentDto): Promise<Parent | null>;
   addParentToStudent(studentId: string, parentId: string): Promise<any>;
-  // removeParentFromAllStudents(parentId: string, studentIds: (string | Types.ObjectId)[]): Promise<void>;
+  removeParentFromAllStudents(parentId: string, studentIds: (string | Types.ObjectId)[]): Promise<void>;
   deleteParent(id: string): Promise<DeleteResult>;
   findChildrens(ids: Types.ObjectId[]): Promise<any[]>;
   pushStudentIds(parentId:string,studentIds:string[]):Promise<Parent>;

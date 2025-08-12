@@ -81,16 +81,16 @@ export class ParentRepository implements IParentRepository {
     return student.toObject({ getters: true });
   }
 
-  // async removeParentFromAllStudents(parentId: string, studentIds: (string | Types.ObjectId)[]) {
-  //   for (const studentId of studentIds) {
-  //     const sid = studentId.toString();
-  //     const student = await this.studentModel.findById(sid);
-  //     if (student) {
-  //       student.parentIds = student.parentIds.filter(id => id.toString() !== parentId);
-  //       await student.save();
-  //     }
-  //   }
-  // }
+  async removeParentFromAllStudents(parentId: string, studentIds: (string | Types.ObjectId)[]) {
+    for (const studentId of studentIds) {
+      const sid = studentId.toString();
+      const student = await this.studentModel.findById(sid);
+      if (student) {
+        student.parentIds = (student.parentIds ?? []).filter(id => id.toString() !== parentId);
+        await student.save();
+      }
+    }
+  }
 
   async deleteParent(id: string) {
     await this.userModel.deleteOne({ profileId: new Types.ObjectId(id) });

@@ -98,7 +98,7 @@ export const updateParent = createAsyncThunk(
     }
 );
 
-// Delete parent
+
 export const deleteParent = createAsyncThunk(
     'parent/delete',
     async (id: string, { rejectWithValue }) => {
