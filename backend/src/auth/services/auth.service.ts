@@ -2,7 +2,7 @@
 
 import { Injectable, UnauthorizedException, BadRequestException, NotFoundException, Logger, Inject, ForbiddenException, } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RegisterDto } from '../dtos/register.dtos';
+import { RegisterDto, Role } from '../dtos/register.dtos';
 import { SignInDto } from '../dtos/signin.dto';
 import { ForgotPasswordDto, ResetPasswordDto, StudentGenarteOtpDto, VerifyOtpDto } from '../dtos/password.dtos';
 import { User } from '../../user/entities/user.schema';
@@ -61,6 +61,11 @@ export class AuthService {
     if (!user) {
       this.logger.warn(`No user found for identifier: ${dto.studentIdentity || dto.email}`);
       throw new UnauthorizedException('Invalid credentials');
+    }
+    if (dto.role !== Role.GUEST) {
+      if (user.role !== dto.role) {
+        throw new ForbiddenException(`Only ${dto.role} can log in here`);
+      }
     }
 
     this.logger.debug("student password", user.password)
