@@ -1,7 +1,12 @@
 
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Menu, Bell } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../store/store';
+import { fetchTeachers } from '../../store/teacherThunks';
+import { fetchAllStudents } from '../../store/studentThunks';
+import { fetchParents } from '../../store/parentSlice';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -10,6 +15,13 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick, notificationCount, header }) => {
+  const dispatch=useDispatch<AppDispatch>()
+  useEffect(()=>{
+    dispatch(fetchTeachers())
+    dispatch(fetchAllStudents())
+    dispatch(fetchParents());
+    console.log("Header called")
+  },[dispatch])
   return (
     <header className="bg-gradient-to-r from-gray-850 to-gray-500 border-gray-700 px-4 py-3 lg:px-6 lg:py-4 ">
       <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0 max-w-7xl mx-auto">

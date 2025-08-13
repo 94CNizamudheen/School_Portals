@@ -19,7 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { icon: Pen, label: 'Admission', route: '/admin/admission' },
     { icon: GraduationCap, label: 'Teachers', route: '/admin/teachers' },
     { icon: Users, label: 'Parents', route: '/admin/parents' },
-    { icon: BookOpen, label: 'Classes', route: '/admin/classes' },
+    { icon: BookOpen, label: 'Classes and Divsion', route: '/admin/classes' },
     { icon: Calendar, label: 'Schedule', route: '/admin/schedule' },
     { icon: DollarSign, label: 'Fees', route: '/admin/fees' },
     { icon: TrendingUp, label: 'Reports', route: '/admin/reports' },

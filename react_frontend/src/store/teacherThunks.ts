@@ -3,7 +3,7 @@ import { AxiosError } from "axios";
 
 import { toast } from "react-toastify";
 import API from "../axios.config";
-import type { Teacher } from "@/types/teacher.types";
+import type { Teacher } from "../types/teacher.types";
 
 
 export const fetchTeachers = createAsyncThunk(

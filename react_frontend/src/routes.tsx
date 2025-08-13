@@ -36,6 +36,7 @@ const ParentDashboard = lazy(()=>import('./parent/pages/ParentDashboardPage.tsx'
 const StudentParentProfile= lazy(()=>import('./parent/pages/StudentParentProfile.tsx'));
 const TeacherDashboard= lazy(()=>import('./teacher/pages/TeacherrDashboard.tsx'));
 const TeacherProfile = lazy(()=>import('./teacher/pages/TeacherProfile.tsx'))
+const ClassDivisionManagementPage= lazy(()=>import('./admin/class_and_division/pages/ClassAndDivisionPage.tsx'))
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home />, errorElement: <RouterErrorFallback /> },
@@ -90,6 +91,8 @@ export const router = createBrowserRouter([
       { path: "teachers/review-and-verify", element: <ReviewAndVerifyTeachersPage /> },
       { path: "admission", element: <AdmissionInfoPage /> },
       { path: "/admin/teachers/:id", element: <TeacherDetailsPage /> },
+      { path: "classes", element: <ClassDivisionManagementPage /> },
+
     ],
   },
   {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
 import { deleteTeacher, fetchTeachers } from "../../store/teacherThunks";
@@ -26,9 +26,9 @@ const TeachersPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 8;
 
-  useEffect(() => {
-    dispatch(fetchTeachers());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchTeachers());
+  // }, [dispatch]);
 
   const filteredTeachers = teachers.filter((teacher) => {
     const fullName = `${teacher.firstName} ${teacher.lastName}`.toLowerCase();

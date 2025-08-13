@@ -1,6 +1,5 @@
 
 
-import React from 'react';
 import { Edit, Eye, Trash2 } from 'lucide-react';
 
 const StudentActions = () => {
