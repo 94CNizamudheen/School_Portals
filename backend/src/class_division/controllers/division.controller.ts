@@ -8,7 +8,7 @@ import { AddOrRemoveStudentDto } from "../dtos/addOrRemove.student.dto";
 
 
 
-@Controller()
+@Controller('divisions')
 @UseGuards(AuthGuard('jwt'))
 export class ClassDivisionController{
     constructor(@Inject() private readonly classDivisionService:ClassDivisionService ){}

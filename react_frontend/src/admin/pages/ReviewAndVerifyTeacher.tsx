@@ -11,8 +11,8 @@ import { User, Mail, Phone, Calendar, BookOpen, Award, FileText, Eye } from "luc
 import TeacherDetailsModal from "../components/modals/ViewTeacherDetails";
 import type { Teacher } from "../../types/teacher.types";
 import { rejectApplication, verifyTeacher } from "../../store/teacherThunks";
-import { toast } from "react-toastify";
 import ProcessingSpinner from "../../components/shared/ProcessingSpinner";
+import { useNotification } from "../../context/notification/useNotification";
 
 
 const getStatusBadgeVariant = (status: string) => {
@@ -44,8 +44,9 @@ const ReviewAndVerifyTeachersPage: React.FC = () => {
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>()
+  const {showNotification}= useNotification()
 
-  const itemsPerPage = 6;
+  const itemsPerPage = 8;
 
   useEffect(() => {
     let filtered = [...appliedTeachers];
@@ -78,18 +79,18 @@ const ReviewAndVerifyTeachersPage: React.FC = () => {
   const handleVerify = async (teacherId: string) => {
     try {
       await dispatch(verifyTeacher(teacherId)).unwrap()
-      toast.success(`Successfully verified the teacher`)
+      showNotification('success',{message:`Successfully verified the teacher`})
     } catch (error) {
-      toast.error(error as string)
+      showNotification('error',{message:error as string})
     }
   };
 
   const handleReject = async (teacherId: string) => {
     try {
       await dispatch(rejectApplication(teacherId)).unwrap()
-      toast.success("Application rejected")
+      showNotification('success',{message:`Application rejected`})
     } catch (error) {
-      toast.error(error as string)
+       showNotification('error',{message:error as string})
     }
   };
 
