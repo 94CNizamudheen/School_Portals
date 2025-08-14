@@ -89,7 +89,7 @@ const SignupPage = () => {
           <CardDescription className="text-purple-200">Create your account to get started</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
             <div className="space-y-2">
               <Label htmlFor="name" className="text-purple-200">Full Name</Label>
               <Input
@@ -111,6 +111,7 @@ const SignupPage = () => {
                 {...register("email")}
                 className="bg-purple-700/30 border-purple-600/50 text-white placeholder:text-purple-300"
                 placeholder="Enter your email"
+    
               />
               {errors.email && (
                 <p className="text-red-400 text-sm">{errors.email.message}</p>

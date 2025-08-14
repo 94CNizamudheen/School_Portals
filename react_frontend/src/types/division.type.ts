@@ -1,5 +1,6 @@
 
-export interface ClassDivision {
+
+export interface Division {
   _id: string;        
   divisionName: string;      
   subjects: string[];
