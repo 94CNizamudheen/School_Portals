@@ -1,27 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchTeachers, findTeacherByEmail, rejectApplication, updateTeacher, verifyTeacher } from './teacherThunks';
-
-interface Teacher {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  mobileNumber: string;
-  dob: string;
-  qualification: string;
-  university: string;
-  experience: string;
-  KTET_CTET_certificateNo: string;
-  subject: string;
-  teachingLevel: string;
-  profileImage: string;
-  eligibilityDocuments: string[];
-  status: 'pending' | 'approved' | 'rejected';
-  addressLine: string;
-  city: string;
-  state: string;
-  pincode: string;
-}
+import type { Teacher } from '../types/teacher.types';
 
 interface TeacherState {
   approved: Teacher[];

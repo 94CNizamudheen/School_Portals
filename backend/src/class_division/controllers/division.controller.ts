@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Inject, Param, Patch, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Logger, Param, Patch, Post, Put, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ClassDivisionService } from "../services/division.service";
 import { CreateClassDivisionDto } from "../dtos/create.division.dto";
@@ -11,6 +11,7 @@ import { AddOrRemoveStudentDto } from "../dtos/addOrRemove.student.dto";
 @Controller('divisions')
 @UseGuards(AuthGuard('jwt'))
 export class ClassDivisionController{
+    private readonly logger= new Logger(Controller.name)
     constructor(@Inject() private readonly classDivisionService:ClassDivisionService ){}
 
     @Get()
@@ -24,12 +25,14 @@ export class ClassDivisionController{
     };
 
     @Post()
-    async create(data:CreateClassDivisionDto){
+    async create(@Body()data: CreateClassDivisionDto) {
+        this.logger.debug(data)
         return await this.classDivisionService.createDivision(data)
     };
 
     @Patch(':id')
     async update(@Param('id')id:string,data:UpdateClassDivisionDto){
+
         return await this.classDivisionService.updateDivision(id,data);
     };
 
