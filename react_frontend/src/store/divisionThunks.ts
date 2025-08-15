@@ -20,6 +20,7 @@ export const fetchAllDivisions = createAsyncThunk(
 export const createDivision = createAsyncThunk(
   "division/create",
   async (data:{divisionName:string,subjects:string[],classTeacherId:string }, { rejectWithValue }) => {
+    console.log("create division data",data)
     try {
       const res = await API.post(`/divisions`, data);
       return res.data; 
@@ -48,7 +49,7 @@ export const assignClassTeacher = createAsyncThunk(
   async ({ divisionId, teacherId }: { divisionId: string; teacherId: string }, { rejectWithValue }) => {
     try {
       const res = await API.patch(`/divisions/${divisionId}/assign-teacher`, { teacherId });
-      return res.data; // updated division
+      return res.data; 
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       return rejectWithValue(err.response?.data?.message || "Failed to assign teacher");
@@ -61,7 +62,7 @@ export const addStudentToDivision = createAsyncThunk(
   async ({ divisionId, studentId }: { divisionId: string; studentId: string }, { rejectWithValue }) => {
     try {
       const res = await API.patch(`/divisions/${divisionId}/add-student`, { studentId });
-      return res.data; // updated division
+      return res.data; 
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       return rejectWithValue(err.response?.data?.message || "Failed to add student");
@@ -74,7 +75,7 @@ export const removeStudentFromDivision = createAsyncThunk(
   async ({ divisionId, studentId }: { divisionId: string; studentId: string }, { rejectWithValue }) => {
     try {
       const res = await API.patch(`/divisions/${divisionId}/remove-student`, { studentId });
-      return res.data; // updated division
+      return res.data; 
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       return rejectWithValue(err.response?.data?.message || "Failed to remove student");

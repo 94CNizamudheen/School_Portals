@@ -15,14 +15,14 @@ export class ClassDivisionRepository implements IClassDivisionRepository{
         @InjectModel(ClassDivision.name) private  classDivisionModel:Model<ClassDivision>
     ) {}
     async findAll(): Promise<ClassDivisionType[]> {
-        return await this.classDivisionModel.find().populate('classTeacherId').populate('assignedStudents').lean().exec() as unknown as ClassDivisionType[]
+        return await this.classDivisionModel.find()
        
     }
     async createDivision(data:CreateClassDivisionDto): Promise<ClassDivisionType> {
         return await this.classDivisionModel.create(data) as unknown as ClassDivisionType ;
     }
     async getById(id: string): Promise<ClassDivisionType | null> {
-        return await this.classDivisionModel.findById(id).populate('classTeacherId').populate('assignedStudents').lean().exec() as unknown as ClassDivisionType
+        return await this.classDivisionModel.findById(id)
     }
     async update(id: string, data: UpdateClassDivisionDto): Promise<ClassDivisionType | null> {
         return await this.classDivisionModel.findByIdAndUpdate(id,data,{new:true}).exec() as unknown as ClassDivisionType

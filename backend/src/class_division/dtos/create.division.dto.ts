@@ -4,7 +4,7 @@ import { IsArray, IsNotEmpty, IsMongoId, IsOptional, IsString } from 'class-vali
 export class CreateClassDivisionDto {
     @IsString() @IsNotEmpty() divisionName: string;
 
-    @IsArray() @IsString({ each: true }) @IsOptional() subjects?: string[];
+    @IsArray() @IsString({ each: true })  subjects: string[];
 
     @IsMongoId() classTeacherId: string;
 }

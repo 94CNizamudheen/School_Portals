@@ -1,53 +1,37 @@
-
 import axios from 'axios';
-import { store } from './store/store'; 
-import { login,logout } from './store/authSlice'; 
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
-   headers: { "Content-Type": "application/json" },
+  headers: { "Content-Type": "application/json" },
 });
 
 API.interceptors.request.use((config) => {
-  const state = store.getState();
-  const token = state.auth.token;
+  const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-
 API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    console.log("response in axios intercepter",error)
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-
-      const state = store.getState();
-      console.log("state refresh_token",state.auth.refreshToken)
-      const refreshToken = state.auth.refreshToken;
+      const refreshToken = localStorage.getItem('refreshToken');
 
       try {
-        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, {
-          refreshToken,
-        });
-
+        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, { refreshToken });
         const { access_token } = res.data;
-        store.dispatch(login({ 
-          access_token, 
-          refresh_token: refreshToken, 
-          role: state.auth.role!,
-          userId: state.auth.userId!,
-        }));
 
-        // Retry original request with new token
+        localStorage.setItem('token', access_token);
+
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return axios(originalRequest);
       } catch (refreshError) {
-        store.dispatch(logout());
+        localStorage.clear();
         return Promise.reject(refreshError);
       }
     }
