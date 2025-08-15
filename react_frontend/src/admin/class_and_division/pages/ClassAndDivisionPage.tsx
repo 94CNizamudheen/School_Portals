@@ -118,6 +118,7 @@ export default function ClassDivisionManagementPage() {
       </div>
     );
   }
+  console.log("divisions",divisions)
 
   return (
     <div className="min-h-screen bg-gray-900 p-6">
@@ -162,7 +163,7 @@ export default function ClassDivisionManagementPage() {
                       Div: {division.divisionName}
                     </h2>
                     <p className="text-gray-400 text-sm">
-                      {division.assignedStudentsId?.length || 0} students
+                      {division.assignedStudents?.length || 0} students
                     </p>
                   </div>
                   <button
@@ -242,7 +243,7 @@ export default function ClassDivisionManagementPage() {
                   <div className="flex items-center justify-between">
                     <h3 className="text-gray-300 font-medium flex items-center gap-2">
                       <UserGroupIcon className="w-4 h-4" />
-                      Students ({division.assignedStudentsId?.length || 0})
+                      Students ({division.assignedStudents?.length || 0})
                     </h3>
                     <button
                       onClick={() => openStudentModal(division._id)}
@@ -254,9 +255,9 @@ export default function ClassDivisionManagementPage() {
                     </button>
                   </div>
                   <div className="bg-gray-700 rounded-lg p-3 min-h-[100px] max-h-[150px] overflow-y-auto">
-                    {division.assignedStudentsId?.length ? (
+                    {division.assignedStudents?.length ? (
                       <div className="space-y-2">
-                        {division.assignedStudentsId.map((studentId) => (
+                        {division.assignedStudents.map((studentId) => (
                           <div
                             key={studentId}
                             className="flex items-center justify-between bg-gray-600 
@@ -326,7 +327,7 @@ export default function ClassDivisionManagementPage() {
             setActiveDivisionId(null);
           }}
           students={students}
-          assignedStudents={getActiveDivision()?.assignedStudentsId || []}
+          assignedStudents={getActiveDivision()?.assignedStudents || []}
           onSubmit={handleAddStudentSubmit}
 
         />
