@@ -7,7 +7,7 @@ interface Props {
   onClose: () => void;
   students: Student[]; 
   assignedStudents: string[]; 
-  onSubmit: (studentId: string) => void;
+  onSubmit: (studentId: string,classLevel:string) => void;
 }
 
 const AddStudentsToDivisionModal: React.FC<Props> = ({ 
@@ -18,7 +18,7 @@ const AddStudentsToDivisionModal: React.FC<Props> = ({
   onSubmit 
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState<string>("");
+  const [selectedStudent, setSelectedStudent] = useState<Student|null>(null);
 
   const available = students.filter((s) => !assignedStudents.includes(s._id as string));
   
@@ -29,15 +29,15 @@ const AddStudentsToDivisionModal: React.FC<Props> = ({
 
   const handleAddStudent = () => {
     if (selectedStudent) {
-      onSubmit(selectedStudent);
-      setSelectedStudent("");
+      onSubmit(selectedStudent._id as string,selectedStudent.classLevel||'');
+      setSelectedStudent(null);
       setSearchTerm("");
       onClose();
     }
   };
 
   const handleClose = () => {
-    setSelectedStudent("");
+    setSelectedStudent(null);
     setSearchTerm("");
     onClose();
   };
@@ -87,9 +87,9 @@ const AddStudentsToDivisionModal: React.FC<Props> = ({
               {filteredStudents.map((student) => (
                 <div
                   key={student._id}
-                  onClick={() => setSelectedStudent(student._id as string)}
+                  onClick={() => setSelectedStudent(student)}
                   className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-                    selectedStudent === student._id
+                    selectedStudent?._id === student._id
                       ? "border-blue-500 bg-blue-500/10"
                       : "border-gray-600 hover:border-gray-500 bg-gray-700/50"
                   }`}
@@ -136,7 +136,7 @@ const AddStudentsToDivisionModal: React.FC<Props> = ({
                   </div>
 
                   {/* Selection Indicator */}
-                  {selectedStudent === student._id && (
+                  {selectedStudent?._id === student._id && (
                     <div className="flex-shrink-0 ml-3">
                       <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
                         <div className="w-2 h-2 rounded-full bg-white"></div>

@@ -1,7 +1,8 @@
 
 
 export interface Division {
-  _id: string;        
+  _id: string;
+  classLevel:string;        
   divisionName: string;      
   subjects: string[];
   classTeacherId:string

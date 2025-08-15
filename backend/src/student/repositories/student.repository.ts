@@ -1,6 +1,6 @@
 
 
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {  Injectable, } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Student } from '../entities/student.schema';
@@ -52,7 +52,7 @@ export class StudentRepository implements IStudentRepository {
   }
 
   async findById(id: string) {
-    return this.studentModel.findById(id).lean();
+    return this.studentModel.findById(id)
   }
   async findByIdentity(identity: string): Promise<Student | null> {
       return await this.studentModel.findOne({identity})

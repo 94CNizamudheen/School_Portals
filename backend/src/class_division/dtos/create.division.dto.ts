@@ -7,4 +7,6 @@ export class CreateClassDivisionDto {
     @IsArray() @IsString({ each: true })  subjects: string[];
 
     @IsMongoId() classTeacherId: string;
+
+    @IsString() classLevel:string
 }

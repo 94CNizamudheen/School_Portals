@@ -11,6 +11,6 @@ export interface IClassDivisionRepository {
     createDivision(data:CreateClassDivisionDto):Promise<ClassDivisionType>;
     update(id:string,data:UpdateClassDivisionDto):Promise<ClassDivisionType|null>;
     delete(id:string):Promise<ClassDivisionType|null>;
-    assignStudents(id:string,studentId:AddOrRemoveStudentDto):Promise<ClassDivisionType>;
-    removeStudent(id:string,studentid:AddOrRemoveStudentDto):Promise<ClassDivisionType>;
+    assignStudents(id:string,studentId:string):Promise<ClassDivisionType>;
+    removeStudent(id:string,studentid:string):Promise<ClassDivisionType>;
 }
