@@ -167,6 +167,7 @@ export const passwordSchema = Yup.object({
 });
 
 export const divisionSchema = Yup.object().shape({
+  classLevel:Yup.string().required('Class level required'),
   divisionName: Yup.string()
     .matches(/^(LKG|UKG|[1-7])-[A-Z]$/, "Format must be LKG-A, UKG-B, 1-A, etc.")
     .required("Division name is required"),

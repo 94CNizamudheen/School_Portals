@@ -2,18 +2,20 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../../store/store";
-import {  fetchAllDivisions, createDivision,  deleteDivisionById,  assignClassTeacher,  addStudentToDivision,  removeStudentFromDivision,} from "../../../store/divisionThunks";
+import { fetchAllDivisions, createDivision, deleteDivisionById, assignClassTeacher, addStudentToDivision, removeStudentFromDivision, } from "../../../store/divisionThunks";
 import type { Division } from "../../../types/division.type";
-import CreateDivisionModal from "../components/CreateDevisionModal"; 
-import AddStudentsToDivisionModal from "../components/AddstudentsToDivisionModal"; 
-import SubjectManagementModal from "../components/SubjectManagementModal"; 
-import TeacherAssignmentModal from "../components/TeacherAssignmentModal"; 
-import { PlusIcon,  TrashIcon,   UserGroupIcon,   AcademicCapIcon,  UserIcon,  PencilSquareIcon } from '@heroicons/react/24/outline';
+import CreateDivisionModal from "../components/CreateDevisionModal";
+import AddStudentsToDivisionModal from "../components/AddstudentsToDivisionModal";
+import SubjectManagementModal from "../components/SubjectManagementModal";
+import TeacherAssignmentModal from "../components/TeacherAssignmentModal";
+import { PlusIcon, TrashIcon, UserGroupIcon, AcademicCapIcon, UserIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import { useNotification } from "../../../context/notification/useNotification";
 
 export interface CreateDivisionForm {
   divisionName: string;
   subjects: string[];
   classTeacherId: string;
+  classLevel: string;
 }
 
 export default function ClassDivisionManagementPage() {
@@ -29,20 +31,19 @@ export default function ClassDivisionManagementPage() {
   );
   const teachers = useSelector((state: RootState) => state.teacher.approved);
   const students = useSelector((state: RootState) => state.student.students);
-
+  const { showNotification } = useNotification()
   useEffect(() => {
     dispatch(fetchAllDivisions());
   }, [dispatch]);
 
-  const handleCreateDivision = (formData: CreateDivisionForm) => {
-    dispatch(
-      createDivision({
-        divisionName: formData.divisionName,
-        subjects: formData.subjects,
-        classTeacherId: formData.classTeacherId,
-      })
-    );
-    setIsCreateModalOpen(false);
+  const handleCreateDivision = async (formData: CreateDivisionForm) => {
+    try {
+     await dispatch(createDivision({classLevel: formData.classLevel,divisionName: formData.divisionName, subjects: formData.subjects, classTeacherId: formData.classTeacherId,}) ).unwrap();
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      showNotification('error', { message: error as string})
+    }
+
   };
 
   const handleDeleteDivision = (divisionId: string) => {
@@ -63,11 +64,16 @@ export default function ClassDivisionManagementPage() {
     }
   };
 
-  const handleAddStudentSubmit = (studentId: string) => {
+  const handleAddStudentSubmit = async(studentId: string,classLevel:string) => {
     if (activeDivisionId) {
-      dispatch(addStudentToDivision({ divisionId: activeDivisionId, studentId }));
-      setIsStudentModalOpen(false);
-      setActiveDivisionId(null);
+      try {
+       await dispatch(addStudentToDivision({ divisionId: activeDivisionId, studentId ,classLevel})).unwrap();
+        setIsStudentModalOpen(false);
+        setActiveDivisionId(null);
+      } catch (error) {
+        showNotification('error', { message: error as string })
+      }
+
     }
   };
 
@@ -150,7 +156,10 @@ export default function ClassDivisionManagementPage() {
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-bold text-white mb-1">
-                      {division.divisionName}
+                      Calss: {division.classLevel}
+                    </h2>
+                    <h2 className="text-xl font-bold text-white mb-1">
+                      Div: {division.divisionName}
                     </h2>
                     <p className="text-gray-400 text-sm">
                       {division.assignedStudentsId?.length || 0} students
@@ -319,7 +328,7 @@ export default function ClassDivisionManagementPage() {
           students={students}
           assignedStudents={getActiveDivision()?.assignedStudentsId || []}
           onSubmit={handleAddStudentSubmit}
-    
+
         />
 
         <SubjectManagementModal

@@ -4,11 +4,15 @@ import { ClassDivision, ClassDivisionSchema } from "./entitie/classDivision.sche
 import { ClassDivisionController } from "./controllers/division.controller";
 import { ClassDivisionRepository } from "./repositories/division.repository";
 import { ClassDivisionService } from "./services/division.service";
+import { StudentModule } from "src/student/student.module";
 
 
 @Module({
-    imports:[MongooseModule.forFeature([{name:ClassDivision.name,schema:ClassDivisionSchema}])],
-    controllers:[ClassDivisionController],
+    imports:[
+        MongooseModule.forFeature([{name:ClassDivision.name,schema:ClassDivisionSchema}]),
+        StudentModule
+    ],
+    controllers:[ClassDivisionController,],
     providers:[ClassDivisionService,{provide:"IClassDivisionRepository",useClass:ClassDivisionRepository}],
     exports:["IClassDivisionRepository",ClassDivisionService]
 })

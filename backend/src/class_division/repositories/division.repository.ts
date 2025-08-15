@@ -27,10 +27,10 @@ export class ClassDivisionRepository implements IClassDivisionRepository{
     async update(id: string, data: UpdateClassDivisionDto): Promise<ClassDivisionType | null> {
         return await this.classDivisionModel.findByIdAndUpdate(id,data,{new:true}).exec() as unknown as ClassDivisionType
     }
-    async assignStudents(id: string, studentId: AddOrRemoveStudentDto): Promise<ClassDivisionType> {
+    async assignStudents(id: string, studentId: string): Promise<ClassDivisionType> {
        return await this.classDivisionModel.findByIdAndUpdate(id,{$addToSet:{assignedStudents:studentId}},{new:true}).exec() as unknown as ClassDivisionType
     }
-    async removeStudent(id: string, studentid:AddOrRemoveStudentDto): Promise<ClassDivisionType> {
+    async removeStudent(id: string, studentid:string): Promise<ClassDivisionType> {
        return await this.classDivisionModel.findByIdAndUpdate(id,{$pull:{assignedStudents:studentid}},{new:true}).exec() as unknown as ClassDivisionType
     }
     async delete(id: string): Promise<ClassDivisionType | null> {

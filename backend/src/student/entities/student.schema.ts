@@ -27,7 +27,7 @@ export class Student extends Document {
   @Prop({ type: [MongooseSchema.Types.ObjectId], ref: 'Parent', default: [] }) parentIds?: Types.ObjectId[];
   @Prop({ required: false, unique: true }) rollNumber?: string;
 
-  @Prop({ required: false }) class?: string;
+  @Prop({ required: false }) division?: string;
   @Prop({ required: false }) dob?: Date;
   @Prop({ required: false, enum: ['male', 'female', 'transgender'] }) gender?: string;
   @Prop({ required: false }) bloodGroup?: string;

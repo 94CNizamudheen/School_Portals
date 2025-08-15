@@ -1,15 +1,19 @@
-import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { ClassDivisionRepository } from "../repositories/division.repository";
 import { ClassDivisionType } from "../repositories/interfaces/division.type.interface";
 import { CreateClassDivisionDto } from "../dtos/create.division.dto";
 import { UpdateClassDivisionDto } from "../dtos/update.division.dto";
 import { AddOrRemoveStudentDto, } from "../dtos/addOrRemove.student.dto";
+import { IStudentRepository } from "src/student/repositories/interfaces/student-repositories.interface";
+import { IClassDivisionRepository } from "../repositories/interfaces/division.repository.interface";
 
 
 @Injectable()
 export class ClassDivisionService {
+    private readonly logger = new Logger(ClassDivisionService.name)
     constructor(
-        @Inject("IClassDivisionRepository") private readonly repo: ClassDivisionRepository,
+        @Inject("IClassDivisionRepository") private readonly repo: IClassDivisionRepository,
+        @Inject("IStudentRepository") private readonly studentRepo: IStudentRepository,
     ) { }
 
     async findAll(): Promise<ClassDivisionType[]> {
@@ -40,18 +44,30 @@ export class ClassDivisionService {
         if (deleted) throw new ConflictException('Delete cannot be applied due to conflict');
         return deleted
     }
-    async addStudent(id: string, studentId: AddOrRemoveStudentDto): Promise<ClassDivisionType> {
+    async addStudent(id: string, data: AddOrRemoveStudentDto): Promise<ClassDivisionType> {
+        this.logger.debug(data)
         const division = await this.repo.getById(id);
         if (!division) throw new NotFoundException('division not found');
-        const updated= await this.repo.assignStudents(id,studentId)
-        if(!updated) throw new ConflictException(' cannot assign student due to conflict');
+        const student = await this.studentRepo.findById(data.studentId)
+        if (!student) throw new NotFoundException('Student Not found');
+        if(student.division!=="") throw new BadRequestException('Student already in other division')
+        if (division.classLevel !== data.classLevel) throw new BadRequestException("Student and Division class level not matching")
+        const updated = await this.repo.assignStudents(id, data.studentId)
+        if (!updated) throw new ConflictException(' cannot assign student due to conflict');
+        student.division = division.divisionName
+        await this.studentRepo.saveStudent(student)
         return updated
     }
-    async removeStudent(id:string,studentId:AddOrRemoveStudentDto):Promise<ClassDivisionType>{
+    async removeStudent(id: string, data: AddOrRemoveStudentDto): Promise<ClassDivisionType> {
         const division = await this.repo.getById(id);
-        if (!division) throw new NotFoundException('division not found'); 
-        const updated= await this.repo.removeStudent(id,studentId)
-        if(!updated) throw new ConflictException(' cannot remove student due to conflict');
+        if (!division) throw new NotFoundException('division not found');
+        const student = await this.studentRepo.findById(data.studentId)
+        if (!student) throw new NotFoundException('Student Not found');
+
+        const updated = await this.repo.removeStudent(id, data.studentId)
+        if (!updated) throw new ConflictException(' cannot remove student due to conflict');
+        student.division = ''
+        await this.studentRepo.saveStudent(student)
         return updated
     }
 
