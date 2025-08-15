@@ -52,10 +52,18 @@ const divisionSlice = createSlice({
         const idx = state.divisions.findIndex(d => d._id === action.payload._id);
         if (idx >= 0) state.divisions[idx] = action.payload;
       })
-
+      .addCase(divisionThunks.addStudentToDivision.pending,(state)=>{
+        state.loading=true;
+        state.error=null
+      })
       .addCase(divisionThunks.addStudentToDivision.fulfilled, (state, action: PayloadAction<Division>) => {
         const idx = state.divisions.findIndex(d => d._id === action.payload._id);
         if (idx >= 0) state.divisions[idx] = action.payload;
+        state.loading=false
+      })
+      .addCase(divisionThunks.addStudentToDivision.rejected,(state,action)=>{
+        state.loading=false;
+        state.error=action.payload as string
       })
       .addCase(divisionThunks.removeStudentFromDivision.fulfilled, (state, action: PayloadAction<Division>) => {
         const idx = state.divisions.findIndex(d => d._id === action.payload._id);

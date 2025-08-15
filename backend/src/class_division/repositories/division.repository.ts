@@ -6,7 +6,6 @@ import { Model, Types } from "mongoose";
 import { ClassDivisionType } from "./interfaces/division.type.interface";
 import { CreateClassDivisionDto } from "../dtos/create.division.dto";
 import { UpdateClassDivisionDto } from "../dtos/update.division.dto";
-import { AddOrRemoveStudentDto, } from "../dtos/addOrRemove.student.dto";
 
 
 @Injectable()
