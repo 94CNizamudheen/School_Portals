@@ -152,7 +152,7 @@ export const step1Schema = Yup.object({
     function (value) {
       const role = this.options.context?.role;
       if (role === 'STUDENT') {
-        return !!value; 
+        return !!value;
       }
       return true;
     }
@@ -167,16 +167,18 @@ export const passwordSchema = Yup.object({
 });
 
 export const divisionSchema = Yup.object().shape({
-  classLevel:Yup.string().required('Class level required'),
+  classLevel: Yup.string().required('Class level required'),
   divisionName: Yup.string()
     .matches(/^(LKG|UKG|[1-7])-[A-Z]$/, "Format must be LKG-A, UKG-B, 1-A, etc.")
     .required("Division name is required"),
 
-  classTeacherId: Yup.string()
-    .required("Please select a class teacher"),
-
+  classTeacherId: Yup.string().required("Please select a class teacher"),
   subjects: Yup.array()
     .of(Yup.string().required("Subject name is required"))
     .min(1, "At least one subject is required")
     .required("Subjects are required"),
+  capacity: Yup.number()
+    .required("Capacity is required")
+    .min(1, "Capacity must be at least 1")
+    .max(60, "Capacity cannot exceed 60"),
 });

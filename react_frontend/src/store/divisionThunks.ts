@@ -19,7 +19,7 @@ export const fetchAllDivisions = createAsyncThunk(
 
 export const createDivision = createAsyncThunk(
   "division/create",
-  async (data:{classLevel:string,divisionName:string,subjects:string[],classTeacherId:string }, { rejectWithValue }) => {
+  async (data:{classLevel:string,divisionName:string,subjects:string[],classTeacherId:string ,capacity:number}, { rejectWithValue }) => {
     console.log("create division data",data)
     try {
       const res = await API.post(`/divisions`, data);
@@ -44,11 +44,11 @@ export const deleteDivisionById = createAsyncThunk(
   }
 );
 
-export const assignClassTeacher = createAsyncThunk(
+export const updateDivision = createAsyncThunk(
   "division/assignTeacher",
-  async ({ divisionId, teacherId }: { divisionId: string; teacherId: string }, { rejectWithValue }) => {
+  async ({ divisionId, data }: { divisionId: string; data: Record<string, unknown> }, { rejectWithValue }) => {
     try {
-      const res = await API.patch(`/divisions/${divisionId}/assign-teacher`, { teacherId });
+      const res = await API.patch(`/divisions/${divisionId}`, data );
       return res.data; 
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;

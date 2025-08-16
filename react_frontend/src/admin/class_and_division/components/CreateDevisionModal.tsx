@@ -10,6 +10,8 @@ interface ModalProps {
   onClose: () => void;
   onSubmit: (formData: CreateDivisionForm) => void;
   availableTeachers: Teacher[];
+  availableSubjects: string[];
+
 }
 
 const CreateDivisionModal: React.FC<ModalProps> = ({
@@ -17,12 +19,14 @@ const CreateDivisionModal: React.FC<ModalProps> = ({
   onClose,
   onSubmit,
   availableTeachers,
+  availableSubjects
 }) => {
   const [formData, setFormData] = useState<CreateDivisionForm>({
     classLevel: "",
     divisionName: "",
     subjects: [],
     classTeacherId: "",
+    capacity: 0
   });
   const [selectedSubject, setSelectedSubject] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -54,6 +58,7 @@ const CreateDivisionModal: React.FC<ModalProps> = ({
         subjects: [],
         classTeacherId: "",
         classLevel: "",
+        capacity: 0
       });
       setSelectedSubject("");
       onClose();
@@ -88,31 +93,8 @@ const CreateDivisionModal: React.FC<ModalProps> = ({
     validateField("subjects", updatedSubjects);
   };
 
-  const availableSubjects = [
-    "Mathematics",
-    "Malayalam",
-    "Arabic",
-    "English ",
-    "Physics",
-    "Chemistry",
-    "Biology",
-    "History",
-    "Geography",
-    "Computer Science",
-    "Art & Design",
-    "Physical Education",
-  ];
-  const availableClassLevels = [
-    "LKG",
-    "UKG",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-  ];
+
+  const availableClassLevels = ["LKG", "UKG", "1", "2", "3", "4", "5", "6", "7",];
 
   if (!isOpen) return null;
 
@@ -268,6 +250,27 @@ const CreateDivisionModal: React.FC<ModalProps> = ({
                   <p className="text-red-400 text-sm">{errors.subjects}</p>
                 )}
               </div>
+              {/* Division Capacity */}
+              <div>
+                <label className="flex items-center gap-2 text-gray-300 mb-3 font-medium">
+                  <BookOpen className="w-4 h-4" /> Division Capacity <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="number"
+                  value={formData.capacity}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    setFormData((prev) => ({ ...prev, capacity: value }));
+                    validateField("capacity", value);
+                  }}
+                  placeholder="Enter max students"
+                  className="w-full bg-gray-800 border border-gray-600 rounded-xl px-4 py-3 text-gray-200"
+                />
+                {errors.capacity && (
+                  <p className="text-red-400 text-sm">{errors.capacity}</p>
+                )}
+              </div>
+
 
               {/* Buttons */}
               <div className="flex gap-4 pt-6">

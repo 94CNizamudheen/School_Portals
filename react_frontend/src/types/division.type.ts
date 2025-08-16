@@ -8,5 +8,6 @@ export interface Division {
   classTeacherId:string
   createdAt?: string; 
   updatedAt?: string; 
+  capacity?:number;
   assignedStudents?:string[]
 }
