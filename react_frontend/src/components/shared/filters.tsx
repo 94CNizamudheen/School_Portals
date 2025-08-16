@@ -33,6 +33,18 @@ const filterOptions: Record<string, { label: string; value: string }[]> = {
     {value:'maths',label:"Maths"},
     {value:'social',label:"Social"},
     {value:'science',label:"Science"},
+  ],
+  '/admin/classes':[
+    {value:'all',label:"All Classes"},
+    {value:'LKG',label:"LKG"},
+    {value:'UKG',label:"UKG"},
+    {value:'1',label:"1"},
+    {value:'2',label:"2"},
+    {value:'3',label:"3"},
+    {value:'4',label:"4"},
+    {value:'5',label:"5"},
+    {value:'6',label:"6"},
+    {value:'7',label:"7"},
   ]
 };
 

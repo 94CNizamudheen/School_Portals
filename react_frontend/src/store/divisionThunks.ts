@@ -35,8 +35,9 @@ export const deleteDivisionById = createAsyncThunk(
   "division/delete",
   async (id: string, { rejectWithValue }) => {
     try {
-      await API.delete(`/divisions/${id}`);
-
+     const res= await API.delete(`/divisions/${id}`);
+     console.log(res.data)
+      return res.data;
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       return rejectWithValue(err.response?.data?.message || "Failed to delete division");

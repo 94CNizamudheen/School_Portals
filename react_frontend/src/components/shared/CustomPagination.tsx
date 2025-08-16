@@ -15,7 +15,7 @@ export function CustomPagination({ currentPage, totalPages, onPageChange }: Prop
     let start = Math.max(1, currentPage - half);
     let end = Math.min(totalPages, currentPage + half);
 
-    // Adjust start and end if near the boundaries
+ 
     if (end - start < MAX_VISIBLE_PAGES - 1) {
       if (start === 1) {
         end = Math.min(totalPages, start + MAX_VISIBLE_PAGES - 1);

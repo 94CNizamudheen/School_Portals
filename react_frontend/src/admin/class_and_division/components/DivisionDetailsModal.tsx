@@ -5,8 +5,7 @@ interface DivisionDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   division: Division | null;
-  onDeleteDivision: (id: string) => void;
-  onRemoveStudent: (divisionId: string, studentId: string) => void;
+  onRemoveStudentConfirm: (divisionId: string, studentId: string) => void;
   onOpenStudentModal: (divisionId: string) => void;
   onOpenSubjectModal: (divisionId: string) => void;
   onOpenTeacherModal: (divisionId: string) => void;
@@ -18,8 +17,7 @@ export default function DivisionDetailsModal({
   isOpen,
   onClose,
   division,
-  onDeleteDivision,
-  onRemoveStudent,
+  onRemoveStudentConfirm,
   onOpenStudentModal,
   onOpenSubjectModal,
   onOpenTeacherModal,
@@ -41,20 +39,20 @@ export default function DivisionDetailsModal({
 
   const capacityStatus = getCapacityStatus(assignedCount, capacity);
 
-  // Fixed handlers - don't close the modal immediately
+
   const handleOpenTeacherModal = () => {
     onOpenTeacherModal(division._id);
-    onClose(); // Close after opening the other modal
+    onClose();
   };
 
   const handleOpenSubjectModal = () => {
     onOpenSubjectModal(division._id);
-    onClose(); // Close after opening the other modal
+    onClose(); 
   };
 
   const handleOpenStudentModal = () => {
     onOpenStudentModal(division._id);
-    onClose(); // Close after opening the other modal
+    onClose();
   };
 
   return (
@@ -71,13 +69,7 @@ export default function DivisionDetailsModal({
               <p className="text-gray-400 mt-1">Division Details & Management</p>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => onDeleteDivision(division._id)}
-                className="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-900/20 transition-all duration-200"
-                title="Delete Division"
-              >
-                <TrashIcon className="w-5 h-5" />
-              </button>
+         
               <button
                 onClick={onClose}
                 className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-all duration-200"
@@ -207,7 +199,7 @@ export default function DivisionDetailsModal({
                       >
                         <span className="text-white font-medium">{getStudentName(studentId)}</span>
                         <button
-                          onClick={() => onRemoveStudent(division._id, studentId)}
+                          onClick={() => onRemoveStudentConfirm(division._id, studentId)}
                           className="text-red-400 hover:text-red-300 p-1 rounded hover:bg-red-900/20 transition-all duration-200"
                         >
                           <TrashIcon className="w-4 h-4" />
