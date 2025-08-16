@@ -73,7 +73,7 @@ const AddStudentsToDivisionModal: React.FC<Props> = ({
         </div>
 
         {/* Student List */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 custom-scroll-minimal">
           {filteredStudents.length === 0 ? (
             <div className="text-center text-gray-400 py-8">
               <User size={48} className="mx-auto mb-4 opacity-50" />
@@ -151,13 +151,13 @@ const AddStudentsToDivisionModal: React.FC<Props> = ({
 
         {/* Footer */}
         <div className="flex items-center justify-between p-6 border-t border-gray-700">
-          <div className="text-gray-400 text-sm">
+          <div className="text-green-400 text-sm">
             {filteredStudents.length} available student{filteredStudents.length !== 1 ? 's' : ''}
           </div>
           <div className="flex gap-3">
             <button
               onClick={handleClose}
-              className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+              className="px-4 py-2 bg-white text-gray-700 hover:text-white transition-colors rounded-lg"
             >
               Cancel
             </button>

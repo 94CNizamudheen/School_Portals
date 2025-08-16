@@ -1,31 +1,19 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../../store/store";
-import {
-  fetchAllDivisions,
-  createDivision,
-  deleteDivisionById,
-  updateDivision,
-  addStudentToDivision,
-  removeStudentFromDivision,
-} from "../../../store/divisionThunks";
+import { fetchAllDivisions, createDivision, deleteDivisionById, updateDivision, addStudentToDivision, removeStudentFromDivision, } from "../../../store/divisionThunks";
 import type { Division } from "../../../types/division.type";
-
 import CreateDivisionModal from "../components/CreateDevisionModal";
 import AddStudentsToDivisionModal from "../components/AddstudentsToDivisionModal";
 import SubjectManagementModal from "../components/SubjectManagementModal";
 import TeacherAssignmentModal from "../components/TeacherAssignmentModal";
 import DivisionDetailsModal from "../components/DivisionDetailsModal";
-
-import {
-  PlusIcon,
-  TrashIcon,
-  AcademicCapIcon,
-  EyeIcon,
-  ExclamationTriangleIcon,
-} from "@heroicons/react/24/outline";
-
+import { PlusIcon, TrashIcon, AcademicCapIcon, EyeIcon, ExclamationTriangleIcon, } from "@heroicons/react/24/outline";
 import { useNotification } from "../../../context/notification/useNotification";
+import StatusFilterWithSearch from "../../../components/shared/filters";
+import { CustomPagination } from "../../../components/shared/CustomPagination";
+import ConfirmModal from "../../../admin/components/modals/ConfirmDeleteModal";
+import Loading from "../../../components/Loading";
 
 export interface CreateDivisionForm {
   divisionName: string;
@@ -43,7 +31,14 @@ export default function ClassDivisionManagementPage() {
   const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
   const [isTeacherModalOpen, setIsTeacherModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteConfig, setDeleteConfig] = useState<{ type: "division" | "student", divisionId?: string, studentId?: string } | null>(null);
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterValue, setFilterValue] = useState("all")
+  const [currentPage, setCurrentPage] = useState(1);
   const [activeDivisionId, setActiveDivisionId] = useState<string | null>(null);
+  const pageSize = 6;
+
 
   const { divisions, loading } = useSelector(
     (state: RootState) => state.divisions
@@ -64,6 +59,20 @@ export default function ClassDivisionManagementPage() {
     if (percentage >= 80) return { color: "yellow", status: "warning" };
     return { color: "green", status: "normal" };
   };
+  const filteredDivisions = divisions.filter((division) => {
+    const matchesSearch =
+      division.divisionName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      division.classLevel.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesFilter =
+      filterValue === "all" ||
+      division.classLevel.toLowerCase() === filterValue.toLowerCase();
+
+    return matchesSearch && matchesFilter;
+  });
+  const totalPages = Math.ceil(filteredDivisions.length / pageSize)
+  const start = (currentPage - 1) * pageSize;
+  const paginatedDivisions = filteredDivisions.slice(start, start + pageSize)
 
   const renderCapacityBar = (assignedCount: number, capacity: number) => {
     const percentage = Math.min((assignedCount / capacity) * 100, 100);
@@ -75,12 +84,7 @@ export default function ClassDivisionManagementPage() {
           <span className="text-gray-300">Capacity</span>
           <div className="flex items-center gap-2">
             <span
-              className={`font-semibold ${status.color === "red"
-                ? "text-red-400"
-                : status.color === "yellow"
-                  ? "text-yellow-400"
-                  : "text-green-400"
-                }`}
+              className={`font-semibold ${status.color === "red" ? "text-red-400" : status.color === "yellow" ? "text-yellow-400" : "text-green-400"}`}
             >
               {assignedCount}/{capacity}
             </span>
@@ -92,11 +96,7 @@ export default function ClassDivisionManagementPage() {
         <div className="w-full bg-gray-700 rounded-full h-2">
           <div
             className={`h-2 rounded-full transition-all duration-300 ${status.color === "red"
-              ? "bg-red-500"
-              : status.color === "yellow"
-                ? "bg-yellow-500"
-                : "bg-green-500"
-              }`}
+              ? "bg-red-500" : status.color === "yellow" ? "bg-yellow-500" : "bg-green-500"}`}
             style={{ width: `${percentage}%` }}
           />
         </div>
@@ -107,15 +107,7 @@ export default function ClassDivisionManagementPage() {
   /** ============= Handlers ============= */
   const handleCreateDivision = async (formData: CreateDivisionForm) => {
     try {
-      await dispatch(
-        createDivision({
-          classLevel: formData.classLevel,
-          divisionName: formData.divisionName,
-          subjects: formData.subjects,
-          classTeacherId: formData.classTeacherId,
-          capacity: formData.capacity,
-        })
-      ).unwrap();
+      await dispatch(createDivision({classLevel: formData.classLevel,  divisionName: formData.divisionName,  subjects: formData.subjects,  classTeacherId: formData.classTeacherId,  capacity: formData.capacity, })).unwrap();
       setIsCreateModalOpen(false);
       showNotification("success", { message: "Division created successfully!" });
     } catch (error) {
@@ -123,27 +115,48 @@ export default function ClassDivisionManagementPage() {
     }
   };
 
-  const handleDeleteDivision = async (divisionId: string) => {
-    if (confirm("Are you sure you want to delete this division?")) {
-      try {
-        await dispatch(deleteDivisionById(divisionId)).unwrap();
+  const handleOpenRemoveStudentConfirm = (divisionId: string, studentId: string) => {
+    setDeleteConfig({ type: "student", divisionId, studentId });
+    setDeleteModalOpen(true);
+  };
+
+  // Division delete
+  const handleOpenDeleteDivisionConfirm = (divisionId: string) => {
+    setDeleteConfig({ type: "division", divisionId });
+    setDeleteModalOpen(true);
+  };
+
+  // Confirm action
+  const handleConfirmDelete = async () => {
+    if (!deleteConfig) return;
+
+    try {
+      if (deleteConfig.type === "division" && deleteConfig.divisionId) {
+        await dispatch(deleteDivisionById(deleteConfig.divisionId)).unwrap();
         setIsDetailsModalOpen(false);
         setActiveDivisionId(null);
         showNotification("success", { message: "Division deleted successfully!" });
-      } catch (error) {
-        showNotification("error", { message: error as string });
       }
+
+      if (deleteConfig.type === "student" && deleteConfig.divisionId && deleteConfig.studentId) {
+        await dispatch(removeStudentFromDivision({
+          divisionId: deleteConfig.divisionId,
+          studentId: deleteConfig.studentId
+        })).unwrap();
+        showNotification("success", { message: "Student removed successfully!" });
+      }
+    } catch (error) {
+      showNotification("error", { message: error as string });
+    } finally {
+      setDeleteModalOpen(false);
+      setDeleteConfig(null);
     }
   };
 
-  const handleAssignTeacher = async (
-    divisionId: string,
-    classTeacherId: string
-  ) => {
+
+  const handleAssignTeacher = async (divisionId: string, classTeacherId: string) => {
     try {
-      await dispatch(
-        updateDivision({ divisionId, data: { classTeacherId } })
-      ).unwrap();
+      await dispatch(updateDivision({ divisionId, data: { classTeacherId } })).unwrap();
       setIsTeacherModalOpen(false);
       setActiveDivisionId(null);
       showNotification("success", { message: "Teacher assigned successfully!" });
@@ -152,21 +165,8 @@ export default function ClassDivisionManagementPage() {
     }
   };
 
-  const handleRemoveStudent = async (divisionId: string, studentId: string) => {
-    if (confirm("Are you sure you want to remove this student?")) {
-      try {
-        await dispatch(removeStudentFromDivision({ divisionId, studentId })).unwrap();
-        showNotification("success", { message: "Student removed successfully!" });
-      } catch (error) {
-        showNotification("error", { message: error as string });
-      }
-    }
-  };
 
-  const handleAddStudentSubmit = async (
-    studentId: string,
-    classLevel: string
-  ) => {
+  const handleAddStudentSubmit = async (studentId: string, classLevel: string) => {
     if (activeDivisionId) {
       try {
         await dispatch(
@@ -251,29 +251,14 @@ export default function ClassDivisionManagementPage() {
 
   /** ============= Available Subjects ============= */
   const availableSubjects = [
-    "Mathematics",
-    "Malayalam",
-    "Arabic",
-    "English",
-    "Physics",
-    "Chemistry",
-    "Biology",
-    "History",
-    "Geography",
-    "Computer Science",
-    "Art & Design",
-    "Physical Education",
-  ];
+    "Mathematics", "Malayalam", "Arabic",
+    "English", "Physics", "Chemistry", "Biology",
+    "History", "Geography", "Computer Science", "Art & Design", "Physical Education",];
 
   /** ============= Loading State ============= */
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-          <p className="text-gray-400">Loading divisions...</p>
-        </div>
-      </div>
+     <Loading/>
     );
   }
 
@@ -291,6 +276,7 @@ export default function ClassDivisionManagementPage() {
               Manage divisions, assign teachers, and organize students
             </p>
           </div>
+
           <button
             onClick={() => setIsCreateModalOpen(true)}
             className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 
@@ -345,11 +331,14 @@ export default function ClassDivisionManagementPage() {
               </div>
             </div>
           </div>
+          <StatusFilterWithSearch
+            onFilterChange={setFilterValue}
+            onSearchChange={setSearchQuery} />
         </div>
 
         {/* Divisions Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {divisions.map((division: Division) => {
+          {paginatedDivisions.map((division: Division) => {
             const assignedCount = division.assignedStudents?.length || 0;
             const capacityStatus = getCapacityStatus(
               assignedCount,
@@ -367,10 +356,10 @@ export default function ClassDivisionManagementPage() {
                   }`}
               >
                 {/* Division Header */}
-                <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-6 border-b border-gray-700">
+                <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 border-b border-gray-700">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h2 className="text-xl font-bold text-white mb-1">
+                      <h2 className="text-xl font-bold text-white ">
                         Class: {division.classLevel}
                       </h2>
                       <h3 className="text-lg font-semibold text-blue-400 mb-2">
@@ -378,7 +367,7 @@ export default function ClassDivisionManagementPage() {
                       </h3>
                     </div>
                     <button
-                      onClick={() => handleDeleteDivision(division._id)}
+                      onClick={() => handleOpenDeleteDivisionConfirm(division._id)}
                       className="text-red-400 hover:text-red-300 p-2 rounded-lg 
                                hover:bg-red-900/20 transition-all duration-200"
                       title="Delete Division"
@@ -466,6 +455,11 @@ export default function ClassDivisionManagementPage() {
             </div>
           )}
         </div>
+        <CustomPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
 
         {/* ==================== Modals ==================== */}
         <CreateDivisionModal
@@ -507,14 +501,26 @@ export default function ClassDivisionManagementPage() {
           isOpen={isDetailsModalOpen}
           onClose={closeDetailsModal}
           division={getActiveDivision()}
-          onDeleteDivision={handleDeleteDivision}
-          onRemoveStudent={handleRemoveStudent}
+          onRemoveStudentConfirm={handleOpenRemoveStudentConfirm}
           onOpenStudentModal={openStudentModal}
           onOpenSubjectModal={openSubjectModal}
           onOpenTeacherModal={openTeacherModal}
           getTeacherName={getTeacherName}
           getStudentName={getStudentName}
         />
+        {isDeleteModalOpen && deleteConfig && (
+          <ConfirmModal
+            onClose={() => setDeleteModalOpen(false)}
+            open={isDeleteModalOpen}
+            onConfirm={handleConfirmDelete}
+            title={deleteConfig.type === "division" ? "Delete Division" : "Remove Student"}
+            description={
+              deleteConfig.type === "division"
+                ? "Are you sure you want to delete this division?"
+                : "Are you sure you want to remove this student from the division?"
+            }
+          />
+        )}
       </div>
     </div>
   );

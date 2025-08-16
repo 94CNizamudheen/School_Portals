@@ -36,6 +36,7 @@ export class ClassDivisionService {
         return updated
     }
     async deleteDivision(id: string): Promise<ClassDivisionType | null> {
+        this.logger.debug("delete invoked")
         const division = await this.repo.getById(id);
         if (!division) throw new NotFoundException('division not found');
 

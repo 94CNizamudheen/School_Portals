@@ -48,10 +48,19 @@ const divisionSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-
-      // .addCase(divisionThunks.deleteDivisionById.fulfilled, (state, action: PayloadAction<string>) => {
-      //   state.divisions = state.divisions.filter(d => d._id !== action.payload);
-      // })
+       .addCase(divisionThunks.deleteDivisionById.pending, (state) => {
+        state.loading = true;
+        state.error=null
+      })
+      .addCase(divisionThunks.deleteDivisionById.fulfilled, (state, action: PayloadAction<string>) => {
+        state.divisions = state.divisions.filter(d => d._id !== action.payload);
+        state.loading = false;
+        state.error=null
+      })
+      .addCase(divisionThunks.deleteDivisionById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string
+      })
       .addCase(divisionThunks.updateDivision.pending, (state) => {
         state.loading = true;
         state.error=null

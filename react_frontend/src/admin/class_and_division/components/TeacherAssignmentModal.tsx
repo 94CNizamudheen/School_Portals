@@ -1,6 +1,6 @@
 
 
-// TeacherAssignmentModal.tsx
+
 import { useState } from 'react';
 import type { Division } from '../../../types/division.type';
 import { XMarkIcon, UserIcon, CheckCircleIcon } from '@heroicons/react/24/outline';

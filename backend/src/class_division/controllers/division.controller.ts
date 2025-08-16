@@ -21,7 +21,7 @@ export class ClassDivisionController{
 
     @Get(':id')
     async findByid(@Param('id')id:string){
-        return await this.findByid(id)
+        return await this.classDivisionService.findById(id)
     };
 
     @Post()
@@ -49,7 +49,7 @@ export class ClassDivisionController{
     
     @Delete(':id')
     async deleteDivision(@Param('id')id:string){
-        return this.deleteDivision(id)
+        return this.classDivisionService.deleteDivision(id)
     };
 
 }
