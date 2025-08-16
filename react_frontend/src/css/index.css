@@ -264,3 +264,182 @@ body, html {
 .student-card-bg {
   @apply bg-[#2c1c5b] text-white rounded-xl shadow-lg;
 }
+
+
+/* Modern Dark Theme Scrollbar */
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: rgba(55, 65, 81, 0.3); /* gray-700 with opacity */
+  border-radius: 8px;
+  margin: 2px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6366f1, #4f46e5); /* indigo gradient */
+  border-radius: 8px;
+  border: 1px solid rgba(55, 65, 81, 0.2);
+  transition: all 0.2s ease;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #4f46e5, #3730a3); /* darker indigo gradient */
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, #3730a3, #1e1b4b);
+}
+
+.custom-scroll::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox Support */
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #6366f1 rgba(55, 65, 81, 0.3);
+}
+
+/* Alternative Glass Style */
+.custom-scroll-glass::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scroll-glass::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  margin: 2px;
+}
+
+.custom-scroll-glass::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.custom-scroll-glass::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.custom-scroll-glass::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.custom-scroll-glass {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0.1);
+}
+
+/* Neon Style */
+.custom-scroll-neon::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scroll-neon::-webkit-scrollbar-track {
+  background: rgba(17, 24, 39, 0.8); /* gray-900 */
+  border-radius: 10px;
+}
+
+.custom-scroll-neon::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #00f5ff, #0066cc);
+  border-radius: 10px;
+  box-shadow: 
+    0 0 10px rgba(0, 245, 255, 0.5),
+    inset 0 0 10px rgba(0, 245, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.custom-scroll-neon::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #00f5ff, #0099ff);
+  box-shadow: 
+    0 0 20px rgba(0, 245, 255, 0.8),
+    0 0 30px rgba(0, 245, 255, 0.4),
+    inset 0 0 15px rgba(0, 245, 255, 0.3);
+}
+
+.custom-scroll-neon {
+  scrollbar-width: thin;
+  scrollbar-color: #00f5ff rgba(17, 24, 39, 0.8);
+}
+
+/* Minimal Modern Style */
+.custom-scroll-minimal::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-scroll-minimal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scroll-minimal::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5); /* gray-400 */
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.custom-scroll-minimal::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 85, 99, 0.8); /* gray-600 */
+  border-radius: 4px;
+}
+
+.custom-scroll-minimal {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+/* Animated Gradient Style */
+.custom-scroll-animated::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scroll-animated::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.4); /* gray-800 */
+  border-radius: 10px;
+}
+
+.custom-scroll-animated::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
+  background-size: 300% 300%;
+  border-radius: 10px;
+  animation: gradient-shift 3s ease infinite;
+  transition: all 0.3s ease;
+}
+
+.custom-scroll-animated::-webkit-scrollbar-thumb:hover {
+  animation-duration: 1s;
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.custom-scroll-animated {
+  scrollbar-width: thin;
+  scrollbar-color: #ff6b6b rgba(31, 41, 55, 0.4);
+}
+
+/* Usage Examples:
+   Add these classes to your scrollable containers:
+   
+   <div class="custom-scroll">...</div>           - Modern dark theme
+   <div class="custom-scroll-glass">...</div>     - Glass morphism
+   <div class="custom-scroll-neon">...</div>      - Neon glow effect
+   <div class="custom-scroll-minimal">...</div>   - Clean minimal
+   <div class="custom-scroll-animated">...</div>  - Animated gradient
+*/

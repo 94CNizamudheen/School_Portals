@@ -29,7 +29,8 @@ export class ClassDivisionService {
     }
     async updateDivision(id: string, data: UpdateClassDivisionDto): Promise<ClassDivisionType> {
         const division = await this.repo.getById(id);
-        if (!division) throw new NotFoundException('Division Not fount')
+        if (!division) throw new NotFoundException('Division Not fount');
+        if(!data)  throw new BadRequestException("No data provided")
         const updated = await this.repo.update(id, data);
         if (!updated) throw new ConflictException('Update cannot be applied due to conflict');
         return updated

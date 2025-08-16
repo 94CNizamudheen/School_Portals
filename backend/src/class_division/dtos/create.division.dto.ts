@@ -1,5 +1,5 @@
 
-import { IsArray, IsNotEmpty, IsMongoId, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsMongoId, IsOptional, IsString, IsNumber } from 'class-validator';
 
 export class CreateClassDivisionDto {
     @IsString() @IsNotEmpty() divisionName: string;
@@ -8,5 +8,7 @@ export class CreateClassDivisionDto {
 
     @IsMongoId() classTeacherId: string;
 
-    @IsString() classLevel:string
+    @IsString() classLevel:string;
+    
+    @IsNumber() capacity:number
 }

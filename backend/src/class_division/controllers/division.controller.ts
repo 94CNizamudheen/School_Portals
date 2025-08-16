@@ -31,12 +31,13 @@ export class ClassDivisionController{
     };
 
     @Patch(':id')
-    async update(@Param('id')id:string,data:UpdateClassDivisionDto){
+    async update(@Param('id')id:string, @Body()data:UpdateClassDivisionDto){
+        this.logger.debug(data)
         return await this.classDivisionService.updateDivision(id,data);
     };
 
     @Patch('add-student/:id')
-    async addStudent(@Param('id')id:string,@Body()data:AddOrRemoveStudentDto){
+    async addStudent(@Param('id')id:string, @Body()data:AddOrRemoveStudentDto){
         this.logger.debug("data for add student",data)
         return await this.classDivisionService.addStudent(id,data)
     };
@@ -50,4 +51,5 @@ export class ClassDivisionController{
     async deleteDivision(@Param('id')id:string){
         return this.deleteDivision(id)
     };
+
 }

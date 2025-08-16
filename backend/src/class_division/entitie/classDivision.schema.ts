@@ -8,5 +8,6 @@ export class ClassDivision extends Document{
     @Prop({type:[String],default:[]}) subjects:string[]
     @Prop({type:Types.ObjectId,ref:'Teacher',required:true}) classTeacherId:Types.ObjectId;
     @Prop({type:[{type:Types.ObjectId,ref:'Student'}],default:[]}) assignedStudents:Types.ObjectId
+    @Prop({required:true}) capacity:number;
 }
 export const ClassDivisionSchema = SchemaFactory.createForClass(ClassDivision);
