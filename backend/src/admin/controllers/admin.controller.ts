@@ -7,9 +7,10 @@ import { UpdateAdminDto } from '../dtos/update-admin.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles.decorator'; 
 import { Role } from 'src/auth/dtos/register.dtos'; 
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('admins')
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard('jwt'))
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
