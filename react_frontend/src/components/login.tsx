@@ -107,7 +107,7 @@ const Login = () => {
     }
   }, [isAuthenticated, role, navigate])
 
-  const googleAllowedRoles = ["PARENT", "ADMIN", "TEACHER", "GUEST"];
+  const googleAllowedRoles = ["PARENT",  "TEACHER", "GUEST"];
   const isGoogleAllowed = googleAllowedRoles.includes(role);
   const handleForgotPassword=()=>{
     if(role=="STUDENT"){

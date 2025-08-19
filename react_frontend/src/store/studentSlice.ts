@@ -109,6 +109,7 @@ const studentSlice = createSlice({
       .addCase(updateStudent.fulfilled, (state, action: PayloadAction<Student>) => {
         state.loading = false;
         state.student = action.payload;
+        state.error=null
       })
       .addCase(updateStudent.rejected, (state, action) => {
         state.loading = false;
