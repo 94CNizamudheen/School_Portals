@@ -5,6 +5,7 @@ import { NocacheInreceptor } from "./interceptor";
 const url = process.env.FRONTEND_URL
 import * as express from 'express';
 import helmet from "helmet";
+import { ValidationPipe } from "@nestjs/common";
 async function bootstrap() {
     const app = await NestFactory.create(AppModule,);
     app.use(express.json({ limit: '10mb' }));
@@ -20,6 +21,13 @@ async function bootstrap() {
         allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true
     })
+    app.useGlobalPipes(
+        new ValidationPipe({
+            whitelist:true,
+            forbidNonWhitelisted:true,
+            transform:true
+        }),
+    )
 
     app.useGlobalInterceptors(new NocacheInreceptor())
     const adminService = app.get(AdminService);

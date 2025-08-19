@@ -1,8 +1,8 @@
 import { Injectable, BadRequestException, NotFoundException, Inject, Logger } from '@nestjs/common';
 import { CreateAdmissionDto } from '../dtos/create-admission.dto';
 import { IAdmissionRepository } from '../repositories/interfaces/admission.repositoriy.interface';
-import { uploadImage } from 'src/utils/upload.image';
-import { uploadDocument } from 'src/utils/upload.document';
+import { uploadImage } from 'src/common/utils/upload.image';
+import { uploadDocument } from 'src/common/utils/upload.document';
 import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
 
 type CreateAdmissionFormDto = Omit<CreateAdmissionDto, 'profilePicture' | 'aadharDocument' | 'birthCertificate' | 'transferCertificate'>;

@@ -7,7 +7,7 @@ import SelectField from '../components/forms/SelectField';
 import FileUploadArea from '../components/forms/FileUploadArea';
 import { Check } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { sendteacherApplication } from '../store/thunks/teacherThunks';
+import { sendteacherApplication } from '../store/teacherThunks';
 import type { AppDispatch, RootState } from '../store/store';
 import ApplicationSuucessModal from '../components/modals/ApplicationSuccessModal';
 import { useNavigate } from 'react-router-dom';

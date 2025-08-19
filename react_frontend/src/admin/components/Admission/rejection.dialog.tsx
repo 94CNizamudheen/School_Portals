@@ -4,14 +4,13 @@ import { Button } from "../../../components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../../components/ui/dialog"
 import { Label } from "../../../components/ui/label"
 import { Textarea } from "../../../components/ui/textarea"
-import { X, FileText } from "lucide-react"
+import { X } from "lucide-react"
 
 interface RejectionDialogProps {
   isOpen: boolean
   rejectionReason: string
   onReasonChange: (reason: string) => void
   onReject: () => void
-  onRequestRefill: () => void
   onClose: () => void
 }
 
@@ -20,7 +19,6 @@ export function RejectionDialog({
   rejectionReason,
   onReasonChange,
   onReject,
-  onRequestRefill,
   onClose,
 }: RejectionDialogProps) {
   return (
@@ -51,10 +49,6 @@ export function RejectionDialog({
               <Button variant="destructive" onClick={onReject} disabled={!rejectionReason.trim()}>
                 <X className="h-4 w-4 mr-2" />
                 Reject Application
-              </Button>
-              <Button variant="outline" onClick={onRequestRefill} disabled={!rejectionReason.trim()}>
-                <FileText className="h-4 w-4 mr-2" />
-                Request Refill
               </Button>
             </div>
             <Button variant="outline" onClick={onClose}>

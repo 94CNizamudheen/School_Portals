@@ -52,8 +52,8 @@ const divisionSlice = createSlice({
         state.loading = true;
         state.error=null
       })
-      .addCase(divisionThunks.deleteDivisionById.fulfilled, (state, action: PayloadAction<string>) => {
-        state.divisions = state.divisions.filter(d => d._id !== action.payload);
+      .addCase(divisionThunks.deleteDivisionById.fulfilled, (state, action: PayloadAction<Division>) => {
+        state.divisions = state.divisions.filter(d => d._id !== action.payload._id);
         state.loading = false;
         state.error=null
       })

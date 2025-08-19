@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 import { IsString,IsEmail,IsDateString,IsArray,IsNumber, IsOptional, ValidateNested, } from "class-validator";
-import { Address } from "src/utils/address";
+import { Address } from "src/common/utils/address";
 
 export class UpdateTeacherDto{
 

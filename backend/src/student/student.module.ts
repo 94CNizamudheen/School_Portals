@@ -20,7 +20,8 @@ import { AdmissionModule } from 'src/admission/admission.module';
       { name: Otp.name, schema: OtpSchema },
       { name: User.name, schema: UserSchema },
     ]),
-    AdmissionModule
+    AdmissionModule,
+    
   ],
   controllers: [StudentController],
   providers: [StudentService, {provide:"IStudentRepository",useClass:StudentRepository}],

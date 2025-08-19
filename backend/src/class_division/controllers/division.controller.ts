@@ -44,7 +44,7 @@ export class ClassDivisionController{
 
     @Patch('remove-student/:id')
     async removeStudent(@Param('id')id:string, @Body()data:AddOrRemoveStudentDto){
-        return await this.removeStudent(id,data)
+        return await this.classDivisionService.removeStudent(id,data)
     };
     
     @Delete(':id')

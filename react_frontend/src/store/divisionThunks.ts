@@ -36,8 +36,7 @@ export const deleteDivisionById = createAsyncThunk(
   async (id: string, { rejectWithValue }) => {
     try {
      const res= await API.delete(`/divisions/${id}`);
-     console.log(res.data)
-      return res.data;
+      return res.data
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       return rejectWithValue(err.response?.data?.message || "Failed to delete division");
@@ -75,7 +74,7 @@ export const removeStudentFromDivision = createAsyncThunk(
   "division/removeStudent",
   async ({ divisionId, studentId }: { divisionId: string; studentId: string }, { rejectWithValue }) => {
     try {
-      const res = await API.patch(`/divisions/${divisionId}/remove-student`, { studentId });
+      const res = await API.patch(`/divisions/remove-student/${divisionId}`, { studentId });
       return res.data; 
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
