@@ -1,7 +1,7 @@
 
 
 import { Users, GraduationCap, DollarSign, TrendingUp } from 'lucide-react';
-import StatCard from './ui/StatCard';
+import StatCard from '../admin/components/StateCard';
 import PerformanceChart from './charts/PerformanceChart';
 import ClassDistributionChart from './charts/ClassDistributionChart';
 import AttendanceChart from './charts/AttendanceChart';

@@ -1,5 +1,4 @@
 import { BadRequestException, ConflictException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { ClassDivisionRepository } from "../repositories/division.repository";
 import { ClassDivisionType } from "../repositories/interfaces/division.type.interface";
 import { CreateClassDivisionDto } from "../dtos/create.division.dto";
 import { UpdateClassDivisionDto } from "../dtos/update.division.dto";
@@ -25,6 +24,7 @@ export class ClassDivisionService {
         return division
     }
     async createDivision(data: CreateClassDivisionDto): Promise<ClassDivisionType> {
+        
         return await this.repo.createDivision(data)
     }
     async updateDivision(id: string, data: UpdateClassDivisionDto): Promise<ClassDivisionType> {
@@ -43,7 +43,7 @@ export class ClassDivisionService {
         if (division.assignedStudents.length > 0) throw new BadRequestException("Cant delete becouse of division has students")
 
         const deleted = await this.repo.delete(id)
-        if (deleted) throw new ConflictException('Delete cannot be applied due to conflict');
+        if (!deleted) throw new ConflictException('Delete cannot be applied due to conflict');
         return deleted
     }
     async addStudent(id: string, data: AddOrRemoveStudentDto): Promise<ClassDivisionType> {

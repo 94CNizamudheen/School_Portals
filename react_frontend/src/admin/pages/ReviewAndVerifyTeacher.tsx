@@ -10,7 +10,7 @@ import type { AppDispatch, RootState } from "../../store/store";
 import { User, Mail, Phone, Calendar, BookOpen, Award, FileText, Eye } from "lucide-react";
 import TeacherDetailsModal from "../components/modals/ViewTeacherDetails";
 import type { Teacher } from "../../types/teacher.types";
-import { rejectApplication, verifyTeacher } from "../../store/thunks/teacherThunks";
+import { rejectApplication, verifyTeacher } from "../../store/teacherThunks";
 import ProcessingSpinner from "../../components/shared/ProcessingSpinner";
 import { useNotification } from "../../context/notification/useNotification";
 

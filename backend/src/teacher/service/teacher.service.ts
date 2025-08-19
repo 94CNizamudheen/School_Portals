@@ -2,10 +2,10 @@ import { BadRequestException, ForbiddenException, Inject, Injectable, Logger, No
 import { TeacherRepository } from '../repositories/teacher.repository';
 import { CreateTeacherDto } from '../dtos/create-teacher.dto';
 import { UpdateTeacherDto } from '../dtos/update-teacher.dto';
-import { uploadImage } from 'src/utils/upload.image';
+import { uploadImage } from 'src/common/utils/upload.image';
 import { IUserRepository } from 'src/user/repositories/interfaces/user.repositoriy.interface';
 import { ITeacherRepository } from '../repositories/interfaces/teacher.repository.interface';
-import { uploadDocument } from 'src/utils/upload.document';
+import { uploadDocument } from 'src/common/utils/upload.document';
 import { rejectTeacherTemplate } from 'src/mailer/utils/templates/teacher.reject.mail.template';
 import { MailService } from 'src/mailer/services/mail.service';
 import { Teacher } from '../entities/teacher.schema';

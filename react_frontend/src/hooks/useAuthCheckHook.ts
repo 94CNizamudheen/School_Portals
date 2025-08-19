@@ -64,7 +64,10 @@ export const useAuthCheck = () => {
             dispatch(logout());
             navigate('/unauthorized');
           } else {
-            dispatch(login({ access_token, role: user.role, userId: user.id }));
+            dispatch(login({
+              access_token, role: user.role, userId: user.id,
+              refresh_token: null
+            }));
           }
         } else {
           dispatch(logout());

@@ -53,18 +53,18 @@ export const AssignChildrenModal: React.FC<Props> = ({ open, onClose, onAssign, 
               <div
                 key={s._id}
                 className={`flex justify-between items-center px-3 py-2 rounded border ${
-                  selectedIds.includes(s._id)
+                  selectedIds.includes(s._id ?? "")
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-300"
                 }`}
               >
                 <span>{s.firstName}</span>
                 <Button
-                  variant={selectedIds.includes(s._id) ? "destructive" : "outline"}
+                  variant={selectedIds.includes(s._id ?? "") ? "destructive" : "outline"}
                   size="sm"
-                  onClick={() => toggleSelect(s._id)}
+                  onClick={() => toggleSelect(s._id ?? "")}
                 >
-                  {selectedIds.includes(s._id) ? "Remove" : "Select"}
+                  {selectedIds.includes(s._id ?? "") ? "Remove" : "Select"}
                 </Button>
               </div>
             ))

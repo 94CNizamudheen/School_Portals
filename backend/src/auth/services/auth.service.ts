@@ -18,7 +18,7 @@ import { studentOtpTemplate } from 'src/mailer/utils/templates/studentPasswordCh
 import { MailService } from 'src/mailer/services/mail.service';
 import { studentForgotTemplate } from 'src/mailer/utils/templates/student.forgot.password.template';
 import * as bcrypt from 'bcrypt'
-import { generateRandomPassword } from 'src/utils/generate.random.password';
+import { generateRandomPassword } from 'src/common/utils/generate.random.password';
 import { userOtpTemplate } from 'src/mailer/utils/templates/userOtpTemplate ';
 @Injectable()
 export class AuthService {
@@ -46,46 +46,53 @@ export class AuthService {
     return { access_token: this.jwtService.sign(payload), user };
   }
 
-  async signIn(dto: SignInDto): Promise<{ access_token: string; refresh_token: string; userId: string, user: User }> {
+  async signIn(dto: SignInDto): Promise<{ access_token: string; refresh_token: string; userId: string; user: User }> {
+    this.logger.log(`SignIn invoked with ${JSON.stringify(dto)}`);
     let user;
-    this.logger.debug(dto.studentIdentity)
-    if (dto.studentIdentity) {
-      user = await this.studentRepo.findByIdentity(dto.studentIdentity)
+    if (dto.role === Role.STUDENT && dto.studentIdentity) {
+      this.logger.debug(`Looking up student: ${dto.studentIdentity}`);
+      user = await this.studentRepo.findByIdentity(dto.studentIdentity);
     } else if (dto.email) {
+      this.logger.debug(`Looking up user: ${dto.email}`);
       user = await this.userRepo.findUserByEmail(dto.email);
     } else {
-      this.logger.debug('No identifier provided')
-      throw new BadRequestException("Invalid Credentials")
+      this.logger.warn('No valid identifier provided');
+      throw new BadRequestException('Invalid credentials');
     }
 
     if (!user) {
-      this.logger.warn(`No user found for identifier: ${dto.studentIdentity || dto.email}`);
+      this.logger.warn(`No user found for ${dto.studentIdentity || dto.email}`);
       throw new UnauthorizedException('Invalid credentials');
     }
+
+    if (dto.role !== Role.GUEST && user.role !== dto.role) {
+      throw new ForbiddenException(`Only ${dto.role} can log in here`);
+    }
+
     if (dto.role !== Role.GUEST) {
-      if (user.role !== dto.role) {
-        throw new ForbiddenException(`Only ${dto.role} can log in here`);
+      const passwordMatch = await this.repo.comparePasswords(dto.password, user.password);
+      if (!passwordMatch) {
+        this.logger.warn(`Password mismatch for ${user.email || user.studentIdentity}`);
+        throw new UnauthorizedException('Invalid credentials');
       }
     }
 
-    this.logger.debug("student password", user.password)
-    this.logger.debug(`User found: ${user?.email || user?.studentIdentity}`)
-    const passwordMatch = await this.repo.comparePasswords(dto.password, user.password);
-    if (!passwordMatch) {
-      this.logger.warn(`Password mismatch for user: ${user.email || user.studentIdentity}`);
-      throw new UnauthorizedException('Invalid credentials');
-    }
+    const payload = {
+      sub: user._id.toString(),
+      identifier: user.email || user.studentIdentity,
+      role: user.role,
+    };
 
-    const payload = { sub: user._id.toString(), email: user.email, role: user.role };
     const access_token = this.jwtService.sign(payload, {
       expiresIn: this.config.get('JWT_EXPIRES_IN'),
     });
     const refresh_token = this.jwtService.sign(payload, {
       expiresIn: this.config.get('JWT_REFRESH_EXPIRES_IN'),
-    })
+    });
 
-    return { access_token, refresh_token, userId: user.id.toString(), user };
+    return { access_token, refresh_token, userId: user._id.toString(), user };
   };
+  
   async refreshToken(refresh_token: string): Promise<{ access_token: string, refresh_token: string }> {
     try {
       const payload = this.jwtService.verify(refresh_token, { secret: this.config.get('JWT_SECRET') });

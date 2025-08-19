@@ -4,13 +4,13 @@ import { CreatePaymentDto } from "../dtos/create.payment.dto";
 import { StudentService } from "src/student/services/student.service";
 import { ParentService } from "src/parent/services/parent.service";
 import { AdmissionService } from "src/admission/services/admission.service";
-import { generateStudentId } from "src/utils/genarate.studentId";
+import { generateStudentId } from "src/common/utils/genarate.studentId";
 import * as bcrypt from 'bcrypt'
 import { Types } from "mongoose";
 import { IUserRepository } from "src/user/repositories/interfaces/user.repositoriy.interface";
 import { IAdmissionRepository } from "src/admission/repositories/interfaces/admission.repositoriy.interface";
 import { IStudentRepository } from "src/student/repositories/interfaces/student-repositories.interface";
-import { generateRandomPassword } from "src/utils/generate.random.password";
+import { generateRandomPassword } from "src/common/utils/generate.random.password";
 
 
 @Injectable()

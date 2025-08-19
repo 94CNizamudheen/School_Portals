@@ -96,13 +96,6 @@ export default function AdmissionInfoPage() {
     handleCloseDetailsDialog()
   }
 
-  const handleRequestRefill = () => {
-    if (!rejectionReason.trim() || !applicationToReject) return
-
-    updateAdmissionStatus(applicationToReject, "refill_requested", verificationNotes, rejectionReason)
-    handleCloseRejectionDialog()
-    handleCloseDetailsDialog()
-  }
 
   const handleCloseRejectionDialog = () => {
     setShowRejectionDialog(false)
@@ -182,7 +175,6 @@ export default function AdmissionInfoPage() {
         rejectionReason={rejectionReason}
         onReasonChange={setRejectionReason}
         onReject={handleRejectWithReason}
-        onRequestRefill={handleRequestRefill}
         onClose={handleCloseRejectionDialog}
       />
        <CustomPagination
