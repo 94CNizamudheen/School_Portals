@@ -7,6 +7,7 @@ import parentReducer from './parentSlice'
 import teacherReducer from './teacherSlice'
 import admissionReducer from './admissionSlice';
 import divisionReducer from './divisionSlice.ts'
+import subjectReducer from './subjectSlice.ts'
 
 
 const persistConfig = {
@@ -21,8 +22,8 @@ const rootReducer = combineReducers({
   parent:parentReducer,
   teacher:teacherReducer,
   admissions:admissionReducer,
-  divisions:divisionReducer
-
+  divisions:divisionReducer,
+  subjects:subjectReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

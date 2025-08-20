@@ -77,7 +77,7 @@ export default function ClassDivisionManagementPage() {
   /** ============= Handlers ============= */
   const handleCreateDivision = async (formData: CreateDivisionForm) => {
     try {
-      await dispatch(createDivision({classLevel: formData.classLevel,  divisionName: formData.divisionName,  subjects: formData.subjects,  classTeacherId: formData.classTeacherId,  capacity: formData.capacity, })).unwrap();
+      await dispatch(createDivision({ classLevel: formData.classLevel, divisionName: formData.divisionName, subjects: formData.subjects, classTeacherId: formData.classTeacherId, capacity: formData.capacity, })).unwrap();
       setIsCreateModalOpen(false);
       showNotification("success", { message: "Division created successfully!" });
     } catch (error) {
@@ -227,7 +227,7 @@ export default function ClassDivisionManagementPage() {
   /** ============= Loading State ============= */
   if (loading) {
     return (
-     <Loading/>
+      <Loading />
     );
   }
 
@@ -264,58 +264,11 @@ export default function ClassDivisionManagementPage() {
           </div>
         </div>
 
-        {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="backdrop-blur-sm bg-white/40 rounded-2xl p-6 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-blue-100">
-                <AcademicCapIcon className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-gray-600 text-sm font-medium">Total Divisions</p>
-                <p className="text-2xl font-bold text-gray-800">{divisions.length}</p>
-              </div>
-            </div>
-          </div>
 
-          <div className="backdrop-blur-sm bg-white/40 rounded-2xl p-6 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-green-100">
-                <ExclamationTriangleIcon className="w-6 h-6 text-green-600" />
-              </div>
-              <div>
-                <p className="text-gray-600 text-sm font-medium">Total Students</p>
-                <p className="text-2xl font-bold text-gray-800">
-                  {divisions.reduce((total, div) => total + (div.assignedStudents?.length || 0), 0)}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="backdrop-blur-sm bg-white/40 rounded-2xl p-6 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-purple-100">
-                <ExclamationTriangleIcon className="w-6 h-6 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-gray-600 text-sm font-medium">At Capacity</p>
-                <p className="text-2xl font-bold text-gray-800">
-                  {divisions.filter(div =>
-                    (div.assignedStudents?.length || 0) >= (div.capacity || 0)
-                  ).length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="backdrop-blur-sm bg-white/40 rounded-2xl p-6 border border-white/20 shadow-lg">
-            <StatusFilterWithSearch
-              onFilterChange={setFilterValue}
-              onSearchChange={setSearchQuery} 
-            />
-          </div>
-        </div>
-
+        <StatusFilterWithSearch
+          onFilterChange={setFilterValue}
+          onSearchChange={setSearchQuery}
+        />
         {/* Divisions Grid */}
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {paginatedDivisions.map((division: Division) => {
@@ -331,17 +284,16 @@ export default function ClassDivisionManagementPage() {
                 className="group relative overflow-hidden bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-500 rounded-3xl"
               >
                 {/* Status Indicator Bar */}
-                <div className={`h-2 ${
-                  capacityStatus.status === "full"
+                <div className={`h-2 ${capacityStatus.status === "full"
                     ? "bg-gradient-to-r from-red-500 to-red-600"
                     : capacityStatus.status === "warning"
                       ? "bg-gradient-to-r from-yellow-500 to-orange-500"
                       : "bg-gradient-to-r from-green-500 to-blue-500"
-                }`}></div>
+                  }`}></div>
 
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-white/80 to-gray-50/90 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                
+
                 {/* Delete Button */}
                 <button
                   onClick={() => handleOpenDeleteDivisionConfirm(division._id)}
@@ -368,15 +320,14 @@ export default function ClassDivisionManagementPage() {
                         </h3>
                       </div>
                     </div>
-                    
+
                     {/* Capacity Badge */}
-                    <div className={`px-3 py-1 rounded-full text-sm font-bold shadow-lg ${
-                      capacityStatus.status === "full"
+                    <div className={`px-3 py-1 rounded-full text-sm font-bold shadow-lg ${capacityStatus.status === "full"
                         ? "bg-red-100 text-red-700 border border-red-200"
                         : capacityStatus.status === "warning"
                           ? "bg-yellow-100 text-yellow-700 border border-yellow-200"
                           : "bg-green-100 text-green-700 border border-green-200"
-                    }`}>
+                      }`}>
                       {assignedCount}/{division.capacity}
                     </div>
                   </div>
@@ -385,22 +336,20 @@ export default function ClassDivisionManagementPage() {
                   <div className="mb-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-medium text-gray-600">Capacity Status</span>
-                      <span className={`text-sm font-bold ${
-                        capacityStatus.status === "full" ? "text-red-600" :
-                        capacityStatus.status === "warning" ? "text-yellow-600" : "text-green-600"
-                      }`}>
+                      <span className={`text-sm font-bold ${capacityStatus.status === "full" ? "text-red-600" :
+                          capacityStatus.status === "warning" ? "text-yellow-600" : "text-green-600"
+                        }`}>
                         {Math.round((assignedCount / (division.capacity as number)) * 100)}%
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
                       <div
-                        className={`h-3 rounded-full transition-all duration-500 ${
-                          capacityStatus.status === "full"
+                        className={`h-3 rounded-full transition-all duration-500 ${capacityStatus.status === "full"
                             ? "bg-gradient-to-r from-red-500 to-red-600"
                             : capacityStatus.status === "warning"
                               ? "bg-gradient-to-r from-yellow-500 to-orange-500"
                               : "bg-gradient-to-r from-green-500 to-blue-500"
-                        }`}
+                          }`}
                         style={{ width: `${Math.min((assignedCount / (division.capacity as number)) * 100, 100)}%` }}
                       ></div>
                     </div>
@@ -422,7 +371,7 @@ export default function ClassDivisionManagementPage() {
                         {getTeacherName(division.classTeacherId)}
                       </p>
                     </div>
-                    
+
                     <div className="bg-gray-50/80 rounded-2xl p-4">
                       <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 bg-purple-100 rounded-lg">

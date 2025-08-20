@@ -62,7 +62,7 @@ export class SubjectSerivice {
     async removeSubject(id: string):  Promise<SubjectTypes | null>  {
         const subject = await this.repo.findById(id);
         if (!subject) throw new NotFoundException("Subject not found");
-        if (subject?.teacherIds && subject.teacherIds.length > 0) {
+        if (subject?.assignedTeachers && subject.assignedTeachers.length > 0) {
             throw new BadRequestException("Cant remove Subject subject have assigned teachers")
         }
         const deleted = await this.repo.deleteSubject(id);

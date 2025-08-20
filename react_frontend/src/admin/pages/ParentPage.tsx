@@ -189,12 +189,13 @@ const ParentPage: React.FC = () => {
                         </div>
                     </div>
 
-                    <StatusFilterWithSearch
+                  
+                </div>
+            </div>
+              <StatusFilterWithSearch
                         onFilterChange={handleStatusChange}
                         onSearchChange={handleSearchQuery}
                     />
-                </div>
-            </div>
 
             {loading ? (
                 <div className="flex justify-center items-center py-20">
@@ -209,6 +210,7 @@ const ParentPage: React.FC = () => {
                 </div>
             ) : (
                 <>
+                
                     {/* Parents Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
                         {currentParents.map(parent => (

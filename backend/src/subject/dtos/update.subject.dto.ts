@@ -10,5 +10,5 @@ export class UpdateSubjectDto{
     @IsOptional() @IsEnum(subjectEnums) subjectType?:string;
     @IsOptional() @IsNumber() totalMark?:number
     @IsOptional() @IsNumber() passMark?:number;
-    @IsOptional() @IsMongoId({each:true}) teacherIds?:Types.ObjectId[] 
+    @IsOptional() @IsMongoId({each:true}) assignedTeachers?:Types.ObjectId[] 
 }
