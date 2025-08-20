@@ -14,6 +14,7 @@ import { MailerModule } from './mailer/mailer.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ClassDivisionModule } from './class_division/classDivision.module';
+import { SubjectModule } from './subject/subject.module';
 
 @Module({
     imports: [
@@ -35,7 +36,8 @@ import { ClassDivisionModule } from './class_division/classDivision.module';
         PaymentModule,
         UserModule,
         MailerModule,
-        ClassDivisionModule
+        ClassDivisionModule,
+        SubjectModule
     ],
     providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard, },],
 })
