@@ -6,27 +6,12 @@ import { useState } from "react"
 import { Button } from "../../../components/ui/button"
 import { Label } from "../../../components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../../../components/ui/dialog"
+import {  Dialog, DialogContent, DialogDescription,  DialogFooter,  DialogHeader,  DialogTitle,} from "../../../components/ui/dialog"
 import { Badge } from "../../../components/ui/badge"
 import { AlertTriangle } from "lucide-react"
-
-interface Subject {
-  _id: string
-  name: string
-  subjectType: "Core" | "Language" | "Elective"
-  assignedTeachers?: string[]
-  totalMark: number
-  passMark: number
-  createdAt: string
-  updatedAt: string
-}
+import { useSelector } from "react-redux"
+import type { RootState } from "../../../store/store"
+import type { Subject } from "../../../types/subject.types"
 
 interface RemoveTeacherModalProps {
   isOpen: boolean
@@ -35,21 +20,14 @@ interface RemoveTeacherModalProps {
   onRemoveTeacher: (subjectId: string, teacherId: string) => void
 }
 
-const mockTeachers = [
-  { id: "teacher1", name: "Dr. Sarah Johnson", subject: "Mathematics" },
-  { id: "teacher2", name: "Prof. Michael Chen", subject: "Physics" },
-  { id: "teacher3", name: "Ms. Emily Davis", subject: "English" },
-  { id: "teacher4", name: "Mr. David Wilson", subject: "Computer Science" },
-  { id: "teacher5", name: "Dr. Lisa Anderson", subject: "Chemistry" },
-  { id: "teacher6", name: "Prof. Robert Brown", subject: "History" },
-]
+
 
 export function RemoveTeacherModal({ isOpen, onClose, subject, onRemoveTeacher }: RemoveTeacherModalProps) {
   const [selectedTeacherId, setSelectedTeacherId] = useState("")
-
+  const teachers= useSelector((state:RootState)=>state.teacher.approved);
   const handleSubmit = () => {
     if (selectedTeacherId && subject) {
-      onRemoveTeacher(subject._id, selectedTeacherId)
+      onRemoveTeacher(subject._id as string, selectedTeacherId)
       setSelectedTeacherId("")
     }
   }
@@ -60,7 +38,7 @@ export function RemoveTeacherModal({ isOpen, onClose, subject, onRemoveTeacher }
   }
 
   const assignedTeachers =
-    subject?.assignedTeachers?.map((teacherId) => mockTeachers.find((t) => t.id === teacherId)).filter(Boolean) || []
+    subject?.assignedTeachers?.map((teacherId) => teachers.find((t) => t._id === teacherId)).filter(Boolean) || []
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -85,8 +63,8 @@ export function RemoveTeacherModal({ isOpen, onClose, subject, onRemoveTeacher }
                 <Label>Currently Assigned Teachers</Label>
                 <div className="flex flex-wrap gap-2">
                   {assignedTeachers.map((teacher) => (
-                    <Badge key={teacher?.id} variant="secondary">
-                      {teacher?.name}
+                    <Badge key={teacher?._id} variant="secondary">
+                      {`${teacher?.firstName} ${teacher?.lastName} `}
                     </Badge>
                   ))}
                 </div>
@@ -99,8 +77,8 @@ export function RemoveTeacherModal({ isOpen, onClose, subject, onRemoveTeacher }
                   </SelectTrigger>
                   <SelectContent>
                     {assignedTeachers.map((teacher) => (
-                      <SelectItem key={teacher?.id} value={teacher?.id || ""}>
-                        {teacher?.name} - {teacher?.subject}
+                      <SelectItem key={teacher?._id} value={teacher?._id || ""}>
+                        {`${teacher?.firstName} ${teacher?.lastName} `} - {teacher?.subject}
                       </SelectItem>
                     ))}
                   </SelectContent>

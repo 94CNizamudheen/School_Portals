@@ -4,17 +4,12 @@ import { useState } from "react"
 import { Button } from "../../../components/ui/button"
 import { Label } from "../../../components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../../../components/ui/dialog"
+import {  Dialog, DialogContent,  DialogDescription,  DialogFooter,  DialogHeader,  DialogTitle,} from "../../../components/ui/dialog"
 import { Badge } from "../../../components/ui/badge"
 
 import type { Subject } from "../../../types/subject.types"
+import { useSelector } from "react-redux"
+import type { RootState } from "@/store/store"
 
 interface AssignTeacherModalProps {
   isOpen: boolean
@@ -23,18 +18,11 @@ interface AssignTeacherModalProps {
   onAssignTeacher: (subjectId: string, teacherId: string) => void
 }
 
-// Mock teachers data
-const mockTeachers = [
-  { id: "teacher1", name: "Dr. Sarah Johnson", subject: "Mathematics" },
-  { id: "teacher2", name: "Prof. Michael Chen", subject: "Physics" },
-  { id: "teacher3", name: "Ms. Emily Davis", subject: "English" },
-  { id: "teacher4", name: "Mr. David Wilson", subject: "Computer Science" },
-  { id: "teacher5", name: "Dr. Lisa Anderson", subject: "Chemistry" },
-  { id: "teacher6", name: "Prof. Robert Brown", subject: "History" },
-]
+
 
 export function AssignTeacherModal({ isOpen, onClose, subject, onAssignTeacher }: AssignTeacherModalProps) {
   const [selectedTeacherId, setSelectedTeacherId] = useState("")
+  const teachers= useSelector((state:RootState)=>state.teacher.approved);
 
   const handleSubmit = () => {
     if (selectedTeacherId && subject) {
@@ -48,7 +36,7 @@ export function AssignTeacherModal({ isOpen, onClose, subject, onAssignTeacher }
     setSelectedTeacherId("")
   }
 
-  const availableTeachers = mockTeachers.filter((teacher) => !subject?.assignedTeachers?.includes(teacher.id))
+  const availableTeachers = teachers.filter((teacher) => !subject?.assignedTeachers?.includes(teacher._id))
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -65,10 +53,10 @@ export function AssignTeacherModal({ isOpen, onClose, subject, onAssignTeacher }
               <Label>Currently Assigned Teachers</Label>
               <div className="flex flex-wrap gap-2">
                 {subject.assignedTeachers.map((teacherId) => {
-                  const teacher = mockTeachers.find((t) => t.id === teacherId)
+                  const teacher = teachers.find((t) => t._id === teacherId)
                   return (
                     <Badge key={teacherId} variant="secondary" className="gap-1">
-                      {teacher?.name || teacherId}
+                      {`${teacher?.firstName} ${teacher?.lastName} `}
                     </Badge>
                   )
                 })}
@@ -83,8 +71,8 @@ export function AssignTeacherModal({ isOpen, onClose, subject, onAssignTeacher }
               </SelectTrigger>
               <SelectContent>
                 {availableTeachers.map((teacher) => (
-                  <SelectItem key={teacher.id} value={teacher.id}>
-                    {teacher.name} - {teacher.subject}
+                  <SelectItem key={teacher._id} value={teacher._id}>
+                    {`${teacher?.firstName} ${teacher?.lastName} `} - {teacher.subject}
                   </SelectItem>
                 ))}
               </SelectContent>

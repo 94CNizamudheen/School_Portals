@@ -7,6 +7,6 @@ export interface Subject {
     passMark: number;
     totalMark: number;
     subjectType: "Core" | "Language" | "Elective";
-    createdAt: string;
-    updatedAt:string
+    createdAt?: string;
+    updatedAt?:string
 };

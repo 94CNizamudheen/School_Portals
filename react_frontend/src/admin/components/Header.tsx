@@ -7,6 +7,7 @@ import type { AppDispatch } from '../../store/store';
 import { fetchTeachers } from '../../store/teacherThunks';
 import { fetchAllStudents } from '../../store/studentThunks';
 import { fetchParents } from '../../store/parentSlice';
+import { fetchSubjects } from '../../store/subjectThunks';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -20,6 +21,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, notificationCount, header 
     dispatch(fetchTeachers())
     dispatch(fetchAllStudents())
     dispatch(fetchParents());
+    dispatch(fetchSubjects())
     console.log("Header called")
   },[dispatch])
   return (
