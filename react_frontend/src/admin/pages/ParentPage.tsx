@@ -132,7 +132,7 @@ const ParentPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-400 to-gray-900 p-6">
+        <div className="min-h-screen p-6">
             {/* Header Section with Glass Morphism */}
             <div className="mb-8">
                 <div className="backdrop-blur-sm bg-white/10 rounded-3xl p-8 border border-white/20 shadow-xl">

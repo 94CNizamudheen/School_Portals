@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { ISubjectRepository } from "../repositories/interfaces/subject.repository.interface";
 import { SubjectTypes } from "../repositories/interfaces/subject.types.interface";
 import { CreateSubjectDto } from "../dtos/create.subject.dto";
@@ -10,6 +10,7 @@ import { ITeacherRepository } from "src/teacher/repositories/interfaces/teacher.
 
 @Injectable()
 export class SubjectSerivice {
+    private readonly logger= new Logger(SubjectSerivice.name)
     constructor(
         @Inject("ISubjectRepository") private readonly repo: ISubjectRepository,
         @Inject("ITeacherRepository") private readonly teacherRepo: ITeacherRepository,
@@ -29,7 +30,9 @@ export class SubjectSerivice {
     };
     async createSubject(data: CreateSubjectDto): Promise<SubjectTypes> {
         const existing = await this.repo.findByName(data.name);
-        if (existing) throw new BadRequestException("Subject already exists");
+        if (existing ){
+             throw new BadRequestException("Subject already exists");
+        }
         const newSubject = await this.repo.createSubject(data);
         if (!newSubject) throw new ConflictException("cant create subject");
         return newSubject;

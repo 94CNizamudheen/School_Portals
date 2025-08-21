@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux"
 import type { AppDispatch, RootState } from "@/store/store"
 import { assignTeacher, createSubject, deleteSubject, removeTeacher, updateSubject } from "../../../store/subjectThunks"
 import { useNotification } from "../../../context/notification/useNotification"
+import ConfirmModal from "../../../admin/components/modals/ConfirmDeleteModal"
 
 export const SubjectPage = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -23,6 +24,7 @@ export const SubjectPage = () => {
   const [isAssignTeacherDialogOpen, setIsAssignTeacherDialogOpen] = useState(false)
   const [isRemoveTeacherDialogOpen, setIsRemoveTeacherDialogOpen] = useState(false)
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null)
+  const [isConfirmModalOpen,setisConfirmModalOpen]= useState(false);
   const subjects = useSelector((state: RootState) => state.subjects.subjects);
   const { showNotification } = useNotification()
 
@@ -41,7 +43,7 @@ export const SubjectPage = () => {
 
   const handleCreateSubject = async (formData: { name: string, subjectType: "Core" | "Language" | "Elective", totalMark: number, passMark: number, }) => {
     try {
-      dispatch(createSubject(formData)).unwrap()
+      await dispatch(createSubject(formData)).unwrap()
       setIsCreateDialogOpen(false)
     } catch (error) {
       showNotification('error', { message: error as string })
@@ -88,7 +90,7 @@ export const SubjectPage = () => {
 
   const handleAssignTeacher = async (subjectId: string, teacherId: string) => {
     try {
-      dispatch(assignTeacher({ id: subjectId, teacherId })).unwrap()
+     await dispatch(assignTeacher({ id: subjectId, teacherId })).unwrap()
       setIsAssignTeacherDialogOpen(false)
       setSelectedSubject(null)
     } catch (error) {
@@ -212,7 +214,7 @@ export const SubjectPage = () => {
                         <UserMinus className="h-4 w-4 mr-2" />
                         Remove Teacher
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteSubject(subject._id as string)}>
+                      <DropdownMenuItem className="text-destructive" onClick={() => {setisConfirmModalOpen(true);setSelectedSubject(subject)}}>
                         <Trash2 className="h-4 w-4 mr-2" />
                         Delete Subject
                       </DropdownMenuItem>
@@ -271,7 +273,16 @@ export const SubjectPage = () => {
           subject={selectedSubject}
           onRemoveTeacher={handleRemoveTeacher}
         />
+
+        <ConfirmModal
+        onClose={()=>setisConfirmModalOpen(false)}
+        open={isConfirmModalOpen}
+        onConfirm={()=>handleDeleteSubject(selectedSubject?._id as string)}
+        description="This Cant be undone"
+        title="Remove Subject"
+        />
       </div>
+      
     </div>
   )
 }

@@ -69,7 +69,7 @@ const TeachersPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-500 to-gray-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br p-6">
       {/* Header Section with Glass Morphism */}
       <div className="mb-8">
         <div className="backdrop-blur-sm bg-white/30 rounded-3xl p-8 border border-white/20 shadow-xl">
