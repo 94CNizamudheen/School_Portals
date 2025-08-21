@@ -14,17 +14,11 @@ const Header = () => {
   const dispatch = useDispatch<AppDispatch>()
   const userMenuRef = useRef<HTMLDivElement>(null)
 
-  // ✅ Directly get from Redux
-  const { isAuthenticated, userName, userEmail } = useSelector(
-    (state: RootState) => state.auth
-  )
+  const { isAuthenticated, userName, userEmail } = useSelector((state: RootState) => state.auth)
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        userMenuRef.current &&
-        !userMenuRef.current.contains(event.target as Node)
-      ) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setIsUserMenuOpen(false)
       }
     }
@@ -38,7 +32,6 @@ const Header = () => {
     setIsUserMenuOpen(false)
   }
 
-  // ✅ Safe initials
   const getInitials = (name?: string) => {
     if (!name || name.trim() === "") return "U"
     return name
@@ -80,34 +73,19 @@ const Header = () => {
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex space-x-8 items-center">
-              <a
-                href="#home"
-                className="hover:text-indigo-300 transition-colors font-medium"
-              >
+              <a href="#home" className="hover:text-indigo-300 transition-colors font-medium">
                 Home
               </a>
-              <a
-                href="#academics"
-                className="hover:text-indigo-300 transition-colors font-medium"
-              >
+              <a href="#academics" className="hover:text-indigo-300 transition-colors font-medium" >
                 Academics
               </a>
-              <a
-                href="#activities"
-                className="hover:text-indigo-300 transition-colors font-medium"
-              >
+              <a href="#activities" className="hover:text-indigo-300 transition-colors font-medium" >
                 Activities
               </a>
-              <a
-                href="#about"
-                className="hover:text-indigo-300 transition-colors font-medium"
-              >
+              <a href="#about" className="hover:text-indigo-300 transition-colors font-medium" >
                 About
               </a>
-              <a
-                href="#contact"
-                className="hover:text-indigo-300 transition-colors font-medium"
-              >
+              <a href="#contact" className="hover:text-indigo-300 transition-colors font-medium">
                 Contact
               </a>
 
@@ -131,9 +109,8 @@ const Header = () => {
                     </span>
                     <ChevronDown
                       size={16}
-                      className={`transition-transform duration-200 ${
-                        isUserMenuOpen ? "rotate-180" : ""
-                      }`}
+                      className={`transition-transform duration-200 ${isUserMenuOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
 
@@ -220,34 +197,19 @@ const Header = () => {
           {isMenuOpen && (
             <div className="md:hidden pb-4 border-t border-white/20">
               <nav className="flex flex-col space-y-2 pt-4">
-                <a
-                  href="#home"
-                  className="text-white hover:text-indigo-300 py-2 transition-colors"
-                >
+                <a href="#home" className="text-white hover:text-indigo-300 py-2 transition-colors">
                   Home
                 </a>
-                <a
-                  href="#academics"
-                  className="text-white hover:text-indigo-300 py-2 transition-colors"
-                >
+                <a href="#academics" className="text-white hover:text-indigo-300 py-2 transition-colors"  >
                   Academics
                 </a>
-                <a
-                  href="#activities"
-                  className="text-white hover:text-indigo-300 py-2 transition-colors"
-                >
+                <a href="#activities" className="text-white hover:text-indigo-300 py-2 transition-colors"  >
                   Activities
                 </a>
-                <a
-                  href="#about"
-                  className="text-white hover:text-indigo-300 py-2 transition-colors"
-                >
+                <a href="#about" className="text-white hover:text-indigo-300 py-2 transition-colors"   >
                   About
                 </a>
-                <a
-                  href="#contact"
-                  className="text-white hover:text-indigo-300 py-2 transition-colors"
-                >
+                <a href="#contact" className="text-white hover:text-indigo-300 py-2 transition-colors" >
                   Contact
                 </a>
 
@@ -313,7 +275,6 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Logout Confirm Modal */}
       <LogoutConfirmModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
