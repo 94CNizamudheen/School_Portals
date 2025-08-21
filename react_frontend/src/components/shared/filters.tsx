@@ -12,14 +12,14 @@ const filterOptions: Record<string, { label: string; value: string }[]> = {
     { value: "rejected", label: "Rejected" },
   ],
   "/admin/parents": [
-    { value: "all", label: "All Parents" },
-    { value: "Father", label: "Relation Father" },
-    { value: "Mother", label: "Relation Mother" },
-    { value: "Uncle", label: "Relation Uncle" },
-    { value: "Aunt", label: "Relation Aunt" },
-    { value: "Grandmother", label: "Relation Grandmother" },
-    { value: "Grandfather", label: "Relation Grandfather" },
-    { value: "Guardian", label: "Relation Guardian" },
+    { value: "all", label: "All" },
+    { value: "Father", label: "Father" },
+    { value: "Mother", label: "Mother" },
+    { value: "Uncle", label: "Uncle" },
+    { value: "Aunt", label: "Aunt" },
+    { value: "Grandmother", label: "Grandmother" },
+    { value: "Grandfather", label: "Grandfather" },
+    { value: "Guardian", label: "Guardian" },
     { value: "Other", label: "Other" },
   ],
   "/admin/students": [
@@ -46,11 +46,11 @@ const filterOptions: Record<string, { label: string; value: string }[]> = {
     { value: "7", label: "7" },
   ],
   "/admin/subjects": [
-  { value: "all", label: "All Subjects" },
-  { value: "Core", label: "Core" },
-  { value: "Language", label: "Language" },
-  { value: "Elective", label: "Elective" },
-],
+    { value: "all", label: "All Subjects" },
+    { value: "Core", label: "Core" },
+    { value: "Language", label: "Language" },
+    { value: "Elective", label: "Elective" },
+  ],
 };
 
 interface Props {
@@ -78,43 +78,75 @@ const StatusFilterWithSearch = ({ onFilterChange, onSearchChange }: Props) => {
   };
 
   return (
-  <div className="max-w-7xl mx-auto px-4 py-4">
-  <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-lg border border-gray-200/50">
-    <div className="flex flex-col md:flex-row gap-4 items-center justify-between w-full">
-      
-      {/* Search Bar - full width on small screens */}
-      <div className="relative w-full md:flex-1 md:max-w-md">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-        <Input
-          placeholder="Search..."
-          value={searchValue}
-          onChange={handleSearch}
-          className="w-full text-gray-600 pl-10 pr-4 py-2 md:py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all duration-200 bg-white/50"
-        />
-      </div>
+    <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-gray-200/50">
+        {/* Desktop Layout */}
+        <div className="hidden md:flex items-center gap-6">
+          
+          {/* Search Bar - Left side */}
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Search..."
+              value={searchValue}
+              onChange={handleSearch}
+              className="w-full text-gray-600 pl-10 pr-4 py-2 rounded-xl border border-gray-300/60 focus:border-gray-500 focus:ring-2 focus:ring-gray-500/20 outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+            />
+          </div>
 
-      {/* Filter buttons - scrollable on mobile */}
-      <div className="w-full md:w-auto overflow-x-auto">
-        <div className="flex gap-2 min-w-max md:flex-wrap justify-start md:justify-center pb-1">
-          {options.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => handleFilterClick(opt.value)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ${
-                filterValue === opt.value
-                  ? "bg-gray-800 text-white shadow-md"
-                  : "bg-white/50 text-gray-600 hover:bg-white/80 hover:text-gray-800"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
+          {/* Filter buttons - Right side */}
+          <div className="flex items-center gap-2">
+            {options.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => handleFilterClick(opt.value)}
+                className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 whitespace-nowrap text-sm ${
+                  filterValue === opt.value
+                    ? "bg-gray-800 text-white shadow-md"
+                    : "bg-white/60 text-gray-700 hover:bg-white/90 hover:text-gray-900 border border-gray-200/50"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile Layout */}
+        <div className="md:hidden space-y-4">
+          
+          {/* Search Bar - Full width on mobile */}
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Search..."
+              value={searchValue}
+              onChange={handleSearch}
+              className="w-full text-gray-600 pl-10 pr-4 py-3 rounded-xl border border-gray-300/60 focus:border-gray-500 focus:ring-2 focus:ring-gray-500/20 outline-none transition-all duration-200 bg-white/70 backdrop-blur-sm"
+            />
+          </div>
+
+          {/* Filter buttons - Scrollable horizontal on mobile */}
+          <div className="w-full overflow-x-auto pb-1">
+            <div className="flex gap-2 min-w-max">
+              {options.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => handleFilterClick(opt.value)}
+                  className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 whitespace-nowrap text-sm ${
+                    filterValue === opt.value
+                      ? "bg-gray-800 text-white shadow-md"
+                      : "bg-white/60 text-gray-700 hover:bg-white/90 hover:text-gray-900 border border-gray-200/50"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-
   );
 };
 

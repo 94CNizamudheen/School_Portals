@@ -119,7 +119,7 @@ const TeachersPage = () => {
             {paginatedTeachers.map((teacher) => (
               <Card
                 key={teacher._id}
-                className="group relative overflow-hidden bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-500 rounded-3xl"
+                className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-500 to-white  backdrop-blur-sm border-0 shadow-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-500 rounded-3xl"
               >
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-white/80 to-gray-50/90 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>

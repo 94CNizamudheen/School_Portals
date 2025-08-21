@@ -14,7 +14,7 @@ import { AssignChildrenModal } from '../components/AssignChildrenModal';
 import { fetchAllStudents } from '../../store/studentThunks';
 import { assignParent } from '../../store/parentSlice';
 import StatusFilterWithSearch from '../../components/shared/filters';
-import type { Student } from '@/types/student';
+import type { Student } from '../../types/student';
 
 const ParentPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -132,70 +132,72 @@ const ParentPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen p-6">
-            {/* Header Section with Glass Morphism */}
-            <div className="mb-8">
-                <div className="backdrop-blur-sm bg-white/10 rounded-3xl p-8 border border-white/20 shadow-xl">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="p-3 bg-gradient-to-r from-gray-600 to-gray-800 rounded-2xl shadow-lg">
-                            <Users className="w-8 h-8 text-white" />
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-500 to-gray-100 bg-clip-text text-transparent">
-                                Parent Management
-                            </h1>
-                            <p className="text-gray-300 mt-1">Manage parent profiles and child assignments</p>
-                        </div>
-                    </div>
-                    
-                    {/* Stats Row */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <div className="bg-white/50 rounded-2xl p-4 backdrop-blur-sm">
+            <div className="container mx-auto px-6 py-8">
+            
+                <div className="mb-8 ">
+                    <div className="backdrop-blur-sm bg-white/10 rounded-3xl p-8 border border-white/20 shadow-xl">
+                        <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-blue-100 rounded-lg">
-                                    <Users className="w-5 h-5 text-blue-600" />
+                                <div className="p-3 bg-gradient-to-r from-gray-600 to-gray-800 rounded-2xl shadow-lg">
+                                    <Users className="w-8 h-8 text-white" />
                                 </div>
                                 <div>
-                                    <p className="text-sm text-gray-600">Total Parents</p>
-                                    <p className="text-2xl font-bold text-gray-800">{parents.length}</p>
+                                    <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-500 to-gray-100 bg-clip-text text-transparent">
+                                        Parent Management
+                                    </h1>
+                                    <p className="text-gray-300 mt-1">Manage parent profiles and child assignments</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-white/50 rounded-2xl p-4 backdrop-blur-sm">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-green-100 rounded-lg">
-                                    <Baby className="w-5 h-5 text-green-600" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-600">With Children</p>
-                                    <p className="text-2xl font-bold text-gray-800">
-                                        {parents.filter(p => p.studentIds && p.studentIds.length > 0).length}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-white/50 rounded-2xl p-4 backdrop-blur-sm">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-orange-100 rounded-lg">
-                                    <UserPlus className="w-5 h-5 text-orange-600" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-600">Unassigned</p>
-                                    <p className="text-2xl font-bold text-gray-800">
-                                        {parents.filter(p => !p.studentIds || p.studentIds.length === 0).length}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                  
+                        {/* Stats Row */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div className="bg-white/50 rounded-2xl p-4 backdrop-blur-sm">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-blue-100 rounded-lg">
+                                        <Users className="w-5 h-5 text-blue-600" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-600">Total Parents</p>
+                                        <p className="text-2xl font-bold text-gray-800">{parents.length}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-white/50 rounded-2xl p-4 backdrop-blur-sm">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-green-100 rounded-lg">
+                                        <Baby className="w-5 h-5 text-green-600" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-600">With Children</p>
+                                        <p className="text-2xl font-bold text-gray-800">
+                                            {parents.filter(p => p.studentIds && p.studentIds.length > 0).length}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-white/50 rounded-2xl p-4 backdrop-blur-sm">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-orange-100 rounded-lg">
+                                        <UserPlus className="w-5 h-5 text-orange-600" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-600">Unassigned</p>
+                                        <p className="text-2xl font-bold text-gray-800">
+                                            {parents.filter(p => !p.studentIds || p.studentIds.length === 0).length}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <StatusFilterWithSearch
+                            onFilterChange={handleStatusChange}
+                            onSearchChange={handleSearchQuery}
+                        />
+                    </div>
                 </div>
-            </div>
-              <StatusFilterWithSearch
-                        onFilterChange={handleStatusChange}
-                        onSearchChange={handleSearchQuery}
-                    />
 
             {loading ? (
                 <div className="flex justify-center items-center py-20">
@@ -210,18 +212,16 @@ const ParentPage: React.FC = () => {
                 </div>
             ) : (
                 <>
-                
-                    {/* Parents Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                {/* Parents Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {currentParents.map(parent => (
                             <Card
                                 key={parent._id}
-                                className="group relative overflow-hidden bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-500 rounded-3xl"
+                                className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-500 to-white  backdrop-blur-sm border-0 shadow-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-500 rounded-3xl min-w-0"
                             >
                                 {/* Gradient Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-white/80 to-gray-50/90 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                                
-                                <CardHeader className="relative z-10 pb-4">
+
+                                <CardHeader className="relative z-10 pb-4 ">
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-12 h-12 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-lg">
@@ -237,7 +237,7 @@ const ParentPage: React.FC = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         {/* Children Count Badge */}
                                         <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
                                             {parent.studentIds?.length || 0}
@@ -246,7 +246,7 @@ const ParentPage: React.FC = () => {
 
                                     {/* Action Buttons */}
                                     <div className="flex flex-wrap gap-2">
-                                        <Button 
+                                        <Button
                                             onClick={() => handleViewChildren(parent)}
                                             className="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300"
                                             size="sm"
@@ -254,9 +254,9 @@ const ParentPage: React.FC = () => {
                                             <Eye className="w-4 h-4 mr-2" />
                                             View Children
                                         </Button>
-                                        
+
                                         {(!parent.studentIds?.length) && (
-                                            <Button 
+                                            <Button
                                                 onClick={() => setAssigningParent(parent)}
                                                 className="bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300"
                                                 size="sm"
@@ -265,8 +265,8 @@ const ParentPage: React.FC = () => {
                                                 Assign
                                             </Button>
                                         )}
-                                        
-                                        <Button 
+
+                                        <Button
                                             onClick={() => handleDelete(parent)}
                                             className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-xl p-2 transition-all duration-300"
                                             size="sm"
@@ -281,7 +281,7 @@ const ParentPage: React.FC = () => {
                                         <div className="p-2 bg-purple-100 rounded-lg">
                                             <Mail className="w-4 h-4 text-purple-600" />
                                         </div>
-                                        <div className="flex-1 min-w-0">
+                                        <div className="flex-1">
                                             <p className="text-xs font-medium text-gray-500 mb-1">Email</p>
                                             <p className="text-sm font-medium text-gray-800 truncate">{parent.email}</p>
                                         </div>
@@ -348,7 +348,7 @@ const ParentPage: React.FC = () => {
                     onClose={() => setViewing(null)}
                 />
             )}
-            
+
             {assigningParent && (
                 <AssignChildrenModal
                     open={!!assigningParent}
@@ -359,6 +359,7 @@ const ParentPage: React.FC = () => {
                 />
             )}
         </div>
+
     );
 };
 
