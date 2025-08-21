@@ -32,7 +32,7 @@ const StudentTable: React.FC<StudentTableProps> = ({ students }) => {
     setSearchTerm(value)
   }
   return (
-    <div className="bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-gradient-to-br from-white via-gray-500 to-white hover:shadow-2xl0 rounded-xl shadow-sm overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
         <h2 className="text-lg font-semibold text-white">All Students</h2>
         <StatusFilterWithSearch

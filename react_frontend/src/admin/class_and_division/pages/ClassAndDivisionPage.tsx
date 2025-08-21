@@ -261,14 +261,14 @@ export default function ClassDivisionManagementPage() {
                 Create Division
               </button>
             </div>
-          </div>
-        </div>
-
 
         <StatusFilterWithSearch
           onFilterChange={setFilterValue}
           onSearchChange={setSearchQuery}
         />
+          </div>
+        </div>
+
         {/* Divisions Grid */}
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {paginatedDivisions.map((division: Division) => {
@@ -281,7 +281,7 @@ export default function ClassDivisionManagementPage() {
             return (
               <div
                 key={division._id}
-                className="group relative overflow-hidden bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-500 rounded-3xl"
+                className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-500 to-white  backdrop-blur-sm border-0 shadow-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-500 rounded-3xl"
               >
                 {/* Status Indicator Bar */}
                 <div className={`h-2 ${capacityStatus.status === "full"
@@ -291,8 +291,7 @@ export default function ClassDivisionManagementPage() {
                       : "bg-gradient-to-r from-green-500 to-blue-500"
                   }`}></div>
 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-white/80 to-gray-50/90 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+    
 
                 {/* Delete Button */}
                 <button
@@ -333,7 +332,7 @@ export default function ClassDivisionManagementPage() {
                   </div>
 
                   {/* Enhanced Capacity Visualization */}
-                  <div className="mb-4">
+                  <div className="mb-4 ">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-medium text-gray-600">Capacity Status</span>
                       <span className={`text-sm font-bold ${capacityStatus.status === "full" ? "text-red-600" :
@@ -357,12 +356,12 @@ export default function ClassDivisionManagementPage() {
                 </div>
 
                 {/* Content Section */}
-                <div className="relative z-10 px-6 pb-6 space-y-4">
+                <div className="relative z-10 px-6 pb-6 space-y-4 ">
                   {/* Quick Stats Grid */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-gray-50/80 rounded-2xl p-4">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-blue-100 rounded-lg">
+                  <div className="grid grid-cols-2 gap-3 ">
+                    <div className="bg-gray-50/80 rounded-2xl p-4 mt-2">
+                      <div className="flex items-center gap-3 mb-2 ">
+                        <div className="p-2 bg-blue-100 rounded-lg ">
                           <ExclamationTriangleIcon className="w-4 h-4 text-blue-600" />
                         </div>
                         <span className="text-xs font-medium text-gray-500">Class Teacher</span>
@@ -372,7 +371,7 @@ export default function ClassDivisionManagementPage() {
                       </p>
                     </div>
 
-                    <div className="bg-gray-50/80 rounded-2xl p-4">
+                    <div className="bg-gray-50/80 rounded-2xl p-4 mt-2">
                       <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 bg-purple-100 rounded-lg">
                           <ExclamationTriangleIcon className="w-4 h-4 text-purple-600" />

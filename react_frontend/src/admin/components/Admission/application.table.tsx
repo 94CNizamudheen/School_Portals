@@ -16,7 +16,7 @@ interface ApplicationsTableProps {
 
 export function ApplicationsTable({ admissions, totalCount, onViewDetails }: ApplicationsTableProps) {
   return (
-    <Card>
+    <Card className="bg-gradient-to-br from-white via-gray-500 to-white hover:shadow-2xl">
       <CardHeader>
         <CardTitle>Admission Applications</CardTitle>
         <CardDescription>
