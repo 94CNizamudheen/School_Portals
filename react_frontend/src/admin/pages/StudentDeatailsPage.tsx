@@ -166,7 +166,7 @@ const StudentDetailPage: React.FC = () => {
 
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-200 to-gray-750 p-6">
+    <div className="min-h-screen  p-6">
 
       <div className="mb-6">
         <Button

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Logger, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { SubjectSerivice } from "../service/subject.service";
 import { CreateSubjectDto } from "../dtos/create.subject.dto";
@@ -9,6 +9,7 @@ import { UpdateSubjectDto } from "../dtos/update.subject.dto";
 @Controller('subjects')
 @UseGuards(AuthGuard('jwt'))
 export class SubjectController{
+    private readonly logger= new Logger(Controller.name)
     constructor(
         @Inject() private readonly subjectService:SubjectSerivice,
     ){}
@@ -18,6 +19,7 @@ export class SubjectController{
     }
     @Post()
     async createSubject(@Body()data:CreateSubjectDto){
+        this.logger.debug(data)
         return await this.subjectService.createSubject(data);
     }
     @Patch(':id')
@@ -26,6 +28,7 @@ export class SubjectController{
     }
     @Patch('assign-teacher/:id')
     async assignTeacher(@Param('id')id:string,@Body('teacherId')teacherId:string){
+        this.logger.debug("sujectId",id,"teacherId",teacherId)
         return await this.subjectService.assignTeacher(id,teacherId);
     }
 
@@ -43,6 +46,7 @@ export class SubjectController{
     }
     @Delete(':id')
     async removeSubject(@Param('id')id:string){
+        this.logger.debug(id)
         return await this.subjectService.removeSubject(id);
     }
 }

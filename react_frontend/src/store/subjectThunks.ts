@@ -37,8 +37,9 @@ export const fetchSubjectById = createAsyncThunk(
 export const createSubject = createAsyncThunk(
   "subject/create",
   async (data: Subject, { rejectWithValue }) => {
-    try {
+    try {   
       const res = await API.post("/subjects", data);
+      console.log(res.data)
       return res.data;
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;

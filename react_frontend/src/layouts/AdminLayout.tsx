@@ -21,7 +21,7 @@ const AdminLayout = () => {
           onMenuClick={() => setSidebarOpen(true)}
           notificationCount={0}
         />
-        <main>
+        <main className='bg-gradient-to-br from-gray-950 via-gray-400 to-gray-900'>
           <Outlet />
         </main>
       </div>
