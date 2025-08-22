@@ -16,7 +16,7 @@ interface PerformanceChartProps {
 
 const PerformanceChart: React.FC<PerformanceChartProps> = ({ data }) => {
   return (
-    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+    <div className="bg-gradient-to-br from-white via-gray-500 to-white hover:shadow-2xl backdrop-blur-sm  rounded-xl p-6 border border-gray-700">
       <h3 className="text-lg font-semibold mb-6">Class Performance Trends</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>

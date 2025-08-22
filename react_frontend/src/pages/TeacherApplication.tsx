@@ -36,7 +36,9 @@ interface FileData {
 }
 
 export default function TeacherApplicationForm() {
-  const {userName,userEmail}=useSelector((state:RootState)=>state.auth)
+  const {userName,userEmail}=useSelector((state:RootState)=>state.auth);
+  const subjects= useSelector((state:RootState)=>state.subjects.subjects)
+  const availableSubjects= subjects.map((sub)=>({value:sub.name,label:sub.name}));
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const [formData, setFormData] = useState<FormData>({
@@ -288,7 +290,8 @@ export default function TeacherApplicationForm() {
                     { value: 'med', label: 'M.Ed' },
                     { value: 'ma', label: 'MA' },
                     { value: 'msc', label: 'MSc' },
-                    { value: 'phd', label: 'PhD' }
+                    { value: 'phd', label: 'PhD' },
+                    { value: 'others', label: 'Others' },
                   ]}
                   value={formData.qualification}
                   onChange={handleInputChange}
@@ -313,16 +316,7 @@ export default function TeacherApplicationForm() {
                 <SelectField
                   label="Subject"
                   field="subject"
-                  options={[
-                    { value: 'malayalam', label: 'Malayalam' },
-                    { value: 'english', label: 'English' },
-                    { value: 'hindi', label: 'Hindi' },
-                    { value: 'maths', label: 'Mathematics' },
-                    { value: 'science', label: 'Sacience' },
-                    { value: 'social', label: 'Social Science' },
-                    { value: 'arabic', label: 'Arabic' },
-                    { value: 'sanskrit', label: 'Sanskrit' }
-                  ]}
+                  options={availableSubjects}
                   value={formData.subject}
                   onChange={handleInputChange}
                   onBlur={handleBlur}

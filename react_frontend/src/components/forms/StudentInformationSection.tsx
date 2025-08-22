@@ -43,7 +43,6 @@ const StudentInformationSection: React.FC<StudentInformationSectionProps> = ({ f
   };
   const casteOptions = casteOptionsByReligion[formData.religion] || [];
 
-  // Indian states and union territories
   const indianStates = [
     'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat',
     'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh',
@@ -54,7 +53,6 @@ const StudentInformationSection: React.FC<StudentInformationSectionProps> = ({ f
     'Ladakh', 'Lakshadweep', 'Puducherry'
   ];
 
-  // Common nationalities
   const nationalities = [
     'Indian', 'American', 'British', 'Canadian', 'Australian', 'German', 'French',
     'Japanese', 'Chinese', 'Russian', 'Brazilian', 'South African', 'Nigerian',

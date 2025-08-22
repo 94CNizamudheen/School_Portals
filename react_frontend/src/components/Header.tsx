@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux"
 import type { AppDispatch, RootState } from "../store/store"
 import { logoutThunk } from "../store/api"
 import LogoutConfirmModal from "./modals/LogoutConfirmModal"
+import { fetchSubjects } from "../store/subjectThunks"
 
 
 const Header = () => {
@@ -15,6 +16,9 @@ const Header = () => {
   const userMenuRef = useRef<HTMLDivElement>(null)
 
   const { isAuthenticated, userName, userEmail } = useSelector((state: RootState) => state.auth)
+  useEffect(()=>{
+    dispatch(fetchSubjects())
+  },[dispatch]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

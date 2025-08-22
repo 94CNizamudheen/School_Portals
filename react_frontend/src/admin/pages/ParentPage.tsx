@@ -217,7 +217,7 @@ const ParentPage: React.FC = () => {
                         {currentParents.map(parent => (
                             <Card
                                 key={parent._id}
-                                className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-500 to-white  backdrop-blur-sm border-0 shadow-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-500 rounded-3xl min-w-0"
+                                className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-500 to-white hover:shadow-2xl backdrop-blur-sm border-0 shadow-lg  transform hover:scale-[1.02] transition-all duration-500 rounded-3xl min-w-0"
                             >
                                 {/* Gradient Overlay */}
 

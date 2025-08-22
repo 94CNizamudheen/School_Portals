@@ -48,13 +48,6 @@ const TeacherAssignmentModal: React.FC<TeacherAssignmentModalProps> = ({
     }
   };
 
-  // const handleRemoveCurrentTeacher = () => {
-  //   if (division) {
-  //     onAssign(division._id, '');
-  //     setSelectedTeacherId('');
-  //   }
-  // };
-
   if (!isOpen || !division) return null;
 
 return (

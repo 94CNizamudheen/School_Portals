@@ -38,7 +38,9 @@ export default function ClassDivisionManagementPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeDivisionId, setActiveDivisionId] = useState<string | null>(null);
   const pageSize = 6;
-
+  
+  const subjects = useSelector((state:RootState)=>state.subjects.subjects)
+  const availableSubjects= subjects.map((sub)=>sub.name);
 
   const { divisions, loading } = useSelector(
     (state: RootState) => state.divisions
@@ -217,12 +219,6 @@ export default function ClassDivisionManagementPage() {
   const closeDetailsModal = () => {
     setIsDetailsModalOpen(false);
   };
-
-  /** ============= Available Subjects ============= */
-  const availableSubjects = [
-    "Mathematics", "Malayalam", "Arabic",
-    "English", "Physics", "Chemistry", "Biology",
-    "History", "Geography", "Computer Science", "Art & Design", "Physical Education",];
 
   /** ============= Loading State ============= */
   if (loading) {
