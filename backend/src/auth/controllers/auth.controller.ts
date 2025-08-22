@@ -6,7 +6,7 @@ import { ResetPasswordDto, StudentGenarteOtpDto, VerifyOtpDto } from '../dtos/pa
 
 @Controller('auth')
 export class AuthController {
-  private readonly logger = new Logger(AuthService.name)
+  private readonly logger = new Logger(AuthController.name)
   constructor(private readonly authService: AuthService) { }
 
   @Post('register')
@@ -21,9 +21,9 @@ export class AuthController {
     return this.authService.signIn(dto);
   };
   @Post('refresh')
-  refresh(@Body('refreshToken') token: string) {
-    this.logger.log("refresh invoked with token", token)
-    return this.authService.refreshToken(token)
+  refresh(@Body('refreshToken') refresh_token: string) {
+    this.logger.log("refresh invoked with token", refresh_token)
+    return this.authService.refreshToken(refresh_token)
   }
 
   @Post('logout')

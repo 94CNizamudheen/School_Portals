@@ -20,10 +20,10 @@ API.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      const refreshToken = localStorage.getItem('refreshToken');
+      const refresh_token = localStorage.getItem('refresh_token');
 
       try {
-        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, { refreshToken });
+        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, { refresh_token });
         const { access_token } = res.data;
 
         localStorage.setItem('token', access_token);

@@ -113,7 +113,7 @@ export class AuthService {
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
-  }
+  };
 
   async logout(token: string): Promise<void> {
     try {
