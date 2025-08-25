@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { teacherValidationSchema } from '../utils/validationSchemas';
 import { mapYupErrors } from '../utils/validationHelpers';
@@ -11,6 +11,7 @@ import { sendteacherApplication } from '../store/teacherThunks';
 import type { AppDispatch, RootState } from '../store/store';
 import ApplicationSuucessModal from '../components/modals/ApplicationSuccessModal';
 import { useNavigate } from 'react-router-dom';
+import { fetchSubjects } from '../store/subjectThunks';
 
 interface FormData {
   firstName: string;
@@ -41,6 +42,14 @@ export default function TeacherApplicationForm() {
   const availableSubjects= subjects.map((sub)=>({value:sub.name,label:sub.name}));
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+    useEffect(()=>{
+    dispatch(fetchSubjects())
+  },[dispatch]);
+
   const [formData, setFormData] = useState<FormData>({
     firstName: userName as string,
     lastName: '',
@@ -57,17 +66,13 @@ export default function TeacherApplicationForm() {
     teachingLevel: '',
     experience: '',
     KTET_CTET_certificateNo: ''
-  });
+  });  
 
   const [files, setFiles] = useState<FileData>({
     photo: null,
     documents: []
-  });
+  });  
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

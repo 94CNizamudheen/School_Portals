@@ -23,11 +23,13 @@ export class TeacherController {
         this.logger.log("body ", body);
         return this.teacherService.apply(body, files)
     };
+
     @Patch('verify-and-create/:teacherId')
     @Roles(Role.ADMIN)
     verrifyAndCreate(@Param('teacherId') teacherId: string) {
         return this.teacherService.verifyAndCreate(teacherId);
-    }
+    };
+    
     @Patch('reject-application/:teacherId')
     @Roles(Role.ADMIN)
     rejectApplivation(@Param('teacherId') teacherId: string) {

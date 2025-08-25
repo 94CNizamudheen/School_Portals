@@ -54,7 +54,8 @@ export class TeacherService {
     await this.userRepo.saveUser(user);
     await this.repo.saveTeacher(teacher);
     return teacher
-  }
+  };
+  
   async rejectApplication(teacherId:string){
     const teacher= await this.repo.findById(teacherId);
     if(!teacher) throw new NotFoundException("teacher with this id not found");

@@ -7,4 +7,4 @@ export class CreateSubjectDto{
     @IsOptional() @IsEnum(subjectEnums) subjectType?:string
     @IsOptional() @IsNumber() totalMark?:number
     @IsOptional() @IsNumber() passMark?:number
-}
+};
