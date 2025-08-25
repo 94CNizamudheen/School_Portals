@@ -158,8 +158,6 @@ const ReviewAndVerifyTeachersPage: React.FC = () => {
                             </div>
                           )}
                         </div>
-
-                        {/* Name and Status */}
                         <div className="space-y-1">
                           <CardTitle className="text-lg font-semibold text-gray-800">
                             {teacher.firstName} {teacher.lastName}

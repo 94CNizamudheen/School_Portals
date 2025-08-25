@@ -9,6 +9,7 @@ import { Textarea } from "../../../components/ui/textarea"
 import { User, Phone, Mail, MapPin, Calendar, FileText, Eye, Download, Check, X } from "lucide-react"
 import { StatusBadge } from "./stats.badge"
 import type { AdmissionFormData } from "../../../types/admission.types"
+import LoadingIndicator from "../../../components/shared/LoadingIndicator"
 
 interface ApplicationDetailsDialogProps {
   admission: AdmissionFormData | null
@@ -18,12 +19,15 @@ interface ApplicationDetailsDialogProps {
   onApprove: () => void
   onReject: () => void
   onViewDocument: (docType: string, fileUrl: string, fileName: string) => void
-  onClose: () => void
+  onClose: () => void;
+  approving?: boolean;
+  rejecting?: boolean;
 }
 const getFileType = (url: string) => {
   if (url.endsWith(".pdf")) return "pdf";
   return "image";
 };
+
 
 export function ApplicationDetailsDialog({
   admission,
@@ -34,7 +38,11 @@ export function ApplicationDetailsDialog({
   onReject,
   onViewDocument,
   onClose,
+  approving,
+  rejecting
 }: ApplicationDetailsDialogProps) {
+
+
   if (!admission) return null
 
   return (
@@ -227,7 +235,7 @@ export function ApplicationDetailsDialog({
                 </div>
               )}
 
-              {(admission.status === "pending" ) && (
+              {(admission.status === "pending") && (
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="notes" className="text-sm font-medium">
@@ -242,16 +250,36 @@ export function ApplicationDetailsDialog({
                     />
                   </div>
 
-                  <div className="flex space-x-2">
-                    <Button onClick={onApprove} className="bg-green-600 hover:bg-green-700">
-                      <Check className="h-4 w-4 mr-2" />
-                      Approve Application
-                    </Button>
-                    <Button variant="destructive" onClick={onReject}>
-                      <X className="h-4 w-4 mr-2" />
-                      Reject Application
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={onApprove}
+                    className="bg-green-600 hover:bg-green-700"
+                    disabled={approving || rejecting}
+                  >
+                    {approving ? (
+                      <LoadingIndicator text="Approving..." />
+                    ) : (
+                      <>
+                        <Check className="h-4 w-4 mr-2" />
+                        Approve Application
+                      </>
+                    )}
+                  </Button>
+
+                  <Button
+                    variant="destructive"
+                    onClick={onReject}
+                    disabled={approving || rejecting}
+                  >
+                    {rejecting ? (
+                      <LoadingIndicator text="Rejecting..." />
+                    ) : (
+                      <>
+                        <X className="h-4 w-4 mr-2" />
+                        Reject Application
+                      </>
+                    )}
+                  </Button>
+
                 </div>
               )}
             </div>

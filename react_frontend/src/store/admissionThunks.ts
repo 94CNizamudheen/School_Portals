@@ -10,6 +10,11 @@ export interface StatusChangeData {
   verificationNotes?: string;
   rejectionReason?: string;
 }
+interface PaymentPayload {
+  admissionId: string;
+  amount: number;
+  transactionId: string;
+}
 
 
 
@@ -30,40 +35,46 @@ export const fetchAdmissions = createAsyncThunk<AdmissionFormData[], void, { rej
   }
 );
 
-export const handleStatusChange = async (id: string, data: StatusChangeData,): Promise<void> => {
-  try {
-    const response = await API.patch(`/admissions/${id}`, data, {
-    })
-    console.log("response of status change", response)
-    toast.success(`Application status ${data.status}`)
-  } catch (error) {
-    const err = error as AxiosError<{ message: string }>;
-    toast.error(err.response?.data?.message || 'Failed to update status');
+export const handleStatusChange = createAsyncThunk<AdmissionFormData, { id: string; data: StatusChangeData }>(
+  "admissions/updateStatus",
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await API.patch(`/admissions/${id}`, data);
+      console.log(response)
+      return response.data;
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      return rejectWithValue(error.response?.data?.message || "Failed to update status");
+    }
   }
-}
-export const fetchApplicationsByEmail = async (email: string,): Promise<AdmissionFormData[] | undefined> => {
-  try {
-    const response = await API.get(`/admissions/${email}`, {
-    })
-    console.log("response in fetch applications", response)
-    return Array.isArray(response.data) ? response.data : [response.data]
-  } catch (error) {
-    const err = error as AxiosError<{ message: string }>
-    console.error(err.response?.data.message || 'Failed to fetch data')
-    return undefined
-  }
-};
-export const completeAdmissionPayment = async (admissionId: string, amount: number, transactionId: string): Promise<void> => {
-  try {
-    const response = await API.post(`/payments/admission-payment`, { admissionId, amount, transactionId });
-    return response.data
-  } catch (error) {
-    const err = error as AxiosError<{ message: string }>;
+);
 
-    throw new Error(err.response?.data.message);
+export const fetchApplicationsByEmail = createAsyncThunk<AdmissionFormData[], string, { rejectValue: string }>(
+  "admissions/fetchByEmail",
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await API.get(`/admissions/${email}`);
+      return Array.isArray(response.data) ? response.data : [response.data];
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch applications");
+    }
   }
-}
-export const createAdmission = async (form:AdmissionFormBody, files: AdmissionFiles): Promise<{ message: string }> => {
+);
+
+export const completeAdmissionPayment = createAsyncThunk<AdmissionFormData, PaymentPayload>(
+  "admissions/completePayment",
+  async ({ admissionId, amount, transactionId }, { rejectWithValue }) => {
+    try {
+      const response = await API.post(`/payments/admission-payment`, { admissionId,amount,transactionId, });
+      return response.data as AdmissionFormData;
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      return rejectWithValue(err.response?.data?.message || "Payment failed");
+    }
+  }
+);
+export const createAdmission = async (form: AdmissionFormBody, files: AdmissionFiles): Promise<{ message: string }> => {
   const data = new FormData();
   (Object.keys(form) as (keyof AdmissionFormBody)[]).forEach((key) => {
     const value = form[key];

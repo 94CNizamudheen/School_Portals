@@ -7,45 +7,45 @@ import { ApplicationsTable } from "../components/Admission/application.table"
 import { ApplicationDetailsDialog } from "../components/Admission/application.details.dialog"
 import { DocumentViewer } from "../components/Admission/document.viewer"
 import { RejectionDialog } from "../components/Admission/rejection.dialog"
-import { useAdmissionData } from "../../hooks/useAdmissionData"
 
 import type { AdmissionFormData, DocumentPreview, } from "../../types/admission.types"
 import { handleStatusChange } from "../../store/admissionThunks"
-import { toast } from "react-toastify"
-import type { AxiosError } from "axios"
 import { CustomPagination } from "../../components/shared/CustomPagination"
+import { useDispatch, useSelector } from "react-redux"
+import type { AppDispatch, RootState } from "@/store/store"
+import { useNotification } from "../../context/notification/useNotification"
 
 
 export default function AdmissionInfoPage() {
 
 
-  const { admissions, updateAdmissionStatus } = useAdmissionData()
-  // Filter states
+  const dispatch = useDispatch<AppDispatch>()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
-
-  // Dialog states
   const [selectedAdmission, setSelectedAdmission] = useState<AdmissionFormData | null>(null)
   const [showDetailsDialog, setShowDetailsDialog] = useState(false)
+  const [approving, setApproving] = useState(false);
+  const [rejecting, setRejecting] = useState(false);
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
   const [documentPreview, setDocumentPreview] = useState<DocumentPreview | null>(null)
 
-  // Form states
   const [verificationNotes, setVerificationNotes] = useState("")
   const [rejectionReason, setRejectionReason] = useState("")
   const [applicationToReject, setApplicationToReject] = useState<string | null>(null)
-
+  const admissions = useSelector((state: RootState) => state.admissions.data);
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 7;
+  const { showNotification } = useNotification()
 
-
-
+  // useEffect(()=>{
+  //   dispatch(fetchAdmissions())
+  //   console.log("this render from the admission info page")
+  // },[dispatch])
 
   const handleViewDetails = (admission: AdmissionFormData) => {
     setSelectedAdmission(admission)
     setShowDetailsDialog(true)
   }
-
   const handleCloseDetailsDialog = () => {
     setShowDetailsDialog(false)
     setSelectedAdmission(null)
@@ -54,16 +54,22 @@ export default function AdmissionInfoPage() {
 
   const handleApprove = async () => {
     if (selectedAdmission) {
+      setApproving(true);
       try {
-        await handleStatusChange(selectedAdmission._id, {
-          status: 'approved',
-          verificationNotes: verificationNotes || 'verified and approved, Please pay admission fee for completed procedure',
-        })
-        updateAdmissionStatus(selectedAdmission._id, "approved", verificationNotes)
+
+        await dispatch(handleStatusChange({
+          id: selectedAdmission._id,
+          data: {
+            status: 'approved',
+            verificationNotes: verificationNotes || 'verified and approved, Please pay admission fee for completed procedure',
+          }
+        })).unwrap()
+        setApproving(false);
+        showNotification('success', { message: "Application Approved successfully" })
         handleCloseDetailsDialog()
       } catch (error) {
-        const err = error as AxiosError<{ message: string }>
-        toast.error(err.response?.data.message || 'failed to approve application')
+        showNotification('error', { message: error as string || 'failed to approve application' })
+        setApproving(false);
       }
 
     }
@@ -71,31 +77,32 @@ export default function AdmissionInfoPage() {
 
   const handleRejectClick = async () => {
     if (selectedAdmission) {
-      try {
-        await handleStatusChange(selectedAdmission._id, {
-          status: 'rejected',
-          verificationNotes: verificationNotes || 'verification  rejected',
-          rejectionReason: rejectionReason || 'Invalid details'
-        })
-        updateAdmissionStatus(selectedAdmission._id, "rejected", verificationNotes, rejectionReason)
-        handleCloseDetailsDialog()
-      } catch (error) {
-        const err = error as AxiosError<{ message: string }>
-        toast.error(err.response?.data.message || 'failed to reject application')
-      }
       setApplicationToReject(selectedAdmission._id)
       setShowRejectionDialog(true)
     }
   }
 
-  const handleRejectWithReason = () => {
+  const handleRejectWithReason = async () => {
     if (!rejectionReason.trim() || !applicationToReject) return
-
-    updateAdmissionStatus(applicationToReject, "rejected", verificationNotes, rejectionReason)
-    handleCloseRejectionDialog()
-    handleCloseDetailsDialog()
-  }
-
+    setRejecting(true);
+    try {
+      await dispatch(handleStatusChange({
+        id: applicationToReject,
+        data: {
+          status: 'rejected',
+          verificationNotes: verificationNotes || 'verification rejected',
+          rejectionReason: rejectionReason || 'Invalid details',
+        }
+      })).unwrap()
+      setRejecting(false);
+      showNotification('success', { message: "Application rejected successfully" })
+      handleCloseRejectionDialog()
+      handleCloseDetailsDialog()
+    } catch (error) {
+      showNotification('error', { message: error as string || 'failed to approve application' })
+      setRejecting(false);
+    }
+  };
 
   const handleCloseRejectionDialog = () => {
     setShowRejectionDialog(false)
@@ -124,9 +131,9 @@ export default function AdmissionInfoPage() {
       a.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       a.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       a.mobileNumber?.includes(searchTerm);
-
     return matchesStatus && matchesSearch;
-  });
+  }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
   const paginatedAdmissions = filteredAdmissions.slice(indexOfFirst, indexOfLast);
@@ -134,12 +141,12 @@ export default function AdmissionInfoPage() {
     setCurrentPage(1);
   }, [searchTerm, statusFilter]);
   const stats = {
-  total: admissions.length,
-  pending: admissions.filter(a => a.status === 'pending').length,
-  approved: admissions.filter(a => a.status === 'approved').length,
-  rejected: admissions.filter(a => a.status === 'rejected').length,
-  completed: admissions.filter(a => a.status === 'completed').length,
-};
+    total: admissions.length,
+    pending: admissions.filter(a => a.status === 'pending').length,
+    approved: admissions.filter(a => a.status === 'approved').length,
+    rejected: admissions.filter(a => a.status === 'rejected').length,
+    completed: admissions.filter(a => a.status === 'completed').length,
+  };
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -157,7 +164,7 @@ export default function AdmissionInfoPage() {
         totalCount={admissions.length}
         onViewDetails={handleViewDetails}
       />
-     
+
 
       <ApplicationDetailsDialog
         admission={selectedAdmission}
@@ -168,6 +175,8 @@ export default function AdmissionInfoPage() {
         onReject={handleRejectClick}
         onViewDocument={handleViewDocument}
         onClose={handleCloseDetailsDialog}
+        approving={approving}
+        rejecting={rejecting}
       />
 
       <RejectionDialog
@@ -177,11 +186,11 @@ export default function AdmissionInfoPage() {
         onReject={handleRejectWithReason}
         onClose={handleCloseRejectionDialog}
       />
-       <CustomPagination
-          currentPage={currentPage}
-          totalPages={Math.ceil(filteredAdmissions.length / itemsPerPage)}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
+      <CustomPagination
+        currentPage={currentPage}
+        totalPages={Math.ceil(filteredAdmissions.length / itemsPerPage)}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
       <DocumentViewer document={documentPreview} onClose={() => setDocumentPreview(null)} />
     </div>
   )

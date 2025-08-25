@@ -1,15 +1,17 @@
 import type { AdmissionFormData } from "@/types/admission.types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { fetchAdmissions } from "./admissionThunks";
+import { fetchAdmissions, fetchApplicationsByEmail, handleStatusChange } from "./admissionThunks";
 
 interface AdmissionState {
-    data: AdmissionFormData[]
+    data: AdmissionFormData[];
+    applicationsByEmail: AdmissionFormData[];
     loading: boolean
     error: string | null
 }
 
 const initialState: AdmissionState = {
     data: [],
+    applicationsByEmail: [],
     loading: false,
     error: null,
 }
@@ -47,13 +49,38 @@ const admissionSlice = createSlice({
                 state.error = null
             })
             .addCase(fetchAdmissions.fulfilled, (state, action) => {
-                state.data=action.payload
+                state.data = action.payload
                 state.loading = false;
             })
             .addCase(fetchAdmissions.rejected, (state, action) => {
                 state.error = action.error.message || 'Failed to fetch admission';
                 state.loading = false
             })
+            .addCase(fetchApplicationsByEmail.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchApplicationsByEmail.fulfilled, (state, action) => {
+                state.loading = false;
+                state.applicationsByEmail = action.payload;
+            })
+            .addCase(fetchApplicationsByEmail.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Something went wrong";
+            })
+            .addCase(handleStatusChange.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(handleStatusChange.fulfilled, (state, action) => {
+               state.data= state.data.map((a)=>a._id===action.payload._id ?action.payload : a);
+               state.loading=false;
+               state.error=null
+            })
+            .addCase(handleStatusChange.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error as string;
+            });
     }
 });
 

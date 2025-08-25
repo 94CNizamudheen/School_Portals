@@ -26,9 +26,6 @@ const TeachersPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 8;
 
-  // useEffect(() => {
-  //   dispatch(fetchTeachers());
-  // }, [dispatch]);
 
   const filteredTeachers = teachers.filter((teacher) => {
     const fullName = `${teacher.firstName} ${teacher.lastName}`.toLowerCase();

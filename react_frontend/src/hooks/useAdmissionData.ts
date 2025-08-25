@@ -13,14 +13,9 @@ export const useAdmissionData = () => {
     dispatch(fetchAdmissions())
   }, [dispatch])
 
-  const changeStatus = (
-    id: string,
-    status: 'approved' | 'rejected' | 'completed',
-    notes?: string,
-    rejectionReason?: string
-  ) => {
-    dispatch(updateAdmissionStatus({ id, status, notes, rejectionReason }))
-  }
+  const changeStatus = async (id: string, status: 'approved' | 'rejected' | 'completed', notes?: string, rejectionReason?: string) => {
+   await dispatch(updateAdmissionStatus({ id, status, notes, rejectionReason }))
+  };
 
   return {
     admissions,

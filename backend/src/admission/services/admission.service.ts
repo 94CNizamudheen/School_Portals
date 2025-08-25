@@ -4,6 +4,8 @@ import { IAdmissionRepository } from '../repositories/interfaces/admission.repos
 import { uploadImage } from 'src/common/utils/upload.image';
 import { uploadDocument } from 'src/common/utils/upload.document';
 import { UpdateAdmissionDto } from '../dtos/update.admission.dto';
+import { MailService } from 'src/mailer/services/mail.service';
+import { admissionStatusTemplate } from 'src/mailer/utils/templates/admission.status.template';
 
 type CreateAdmissionFormDto = Omit<CreateAdmissionDto, 'profilePicture' | 'aadharDocument' | 'birthCertificate' | 'transferCertificate'>;
 
@@ -11,7 +13,11 @@ type CreateAdmissionFormDto = Omit<CreateAdmissionDto, 'profilePicture' | 'aadha
 @Injectable()
 export class AdmissionService {
   private readonly logger= new Logger(AdmissionService.name)
-  constructor(@Inject('IAdmissionRepository') private readonly repo: IAdmissionRepository) {}
+  constructor(
+    @Inject('IAdmissionRepository') private readonly repo: IAdmissionRepository,
+    private readonly mailService:MailService
+
+  ) {}
 
   async submitApplication(dto: CreateAdmissionFormDto,files:Record<string,Express.Multer.File[]>) {
     this.logger.log(`submit application invoked with ${JSON.stringify(dto)}`)
@@ -45,7 +51,16 @@ export class AdmissionService {
   async updateApplicationStatus(id:string,dto:UpdateAdmissionDto) {
     const admission = await this.repo.findById(id);
     if (!admission) throw new NotFoundException('Application not found');
-    await this.repo.updateStatus(id, dto);
+    const subject= "Admission Status"
+    const text= "Dear Applicant"
+    const html= admissionStatusTemplate(dto.status);
+    try {
+      await this.mailService.sendMail({to: admission.email,subject,text,html});
+      return await this.repo.updateStatus(id, dto);
+    } catch (error) {
+      this.logger.error(`Failed to send login email to ${admission.email}`, error);
+      return false;
+    }
   }
   async getAdmissionById(id:string){
     const admission= await this.repo.findById(id)

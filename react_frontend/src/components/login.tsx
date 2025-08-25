@@ -63,8 +63,9 @@ const Login = () => {
       })
 
       const { access_token, userId, refresh_token, user } = response.data
-      dispatch(login({ access_token, role, userId, refresh_token }))
-      dispatch(userInfo({ name: user.name, email: user.email }))
+      console.log(response.data)
+       dispatch(login({ access_token, role, userId, refresh_token }))
+       dispatch(userInfo({ name: user.name, email: user.email }))
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message || "Login failed. Please try again")

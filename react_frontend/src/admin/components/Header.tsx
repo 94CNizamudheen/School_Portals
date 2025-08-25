@@ -8,6 +8,7 @@ import { fetchTeachers } from '../../store/teacherThunks';
 import { fetchAllStudents } from '../../store/studentThunks';
 import { fetchParents } from '../../store/parentSlice';
 import { fetchSubjects } from '../../store/subjectThunks';
+import { fetchAdmissions } from '../../store/admissionThunks';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -18,6 +19,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onMenuClick, notificationCount, header }) => {
   const dispatch=useDispatch<AppDispatch>()
   useEffect(()=>{
+    dispatch(fetchAdmissions())
     dispatch(fetchTeachers())
     dispatch(fetchAllStudents())
     dispatch(fetchParents());
