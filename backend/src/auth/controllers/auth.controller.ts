@@ -21,9 +21,9 @@ export class AuthController {
     return this.authService.signIn(dto);
   };
   @Post('refresh')
-  refresh(@Body('refreshToken') refresh_token: string) {
-    this.logger.log("refresh invoked with token", refresh_token)
-    return this.authService.refreshToken(refresh_token)
+  async refresh(@Body('refresh_token') refresh_token: string) {
+    this.logger.debug("refresh invoked with token", refresh_token);
+     return this.authService.refreshToken(refresh_token)
   }
 
   @Post('logout')
