@@ -35,7 +35,7 @@ const TeachersPage = () => {
       teacher.subject?.toLowerCase() === filterValue.toLowerCase();
 
     return matchesSearch && matchesFilter;
-  });
+  }).sort((a,b)=>new Date(b.createdAt).getTime()- new Date(a.createdAt).getTime());
 
   const totalPages = Math.ceil(filteredTeachers.length / pageSize);
   const start = (currentPage - 1) * pageSize;

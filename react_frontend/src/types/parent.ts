@@ -10,13 +10,23 @@ export interface ParentForm {
   emergencyContactPhone?: string;
   emergencyContactRelationship?: string;
 }
+
 export interface Parent {
-  name?: string;
-  email?: string;
-  mobileNumber?: string;
-  occupation?: string;
-  relationship?: string;
-  emergencyContactName?: string;
-  emergencyContactPhone?: string;
-  emergencyContactRelationship?: string;
+    _id: string;
+    name: string;
+    email: string;
+    mobileNumber: string;
+    occupation?: string;
+    relationship?: string;
+    emergencyContactName?: string;
+    emergencyContactPhone?: string;
+    emergencyContactRelationship?: string;
+    studentIds?: string[];
+    relations: Relation[];
+    createdAt?:string
 }
+export interface Relation {
+    admissionId: string;
+    relationship: string;
+}
+

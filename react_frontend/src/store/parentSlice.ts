@@ -3,31 +3,13 @@ import { AxiosError } from 'axios';
 import API from '../axios.config';
 import type { Student } from '../types/student';
 import { updateStudent } from './studentThunks';
+import type { Parent } from '../types/parent'; 
+
 
 interface AssignParentPayload {
     parentId: string;
     studentIds: string[];
-}
-
-export interface Relation {
-    admissionId: string;
-    relationship: string;
-}
-
-export interface Parent {
-    _id: string;
-    name: string;
-    email: string;
-    mobileNumber: string;
-    occupation?: string;
-    relationship?: string;
-    emergencyContactName?: string;
-    emergencyContactPhone?: string;
-    emergencyContactRelationship?: string;
-    studentIds?: string[];
-    relations: Relation[];
-}
-
+};
 
 interface ParentState {
     parents: Parent[];

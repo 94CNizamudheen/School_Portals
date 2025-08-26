@@ -16,7 +16,7 @@ const StudentTable: React.FC<StudentTableProps> = ({ students }) => {
     const matchesSearch= student.firstName.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus= statusFilter==='all'||student.isActive===(statusFilter==='active');
     return matchesSearch && matchesStatus
-  })
+  }).sort((a,b)=>new Date(b.createdAt).getTime()- new Date(a.createdAt).getTime())
 
   
      const studentsperPage=8;
@@ -32,7 +32,7 @@ const StudentTable: React.FC<StudentTableProps> = ({ students }) => {
     setSearchTerm(value)
   }
   return (
-    <div className="bg-gradient-to-br from-white via-gray-500 to-white hover:shadow-2xl0 rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-gradient-to-br from-gray via-gray-100 to-gray-700 hover:shadow-2xl0 rounded-xl shadow-sm overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
         <h2 className="text-lg font-semibold text-white">All Students</h2>
         <StatusFilterWithSearch

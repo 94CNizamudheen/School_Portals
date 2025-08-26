@@ -9,8 +9,9 @@ import { ArrowLeft, User,  Mail,  Phone,  MapPin,  Calendar,  BookOpen,  Shield,
 import { Button } from '../../components/ui/button';
 
 import { useNotification } from '../../context/notification/useNotification';
-import Loading from '../../components/Loading';
+// import Loading from '../../components/Loading';
 import InfoCard from '../components/StudentInfoCard';
+import LoadingIndicator from '../../components/shared/LoadingIndicator';
 
 const StudentDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -124,11 +125,11 @@ const StudentDetailPage: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <Loading/>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <Loading/>
+  //   );
+  // }
 
   if (error) {
     return (
@@ -232,6 +233,7 @@ const StudentDetailPage: React.FC = () => {
                 {student.isActive ? (
                   <>
                     <CheckCircle className="w-4 h-4" />
+                    
                     Active Student
                   </>
                 ) : (
@@ -263,17 +265,9 @@ const StudentDetailPage: React.FC = () => {
                   : 'bg-green-600 hover:bg-green-700'
               } text-white rounded-xl px-6 py-3 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300`}
             >
-              {student.isActive ? (
-                <>
-                  <UserX className="w-4 h-4 mr-2" />
-                  Suspend Student
-                </>
-              ) : (
-                <>
-                  <UserCheck className="w-4 h-4 mr-2" />
-                  Activate Student
-                </>
-              )}
+              {student.isActive ?(
+                loading? (<LoadingIndicator text='Suspending...'/>):(<><UserX className="w-4 h-4 mr-2" />Suspend Student</>)
+              ):loading ? (<LoadingIndicator text='Activating...'/>):(<>  <UserCheck className="w-4 h-4 mr-2" />Activate</>) }
             </Button>
           </div>
         </div>

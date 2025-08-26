@@ -36,7 +36,7 @@ export const SubjectPage = () => {
     const matchesCount = filter === 'all' || subject.subjectType.toLocaleLowerCase() === filter.toLowerCase();
     const matchesSearch = subject.name.toLowerCase().includes(searchTerm.toLowerCase()) || subject.subjectType.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCount && matchesSearch
-  })
+  }).sort((a,b)=>new Date(b.createdAt??'').getTime()-new Date(a.createdAt??"").getTime())
 
 
   const subjectsPerPage = 6;

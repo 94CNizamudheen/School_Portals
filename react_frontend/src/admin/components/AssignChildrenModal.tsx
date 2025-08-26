@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../components/ui/dialog";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
-import type { Parent } from "../../store/parentSlice";
+import type { Parent } from "../../types/parent";
 import type {Student} from '../../types/student' 
 
 interface Props {

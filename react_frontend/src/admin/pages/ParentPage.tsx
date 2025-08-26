@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchParents, deleteParent, fetchChildrenOfParent } from '../../store/parentSlice';
-import type { Parent } from '../../store/parentSlice';
+import type { Parent } from '../../types/parent';
 import type { RootState, AppDispatch } from '../../store/store';
 import { Button } from '../../components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
@@ -31,7 +31,7 @@ const ParentPage: React.FC = () => {
         const matchStatus = statusFilter === 'all' || parent.relationship?.toLocaleLowerCase() === statusFilter.toLowerCase();
         const matchesSearch = parent.name.toLowerCase().includes(searchTerm.toLowerCase()) || parent.mobileNumber.includes(searchTerm)
         return matchStatus && matchesSearch
-    })
+    }).sort((a,b)=> new Date(b.createdAt??'').getTime()-new Date(a.createdAt??'').getTime() )
 
     const parentsPerPage = 9;
     const indexOfLastParent = currentPage * parentsPerPage;

@@ -59,4 +59,5 @@ export interface Student {
   cast:string
   identity?:string
   admissionId?:string
+  createdAt:Date
 }

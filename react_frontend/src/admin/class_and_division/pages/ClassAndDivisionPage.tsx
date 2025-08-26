@@ -42,9 +42,7 @@ export default function ClassDivisionManagementPage() {
   const subjects = useSelector((state:RootState)=>state.subjects.subjects)
   const availableSubjects= subjects.map((sub)=>sub.name);
 
-  const { divisions, loading } = useSelector(
-    (state: RootState) => state.divisions
-  );
+  const { divisions, loading } = useSelector( (state: RootState) => state.divisions);
   const teachers = useSelector((state: RootState) => state.teacher.approved);
   const students = useSelector((state: RootState) => state.student.students);
 
@@ -71,7 +69,7 @@ export default function ClassDivisionManagementPage() {
       division.classLevel.toLowerCase() === filterValue.toLowerCase();
 
     return matchesSearch && matchesFilter;
-  });
+  }).sort((a,b)=>new Date(b.createdAt).getTime()-new Date(a.createdAt).getTime())
   const totalPages = Math.ceil(filteredDivisions.length / pageSize)
   const start = (currentPage - 1) * pageSize;
   const paginatedDivisions = filteredDivisions.slice(start, start + pageSize)

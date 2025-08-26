@@ -28,7 +28,6 @@ export class ParentController {
   @Roles(Role.ADMIN,)
   @Get()
   findAll() {
-    this.logger.log('parent get invoked')
     return this.parentService.findAll();
   }
 
