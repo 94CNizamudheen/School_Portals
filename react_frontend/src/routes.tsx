@@ -37,7 +37,9 @@ const StudentParentProfile= lazy(()=>import('./parent/pages/StudentParentProfile
 const TeacherDashboard= lazy(()=>import('./teacher/pages/TeacherrDashboard.tsx'));
 const TeacherProfile = lazy(()=>import('./teacher/pages/TeacherProfile.tsx'))
 const ClassDivisionManagementPage= lazy(()=>import('./admin/class_and_division/pages/ClassAndDivisionPage.tsx'))
-const SubjectManagementPage= lazy(()=>import('./admin/subject/page/SubjectPage.tsx'))
+const SubjectManagementPage= lazy(()=>import('./admin/subject/page/SubjectPage.tsx'));
+const TimetableSchedulePage= lazy(()=>import('./admin/timeTable/Pages/TimeTablePage.tsx'));
+const CalenderPage= lazy(()=>import('./admin/calender_and_events/pages/SchoolCalender.tsx'))
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home />, errorElement: <RouterErrorFallback /> },
@@ -94,6 +96,8 @@ export const router = createBrowserRouter([
       { path: "/admin/teachers/:id", element: <TeacherDetailsPage /> },
       { path: "classes", element: <ClassDivisionManagementPage /> },
       { path: "subjects", element: <SubjectManagementPage /> },
+      { path: "time-table-schedule", element: <TimetableSchedulePage /> },
+      { path: "calender-schedule", element: <CalenderPage /> },
 
     ],
   },

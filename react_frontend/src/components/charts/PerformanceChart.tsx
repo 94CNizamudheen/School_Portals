@@ -16,13 +16,13 @@ interface PerformanceChartProps {
 
 const PerformanceChart: React.FC<PerformanceChartProps> = ({ data }) => {
   return (
-    <div className="bg-gradient-to-br from-white via-gray-500 to-white hover:shadow-2xl backdrop-blur-sm  rounded-xl p-6 border border-gray-700">
+    <div className="text-gray-800 bg-gradient-to-br from-white via-gray-500 to-white hover:shadow-2xl backdrop-blur-sm  rounded-xl p-6 border border-gray-700">
       <h3 className="text-lg font-semibold mb-6">Class Performance Trends</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis dataKey="month" stroke="#9CA3AF" />
-          <YAxis stroke="#9CA3AF" />
+          <XAxis dataKey="month" className='text-gray-900' />
+          <YAxis className='text-gray-900' />
           <Tooltip 
             contentStyle={{ 
               backgroundColor: '#1F2937', 

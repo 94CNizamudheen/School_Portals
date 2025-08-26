@@ -16,7 +16,7 @@ interface UnpaidStudentsProps {
 
 const UnpaidStudents: React.FC<UnpaidStudentsProps> = ({ students }) => {
   return (
-    <div className="bg-gradient-to-br from-white via-gray-500 to-white hover:shadow-2xl backdrop-blur-sm  rounded-xl p-6 border border-gray-700">
+    <div className=" text-gray-800 bg-gradient-to-br from-white via-gray-500 to-white hover:shadow-2xl backdrop-blur-sm  rounded-xl p-6 border border-gray-700">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold">Unpaid Students</h3>
         <button className="text-red-400 hover:text-red-300 text-sm">Send Reminders</button>
