@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { ClassDivisionType } from "./division.type.interface";
+import { ClassDivisionType } from "../../types/division.type.interface";
 import { CreateClassDivisionDto } from "src/class_division/dtos/create.division.dto";
 import { UpdateClassDivisionDto } from "src/class_division/dtos/update.division.dto";
 import { AddOrRemoveStudentDto, } from "src/class_division/dtos/addOrRemove.student.dto";

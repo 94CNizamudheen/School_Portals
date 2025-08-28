@@ -3,7 +3,7 @@ import { IClassDivisionRepository } from "./interfaces/division.repository.inter
 import { InjectModel } from "@nestjs/mongoose";
 import { ClassDivision } from "../entitie/classDivision.schema";
 import { Model, Types } from "mongoose";
-import { ClassDivisionType } from "./interfaces/division.type.interface";
+import { ClassDivisionType } from "../types/division.type.interface";
 import { CreateClassDivisionDto } from "../dtos/create.division.dto";
 import { UpdateClassDivisionDto } from "../dtos/update.division.dto";
 

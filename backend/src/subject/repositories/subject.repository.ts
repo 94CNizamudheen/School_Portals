@@ -24,7 +24,7 @@ export class SubjectRepository implements ISubjectRepository{
         return await this.subjectModel.findOne({name}).collation({locale:"en",strength:2}).lean<SubjectTypes|null>()
     }
     async createSubject(data: CreateSubjectDto): Promise<SubjectTypes> {
-        return (await this.subjectModel.create(data)).toObject() as SubjectTypes 
+        return await this.subjectModel.create(data) as SubjectTypes 
     }
     async updateSubject(id: string, data: UpdateSubjectDto): Promise<SubjectTypes | null> {
         return await this.subjectModel.findByIdAndUpdate(id,data,{new:true}).lean<SubjectTypes|null>()

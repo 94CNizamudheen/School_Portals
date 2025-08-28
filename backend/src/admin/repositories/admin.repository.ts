@@ -6,7 +6,7 @@ import { User } from 'src/user/entities/user.schema';
 import * as bcrypt from 'bcrypt';
 import { CreateAdminDto,  } from '../dtos/create-admin.dto';
 import { UpdateAdminDto } from '../dtos/update-admin.dto';
-import { IAdminRepository } from './interfaces/admin-repository.interface';
+import { IAdminRepository } from './interfaces/admin-repository.interface'; 
 
 @Injectable()
 export class AdminRepository implements IAdminRepository {

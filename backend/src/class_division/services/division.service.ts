@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Inject, Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { ClassDivisionType } from "../repositories/interfaces/division.type.interface";
+import { ClassDivisionType } from "../types/division.type.interface";
 import { CreateClassDivisionDto } from "../dtos/create.division.dto";
 import { UpdateClassDivisionDto } from "../dtos/update.division.dto";
 import { AddOrRemoveStudentDto, } from "../dtos/addOrRemove.student.dto";
