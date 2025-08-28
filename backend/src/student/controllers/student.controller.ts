@@ -39,7 +39,6 @@ export class StudentController {
   @Roles(Role.ADMIN)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateStudentDto) {
-
     return this.studentService.update(id, dto);
   }
 

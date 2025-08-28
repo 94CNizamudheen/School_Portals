@@ -13,10 +13,9 @@ export class AdmissionController {
 
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
-  async apply( @Body() body: Omit<CreateAdmissionDto, 'profilePicture' | 'aadharDocument' | 'birthCertificate' | 'transferCertificate'>,@UploadedFiles() files: Array<Express.Multer.File>,) {
+  async apply(@Body() body: Omit<CreateAdmissionDto, 'profilePicture' | 'aadharDocument' | 'birthCertificate' | 'transferCertificate'>, @UploadedFiles() files: Array<Express.Multer.File>,) {
     this.logger.debug('controller invoked with ', body);
     this.logger.debug('received files: ', files);
-
     const fileMap: Record<string, Express.Multer.File[]> = {};
     for (const file of files) {
       if (!fileMap[file.fieldname]) {

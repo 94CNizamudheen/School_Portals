@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { IAcademicCalendar } from "./academic.calender.repository.inreface";
+import { IAcademicCalendarRepository } from "./academic.calender.repository.inreface";
 import { InjectModel } from "@nestjs/mongoose";
 import { AcademicCalendar } from "../entities/academic.calender.schema"; 
 import { Model } from "mongoose";
@@ -9,7 +9,7 @@ import { UpdateAcademicCalendarDto } from "../dtos/update.academic.calender.dto"
 
 
 @Injectable()
-export class AcademicCalendarRepository implements IAcademicCalendar{
+export class AcademicCalendarRepository implements IAcademicCalendarRepository{
     constructor(
         @InjectModel(AcademicCalendar.name) private readonly model:Model<AcademicCalendar>
     ){};
@@ -20,7 +20,7 @@ export class AcademicCalendarRepository implements IAcademicCalendar{
         return await this.model.find().lean<AcademicCalendarType[]>() 
     };
     async findById(id: string): Promise<AcademicCalendarType|null> {
-        return await this.model.findById(id).lean<AcademicCalendarType|null>() 
+        return await this.model.findById(id).lean<AcademicCalendarType|null>().exec()
     };
     async update(id: string, data: UpdateAcademicCalendarDto): Promise<AcademicCalendarType|null> {
         return await this.model.findByIdAndUpdate(id,data,{new:true}).lean<AcademicCalendarType|null>();

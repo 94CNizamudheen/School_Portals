@@ -19,7 +19,7 @@ export class SchoolEventRepository implements ISchoolEventRepository{
         return await this.model.find().lean<SchoolEventType[]>()
     };
     async findById(id: string): Promise<SchoolEventType | null> {
-        return await this.model.findById(id).lean<SchoolEventType|null>();
+        return await this.model.findById(id).lean<SchoolEventType|null>().exec();
     };
     async update(id: string, data: UpdateSchoolEvent): Promise<SchoolEventType | null> {
         return await this.model.findByIdAndUpdate(id,data,{new:true}).lean<SchoolEventType|null>()

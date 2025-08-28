@@ -3,7 +3,6 @@ import { ISubjectRepository } from "../repositories/interfaces/subject.repositor
 import { SubjectTypes } from "../repositories/interfaces/subject.types.interface";
 import { CreateSubjectDto } from "../dtos/create.subject.dto";
 import { UpdateSubjectDto } from "../dtos/update.subject.dto";
-import { Types } from "mongoose";
 import { ITeacherRepository } from "src/teacher/repositories/interfaces/teacher.repository.interface";
 
 
