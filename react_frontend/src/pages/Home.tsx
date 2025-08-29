@@ -5,14 +5,13 @@ import ActivitiesSection from "../components/ActivitiesSection"
 import ContactSection from "../components/ContactSection"
 import Footer from "../components/Footer"
 import Header from "../components/Header"
-import { useSelector } from "react-redux"
-import type { RootState } from "../types/store.types"; 
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { useAppSelector } from "../hooks/app.hooks"
 
 
 const Home = () => {
-  const role= useSelector((state:RootState)=>state.auth.role)
+  const role= useAppSelector((state)=>state.auth.role)
   console.log("role is",role)
   const navigate= useNavigate()
   useEffect(()=>{

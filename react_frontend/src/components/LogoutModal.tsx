@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
 import { logoutThunk } from '../store/authThunks'
-import type { AppDispatch }from ".././types/store.types"; 
+import { useAppDispatch } from '../hooks/app.hooks'
+
 
 type LogoutModalProps = {
   trigger: React.ReactNode
@@ -13,7 +13,7 @@ type LogoutModalProps = {
 const LogoutModal: React.FC<LogoutModalProps> = ({ trigger }) => {
   const [show, setShow] = useState(false)
   const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>()
+const dispatch = useAppDispatch()
 
   const handleLogout = async () => {
     try {

@@ -5,14 +5,13 @@ import { Badge } from "../../components/ui/badge";
 
 import StatusFilterWithSearch from "../../components/shared/filters";
 import { CustomPagination } from "../../components/shared/CustomPagination";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState }from "../../types/store.types"; 
 import { User, Mail, Phone, Calendar, BookOpen, Award, FileText, Eye } from "lucide-react";
 import TeacherDetailsModal from "../components/modals/ViewTeacherDetails";
 import type { Teacher } from "../../types/teacher.types";
 import { rejectApplication, verifyTeacher } from "../../store/teacherSlice";
 import ProcessingSpinner from "../../components/shared/ProcessingSpinner";
 import { useNotification } from "../../context/notification/useNotification";
+import { useAppDispatch, useAppSelector } from "../../hooks/app.hooks";
 
 
 const getStatusBadgeVariant = (status: string) => {
@@ -34,8 +33,8 @@ const getStatusColor = (status: string) => {
 };
 
 const ReviewAndVerifyTeachersPage: React.FC = () => {
-  const appliedTeachers = useSelector((state: RootState) => state.teacher.applied)
-  const loading = useSelector((state: RootState) => state.teacher.loading);
+  const appliedTeachers = useAppSelector((state) => state.teacher.applied)
+  const loading = useAppSelector((state) => state.teacher.loading);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
@@ -43,7 +42,7 @@ const ReviewAndVerifyTeachersPage: React.FC = () => {
   const [filteredTeachers, setFilteredTeachers] = useState<Teacher[]>([]);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false);
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useAppDispatch()
   const {showNotification}= useNotification()
 
   const itemsPerPage = 8;

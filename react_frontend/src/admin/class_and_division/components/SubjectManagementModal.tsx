@@ -1,10 +1,11 @@
 
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from "../../../types/store.types"; 
+import {  } from 'react-redux';
+
 import type { Division } from '../../../types/division.type';
 import { XMarkIcon, PlusIcon, TrashIcon, AcademicCapIcon } from '@heroicons/react/24/outline';
 import { updateDivision } from '../../../store/divisionThunks';
+import { useAppDispatch } from '../../../hooks/app.hooks';
 
 interface SubjectManagementModalProps {
   isOpen: boolean;
@@ -15,7 +16,7 @@ interface SubjectManagementModalProps {
 }
 
 const SubjectManagementModal: React.FC<SubjectManagementModalProps> = ({ isOpen, onClose, division, onSubjectUpdate, availableSubjects }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const [newSubject, setNewSubject] = useState('');
   const [subjects, setSubjects] = useState<string[]>([]);
   useEffect(() => {

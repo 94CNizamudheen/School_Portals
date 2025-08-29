@@ -8,21 +8,21 @@ import { step1Schema, passwordSchema } from '../utils/validationSchemas';
 import type { AxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from "../types/store.types"; 
+
 import LoadingIndicator from './shared/LoadingIndicator';
 import { generateOtpThunk } from '../store/authThunks';
 import { resetPassword } from '../store/authThunks';
+import { useAppDispatch, useAppSelector } from '../hooks/app.hooks';
 
 const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
 
-    const role = useSelector((state: RootState) => state.auth.role)
+    const role = useAppSelector((state) => state.auth.role)
     const [loading, setLoading] = useState(false)
     const [step, setStep] = useState(1);
     const [emailAndIdentity, setEmailAndIdentity] = useState({ email: '', identity: '' });
     const [otp, setOtp] = useState('');
     const { showNotification } = useNotification();
-    const dispatch = useDispatch<AppDispatch>()
+    const dispatch = useAppDispatch()
 
 
     const { register: registerStep1, handleSubmit: handleSubmitStep1, formState: { errors: step1Errors } } = useForm({
@@ -37,7 +37,7 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
                 await dispatch(requestStudentOtp(data as { email: string; identity: string })).unwrap();
 
             } else {
-                
+
                 await dispatch(generateOtpThunk(data.email)).unwrap();
             }
             setEmailAndIdentity(data as { email: string; identity: string });
@@ -65,7 +65,7 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
         }
     };
 
-  
+
     const { register: registerPassword, handleSubmit: handleSubmitPassword, formState: { errors: passwordErrors }, } = useForm({
         resolver: yupResolver(passwordSchema),
     });
@@ -73,10 +73,10 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
     const handlePasswordSubmit = async (data: { password: string; confirmPassword: string }) => {
         try {
             setLoading(true)
-            if(role=="STUDENT"){
+            if (role == "STUDENT") {
                 await dispatch(changeStudentPassword({ identity: emailAndIdentity.identity, password: data.password })).unwrap();
-            }else{
-                await resetPassword(emailAndIdentity.email,data.password)
+            } else {
+                await resetPassword(emailAndIdentity.email, data.password)
             }
             showNotification('success', {
                 title: 'Success',

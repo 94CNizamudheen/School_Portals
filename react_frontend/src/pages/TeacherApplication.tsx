@@ -6,12 +6,11 @@ import InputField from '../components/forms/InputField';
 import SelectField from '../components/forms/SelectField';
 import FileUploadArea from '../components/forms/FileUploadArea';
 import { Check } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux';
 import { sendteacherApplication } from '../store/teacherSlice';
-import type { AppDispatch, RootState }  from "../types/store.types"; 
 import ApplicationSuucessModal from '../components/modals/ApplicationSuccessModal';
 import { useNavigate } from 'react-router-dom';
 import { fetchSubjects } from '../store/subjectThunks';
+import { useAppDispatch, useAppSelector } from '../hooks/app.hooks';
 
 interface FormData {
   firstName: string;
@@ -37,11 +36,11 @@ interface FileData {
 }
 
 export default function TeacherApplicationForm() {
-  const {userName,userEmail}=useSelector((state:RootState)=>state.auth);
-  const subjects= useSelector((state:RootState)=>state.subjects.subjects)
+  const {userName,userEmail}=useAppSelector((state)=>state.auth);
+  const subjects= useAppSelector((state)=>state.subjects.subjects)
   const availableSubjects= subjects.map((sub)=>({value:sub.name,label:sub.name}));
   const navigate = useNavigate()
-  const dispatch = useDispatch<AppDispatch>()
+ const dispatch = useAppDispatch()
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);

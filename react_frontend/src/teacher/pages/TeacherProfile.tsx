@@ -1,21 +1,19 @@
 
 
-import { useDispatch, useSelector } from "react-redux";
 import { Pencil, Lock, User } from "lucide-react";
-import type { AppDispatch, RootState} from "../../types/store.types"; 
 import { useState } from "react";
-
 import ChangePasswordModal from "../../components/ChangePasswordModal";
 import EditTeacherModal from "../components/EditTeacherModal";
 import { updateTeacher } from "../../store/teacherSlice";
 import { useNotification } from "../../context/notification/useNotification";
 import type { AxiosError } from "axios";
+import { useAppDispatch, useAppSelector } from "../../hooks/app.hooks";
 
 const TeacherProfile = () => {
-    const teacher = useSelector((state: RootState) => state.teacher.teacher);
+    const teacher = useAppSelector((state) => state.teacher.teacher);
     const [isEditModalOpen, setEditModalOpen] = useState(false)
     const [isResetPasswordModalOpen, setResetPasswordModalOpen] = useState(false)
-    const dispatch= useDispatch<AppDispatch>();
+    const dispatch= useAppDispatch();
     const {showNotification}= useNotification()
    
     const handleSaveTeacher=(updates:{email?:string,  mobileNumber?: string;profileImage?: File | null;})=>{

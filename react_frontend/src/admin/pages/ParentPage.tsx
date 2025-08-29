@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+
 import { fetchParents, deleteParent, fetchChildrenOfParent } from '../../store/parentSlice';
 import type { Parent } from '../../types/parent';
-import type { RootState, AppDispatch } from "../../types/store.types"; 
 import { Button } from '../../components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import { Trash2, Eye, UserPlus, Users, Mail, Phone, Briefcase, Heart, Baby } from 'lucide-react';
@@ -15,11 +14,12 @@ import { fetchAllStudents } from '../../store/studentSlice';
 import { assignParent } from '../../store/parentSlice';
 import StatusFilterWithSearch from '../../components/shared/filters';
 import type { Student } from '../../types/student';
+import { useAppDispatch, useAppSelector } from '../../hooks/app.hooks';
 
 const ParentPage: React.FC = () => {
-    const dispatch = useDispatch<AppDispatch>();
-    const { parents, loading, error } = useSelector((s: RootState) => s.parent);
-    const students = useSelector((state: RootState) => state.student.students)
+    const dispatch = useAppDispatch();
+    const { parents, loading, error } = useAppSelector((s) => s.parent);
+    const students = useAppSelector((state) => state.student.students)
     const [viewing, setViewing] = useState<Parent | null>(null);
     const [childrenList, setChildrenList] = useState<Student[]>([]);
     const [assigningParent, setAssigningParent] = useState<Parent | null>(null);

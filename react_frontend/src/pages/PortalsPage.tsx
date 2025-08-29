@@ -1,13 +1,12 @@
 
 
+import { useAppSelector } from "../hooks/app.hooks"
 import { useNotification } from "../context/notification/useNotification"
-import type { RootState }  from "../types/store.types"; 
 import { ArrowLeft } from "lucide-react"
-import { useSelector } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
 
 const PortalsPage = () => {
-  const { role, userName } = useSelector((state: RootState) => state.auth);
+  const { role, userName } = useAppSelector((state) => state.auth);
   const { showNotification } = useNotification()
   const navigate = useNavigate()
   const userRoles = [

@@ -3,11 +3,10 @@
 import React, { useState } from 'react';
 import { X, Mail, User, ArrowRight } from 'lucide-react';
 import LoadingIndicator from '../../components/shared/LoadingIndicator';
-import { useDispatch } from 'react-redux';
 import { sendStudentPassword } from '../../store/studentSlice';
-import type { AppDispatch } from "../../types/store.types"; 
 import { useNotification } from '../../context/notification/useNotification';
 import type { AxiosError } from 'axios';
+import { useAppDispatch } from '../../hooks/app.hooks';
 
 interface ModalProps {
     isOpen: boolean;
@@ -18,7 +17,7 @@ const StudentForgotPassword: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const [parentEmail, setParentEmail] = useState('');
     const [identity, setIdentity] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const dispatch = useDispatch<AppDispatch>()
+    const dispatch = useAppDispatch()
     const { showNotification } = useNotification()
 
     const handleSubmit = async () => {

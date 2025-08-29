@@ -6,10 +6,8 @@ import { Label } from "../../../components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
 import {  Dialog, DialogContent,  DialogDescription,  DialogFooter,  DialogHeader,  DialogTitle,} from "../../../components/ui/dialog"
 import { Badge } from "../../../components/ui/badge"
-
 import type { Subject } from "../../../types/subject.types"
-import { useSelector } from "react-redux"
-import type { RootState }  from "../../../types/store.types"; 
+import { useAppSelector } from "@/hooks/app.hooks"
 
 interface AssignTeacherModalProps {
   isOpen: boolean
@@ -22,7 +20,7 @@ interface AssignTeacherModalProps {
 
 export function AssignTeacherModal({ isOpen, onClose, subject, onAssignTeacher }: AssignTeacherModalProps) {
   const [selectedTeacherId, setSelectedTeacherId] = useState("")
-  const teachers= useSelector((state:RootState)=>state.teacher.approved);
+  const teachers= useAppSelector((state)=>state.teacher.approved);
 
   const handleSubmit = () => {
     if (selectedTeacherId && subject) {

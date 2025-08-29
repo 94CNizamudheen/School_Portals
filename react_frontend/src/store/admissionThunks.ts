@@ -2,7 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { AdmissionFiles, AdmissionFormBody, AdmissionFormData } from "../types/admission.types";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import type { RootState } from "../types/store.types";
 import API from "../axios.config";
 
 export interface StatusChangeData {
@@ -18,10 +17,9 @@ interface PaymentPayload {
 
 
 
-export const fetchAdmissions = createAsyncThunk<AdmissionFormData[], void, { rejectValue: string; state: RootState }>(
+export const fetchAdmissions = createAsyncThunk<AdmissionFormData[], void, { rejectValue: string }>(
   'admissions/fetchAll',
   async (_, { rejectWithValue, }) => {
-
     try {
       const response = await API.get(`/admissions`, {
       });

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useParams, useNavigate } from 'react-router-dom';;
 import { fetchAllStudents, updateStudent } from '../../store/studentSlice'; 
-import type { RootState, AppDispatch }from "../../types/store.types"; 
 import type { Student } from '../../types/student';
 import { ArrowLeft, User,  Mail,  Phone,  MapPin,  Calendar,  BookOpen,  Shield,  Heart,  Camera, CheckCircle,XCircle,GraduationCap,UserCheck,  UserX} from 'lucide-react';
 import { Button } from '../../components/ui/button';
@@ -12,14 +10,15 @@ import { useNotification } from '../../context/notification/useNotification';
 // import Loading from '../../components/Loading';
 import InfoCard from '../components/StudentInfoCard';
 import LoadingIndicator from '../../components/shared/LoadingIndicator';
+import { useAppDispatch, useAppSelector } from '../../hooks/app.hooks';
 
 const StudentDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch()
   const { showNotification } = useNotification();
 
-  const { student: storeStudent, students, loading, error } = useSelector((state: RootState) => state.student);
+  const { student: storeStudent, students, loading, error } = useAppSelector((state) => state.student);
   const [student, setStudent] = useState<Student | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [imageUploading, setImageUploading] = useState(false);

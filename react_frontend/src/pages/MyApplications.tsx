@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState }from "../types/store.types"; 
+
 import type { AdmissionFormData } from "../types/admission.types"
 import { FileText, AlertCircle } from "lucide-react"
 import { completeAdmissionPayment, fetchApplicationsByEmail } from "../store/admissionThunks"
@@ -9,6 +8,7 @@ import { AxiosError } from "axios"
 import ComponentLoader from "../components/shared/ComponentLoader"
 import { useNavigate } from "react-router-dom"
 import { useNotification } from "../context/notification/useNotification"
+import { useAppDispatch, useAppSelector } from "../hooks/app.hooks"
 
 interface StatusCounts {
   total: number
@@ -23,10 +23,10 @@ const MyApplications: React.FC = () => {
   const [expandedApplications, setExpandedApplications] = useState<Set<string>>(new Set())
   const [paymentInProgressId, setPaymentInProgressId] = useState<string | null>(null)
 
-  const { isAuthenticated, userEmail } = useSelector((state: RootState) => state.auth)
-  const { applicationsByEmail, loading, error } = useSelector((state: RootState) => state.admissions)
+  const { isAuthenticated, userEmail } = useAppSelector((state ) => state.auth)
+  const { applicationsByEmail, loading, error } = useAppSelector((state ) => state.admissions)
   const { showNotification } = useNotification()
-  const dispatch = useDispatch<AppDispatch>()
+const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (isAuthenticated && userEmail) {

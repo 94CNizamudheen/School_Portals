@@ -1,25 +1,25 @@
 
-import { useDispatch, useSelector } from "react-redux";
+
 import { Bell, HelpCircle, Lock, Menu, Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ChangePasswordModal from "../ChangePasswordModal";
-import type { AppDispatch, RootState } from "../../types/store.types"; 
 import { fetchStudentById } from "../../store/studentSlice";
 import { useNotification } from "../../context/notification/useNotification";
 import { fetchParentByEmail } from "../../store/parentSlice";
 import type { AxiosError } from "axios";
 import { findTeacherByEmail } from "../../store/teacherSlice";
+import { useAppDispatch, useAppSelector } from "../../hooks/app.hooks";
 
 
 interface Props {
     onMenuClick: () => void;
 }
 const CommonHeader: React.FC<Props> = ({ onMenuClick }) => {
-    const student = useSelector((state: RootState) => state.student.student);
-    const teacher = useSelector((state: RootState) => state.teacher.teacher);
-    const parent = useSelector((state: RootState) => state.parent.parent);
-    const { role, userEmail, userId } = useSelector((state: RootState) => state.auth);
-    const dispatch = useDispatch<AppDispatch>()
+    const student = useAppSelector((state ) => state.student.student);
+    const teacher = useAppSelector((state ) => state.teacher.teacher);
+    const parent = useAppSelector((state) => state.parent.parent);
+    const { role, userEmail, userId } = useAppSelector((state) => state.auth);
+   const dispatch = useAppDispatch()
     const { showNotification } = useNotification()
 
     useEffect(() => {

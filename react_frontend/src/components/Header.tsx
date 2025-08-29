@@ -1,20 +1,19 @@
 import { useEffect, useState, useRef } from "react"
 import { X, Menu, LogOut, ChevronDown, Settings, FileText, Bell, GraduationCap, } from "lucide-react"
 import { Link } from "react-router-dom"
-import { useSelector, useDispatch } from "react-redux"
-import type { AppDispatch, RootState }from "../types/store.types"; 
 import { logoutThunk } from "../store/authThunks" 
 import LogoutConfirmModal from "./modals/LogoutConfirmModal"
+import { useAppDispatch, useAppSelector } from "../hooks/app.hooks"
 
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useAppDispatch()
   const userMenuRef = useRef<HTMLDivElement>(null)
 
-  const { isAuthenticated, userName, userEmail } = useSelector((state: RootState) => state.auth)
+  const { isAuthenticated, userName, userEmail } = useAppSelector((state) => state.auth)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {

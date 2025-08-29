@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../../types/store.types"; 
 import { deleteTeacher, fetchTeachers } from "../../store/teacherSlice";
 import { Card, CardContent, CardHeader, CardTitle, } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -11,12 +9,13 @@ import { Mail, Phone, GraduationCap, MoreHorizontal, Eye, Trash2, Users } from "
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from "../../components/ui/dropdown-menu";
 import ConfirmModal from "../components/modals/ConfirmDeleteModal";
 import { useNotification } from "../../context/notification/useNotification";
+import { useAppDispatch, useAppSelector } from "../../hooks/app.hooks";
 
 const TeachersPage = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate= useNavigate()
-  const teachers = useSelector((state: RootState) => state.teacher.approved);
-  const loading = useSelector((state: RootState) => state.teacher.loading);
+  const teachers = useAppSelector((state ) => state.teacher.approved);
+  const loading = useAppSelector((state) => state.teacher.loading);
   const {showNotification}=useNotification()
 
   const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(null);

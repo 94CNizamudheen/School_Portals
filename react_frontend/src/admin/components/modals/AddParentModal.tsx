@@ -1,12 +1,11 @@
 
 
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from "../../../types/store.types"; 
 import { addParent } from '../../../store/parentSlice';
 import { useNotification } from '../../../context/notification/useNotification';
 import type { AxiosError } from 'axios';
 import { X } from 'lucide-react';
+import { useAppDispatch } from '../../../hooks/app.hooks';
 
 interface AddParentModalProps {
     open: boolean;
@@ -14,7 +13,7 @@ interface AddParentModalProps {
 }
 
 export const AddParentModal: React.FC<AddParentModalProps> = ({ open, onClose }) => {
-    const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useAppDispatch();
     const { showNotification } = useNotification()
 
     const [form, setForm] = useState({

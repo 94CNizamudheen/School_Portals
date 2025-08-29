@@ -9,17 +9,16 @@ import { CreateSubjectModal } from "../components/CreateSubjectModal"
 import { EditSubjectModal } from "../components/EditSubjectModal"
 import { AssignTeacherModal } from "../components/AssignTeacherModal"
 import type { Subject } from "../../../types/subject.types"
-import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "../../../types/store.types"; 
 import { assignTeacher, createSubject, deleteSubject, removeTeacher, updateSubject } from "../../../store/subjectThunks"
 import { useNotification } from "../../../context/notification/useNotification"
 import ConfirmModal from "../../../admin/components/modals/ConfirmDeleteModal"
 import StatusFilterWithSearch from "../../../components/shared/filters"
 import { CustomPagination } from "../../../components/shared/CustomPagination"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../components/ui/tooltip"
+import { useAppDispatch, useAppSelector } from "../../../hooks/app.hooks"
 
 export const SubjectPage = () => {
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useAppDispatch()
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isAssignTeacherDialogOpen, setIsAssignTeacherDialogOpen] = useState(false)
@@ -29,8 +28,8 @@ export const SubjectPage = () => {
   const [currentpage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const subjects = useSelector((state: RootState) => state.subjects.subjects);
-  const teachers = useSelector((state: RootState) => state.teacher.approved);
+  const subjects = useAppSelector((state ) => state.subjects.subjects);
+  const teachers = useAppSelector((state ) => state.teacher.approved);
 
   const filterdSubjects = subjects.filter((subject) => {
     const matchesCount = filter === 'all' || subject.subjectType.toLocaleLowerCase() === filter.toLowerCase();

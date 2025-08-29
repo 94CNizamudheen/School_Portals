@@ -6,8 +6,8 @@ import studentReducer from './studentSlice'
 import parentReducer from './parentSlice'
 import teacherReducer from './teacherSlice'
 import admissionReducer from './admissionSlice';
-import divisionReducer from './divisionSlice.ts'
-import subjectReducer from './subjectSlice.ts'
+import divisionReducer from './divisionSlice'
+import subjectReducer from './subjectSlice'
 
 
 const persistConfig = {
@@ -40,3 +40,5 @@ export const store = configureStore({
 
 export const persistor = persistStore(store);
 
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

@@ -1,8 +1,7 @@
 
+import { useAppSelector } from '../../hooks/app.hooks';
 import React, { useRef } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import type { RootState }from "../../types/store.types"; 
 import { toast } from 'react-toastify';
 ;
 
@@ -11,7 +10,7 @@ interface Props {
 }
 
 const PrivateRoute: React.FC<Props> = ({ children }) => {
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const hasWarned = useRef(false);
   if (!isAuthenticated) {
     if (!hasWarned.current) {

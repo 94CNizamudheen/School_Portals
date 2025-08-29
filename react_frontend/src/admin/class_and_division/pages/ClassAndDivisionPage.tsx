@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../../../types/store.types"; 
+
 import { fetchAllDivisions, createDivision, deleteDivisionById, updateDivision, addStudentToDivision, removeStudentFromDivision, } from "../../../store/divisionThunks";
 import type { Division } from "../../../types/division.type";
 import CreateDivisionModal from "../components/CreateDevisionModal";
@@ -14,6 +13,7 @@ import StatusFilterWithSearch from "../../../components/shared/filters";
 import { CustomPagination } from "../../../components/shared/CustomPagination";
 import ConfirmModal from "../../../admin/components/modals/ConfirmDeleteModal";
 import Loading from "../../../components/Loading";
+import { useAppDispatch, useAppSelector } from "../../../hooks/app.hooks";
 
 export interface CreateDivisionForm {
   divisionName: string;
@@ -24,7 +24,7 @@ export interface CreateDivisionForm {
 }
 
 export default function ClassDivisionManagementPage() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
@@ -39,12 +39,12 @@ export default function ClassDivisionManagementPage() {
   const [activeDivisionId, setActiveDivisionId] = useState<string | null>(null);
   const pageSize = 6;
   
-  const subjects = useSelector((state:RootState)=>state.subjects.subjects)
+  const subjects = useAppSelector((state)=>state.subjects.subjects)
   const availableSubjects= subjects.map((sub)=>sub.name);
 
-  const { divisions, loading } = useSelector( (state: RootState) => state.divisions);
-  const teachers = useSelector((state: RootState) => state.teacher.approved);
-  const students = useSelector((state: RootState) => state.student.students);
+  const { divisions, loading } = useAppSelector( (state ) => state.divisions);
+  const teachers = useAppSelector((state ) => state.teacher.approved);
+  const students = useAppSelector((state ) => state.student.students);
 
   const { showNotification } = useNotification();
 

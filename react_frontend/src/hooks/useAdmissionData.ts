@@ -1,13 +1,13 @@
-// hooks/useAdmissionData.ts
+
 import { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import type { RootState, AppDispatch } from "../types/store.types"; 
+
 import { updateAdmissionStatus,} from '../store/admissionSlice'
 import { fetchAdmissions } from '../store/admissionThunks'
+import { useAppDispatch, useAppSelector } from './app.hooks'
 
 export const useAdmissionData = () => { 
-  const dispatch = useDispatch<AppDispatch>()
-  const { data: admissions, loading, error } = useSelector( (state: RootState) => state.admissions)
+  const dispatch = useAppDispatch()
+  const { data: admissions, loading, error } = useAppSelector( (state) => state.admissions)
 
   useEffect(() => {
     dispatch(fetchAdmissions())

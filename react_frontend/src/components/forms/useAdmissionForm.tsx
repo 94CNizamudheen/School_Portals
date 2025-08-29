@@ -4,14 +4,13 @@ import { ValidationError } from "yup";
 
 import { admissionValidationSchema } from "../../utils/validationSchemas";
 import { createAdmission } from "../../store/admissionThunks";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../types/store.types"; 
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../context/notification/useNotification";
+import { useAppSelector } from "../../hooks/app.hooks";
 
 const useAdmissionForm = () => {
-    const userEmail = useSelector((state: RootState) => state.auth.userEmail);
-    const userName = useSelector((state: RootState) => state.auth.userName);
+    const userEmail = useAppSelector((state) => state.auth.userEmail);
+    const userName = useAppSelector((state) => state.auth.userName);
     
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);

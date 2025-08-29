@@ -2,7 +2,7 @@ import type { AxiosError } from "axios";
 import API from "../axios.config";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { login, logout } from "./authSlice";
-import type { RootState } from "../types/store.types"; 
+
 
 
 export const generateOtpThunk = createAsyncThunk(
@@ -21,8 +21,7 @@ export const refreshTokenThunk = createAsyncThunk(
   'auth/refresh',
   async (_, thunkAPI) => {
     try {
-      const state = thunkAPI.getState() as RootState
-      const refresh_token = state.auth.refresh_token;
+      const refresh_token = localStorage.getItem('refresh_token')
       if (!refresh_token) {
         return thunkAPI.rejectWithValue('No refresh token available');
       }

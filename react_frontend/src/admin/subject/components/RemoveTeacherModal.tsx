@@ -1,7 +1,4 @@
 
-
-"use client"
-
 import { useState } from "react"
 import { Button } from "../../../components/ui/button"
 import { Label } from "../../../components/ui/label"
@@ -9,9 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import {  Dialog, DialogContent, DialogDescription,  DialogFooter,  DialogHeader,  DialogTitle,} from "../../../components/ui/dialog"
 import { Badge } from "../../../components/ui/badge"
 import { AlertTriangle } from "lucide-react"
-import { useSelector } from "react-redux"
-import type { RootState }  from "../../../types/store.types"; 
 import type { Subject } from "../../../types/subject.types"
+import { useAppSelector } from "@/hooks/app.hooks"
 
 interface RemoveTeacherModalProps {
   isOpen: boolean
@@ -24,7 +20,7 @@ interface RemoveTeacherModalProps {
 
 export function RemoveTeacherModal({ isOpen, onClose, subject, onRemoveTeacher }: RemoveTeacherModalProps) {
   const [selectedTeacherId, setSelectedTeacherId] = useState("")
-  const teachers= useSelector((state:RootState)=>state.teacher.approved);
+  const teachers= useAppSelector((state)=>state.teacher.approved);
   const handleSubmit = () => {
     if (selectedTeacherId && subject) {
       onRemoveTeacher(subject._id as string, selectedTeacherId)

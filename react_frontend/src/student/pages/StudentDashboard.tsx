@@ -2,16 +2,15 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
 import { Button } from "../../components/ui/button"
 import { Calendar, Clock, BookOpen, Users, Award, TrendingUp } from "lucide-react"
-import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "../../types/store.types"; 
+
 import { fetchStudentById } from "../../store/studentSlice"
 import { useEffect } from "react"
+import { useAppDispatch, useAppSelector } from "@/hooks/app.hooks"
 
 export default function StudentDashboard() {
-  const dispatch = useDispatch<AppDispatch>()
-  const studentId= useSelector((state:RootState)=>state.auth.userId)
-  const { student, loading } = useSelector((state: RootState) => state.student)
-  console.log(student)
+  const dispatch = useAppDispatch()
+  const studentId= useAppSelector((state)=>state.auth.userId)
+  const { student, loading } = useAppSelector((state) => state.student)
 
   useEffect(()=>{
        dispatch(fetchStudentById(studentId as string))

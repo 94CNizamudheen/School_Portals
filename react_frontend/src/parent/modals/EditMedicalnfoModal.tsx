@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../types/store.types"; 
 import { updateStudent } from "../../store/studentSlice";
 import { useNotification } from "../../context/notification/useNotification";
 import type { AxiosError } from "axios";
 import { X } from "lucide-react";
+import { useAppDispatch } from "../../hooks/app.hooks";
 
 interface EditMedicalInfoModalProps {
     isOpen: boolean;
@@ -15,7 +14,7 @@ interface EditMedicalInfoModalProps {
 
 const EditMedicalInfoModal = ({ isOpen, onClose, studentId, initialData = "", }: EditMedicalInfoModalProps) => {
     const {showNotification}= useNotification()
-    const dispatch = useDispatch<AppDispatch>();
+const dispatch = useAppDispatch()
     const [medicalInfo, setMedicalInfo] = useState(initialData);
 
     if (!isOpen) return null;

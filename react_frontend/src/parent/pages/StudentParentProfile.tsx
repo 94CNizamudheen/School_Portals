@@ -3,24 +3,24 @@
 
 import { useEffect, useState } from 'react';
 import { ChevronDown, Edit, FileUser, Hospital } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from "../../types/store.types"; 
+
 import { fetchChildrenOfParent, updateParent } from '../../store/parentSlice';
 import EditMedicalInfoModal from '../modals/EditMedicalnfoModal';
 import ParentEditModal from '../modals/EditParentModal';
 import { useNotification } from '../../context/notification/useNotification';
 import type { AxiosError } from 'axios';
 import ChangePasswordModal from '../../components/ChangePasswordModal';
+import { useAppDispatch, useAppSelector } from '@/hooks/app.hooks';
 
 const StudentParentProfile = () => {
-  const parent = useSelector((state: RootState) => state.parent.parent);
-  const studentsData = useSelector((state: RootState) => state.parent.childrens);
+  const parent = useAppSelector((state) => state.parent.parent);
+  const studentsData = useAppSelector((state) => state.parent.childrens);
   const [isOpenMedicalinfoModal, setOpenMedicalinfoModal] = useState(false)
   const [isOpenParentEditModal, setOpenParentEditModal] = useState(false)
   const [isChangePasswordModalOpen,setChangePasswordModalOpen]= useState(false)
   const { showNotification } = useNotification()
 
-  const dispatch = useDispatch<AppDispatch>();
+ const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (parent?._id) {

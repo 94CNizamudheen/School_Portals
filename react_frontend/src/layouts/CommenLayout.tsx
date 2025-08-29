@@ -4,12 +4,12 @@ import { Outlet } from "react-router-dom";
 import { useState } from "react";
 import CommonSidebar from "../components/shared/CommonSidebar";
 import CommonHeader from "../components/shared/CommonHeader";
-import { useSelector } from "react-redux";
-import type { RootState }from "../types/store.types"; 
+import { useAppSelector } from "../hooks/app.hooks";
+
 
 const CommonLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const role = useSelector((state: RootState) => state.auth.role);
+  const role = useAppSelector((state) => state.auth.role);
 
   let sidebarBg = "";
   let mainBg = "";

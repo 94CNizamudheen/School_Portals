@@ -2,10 +2,10 @@
 
 import { Link, useLocation } from "react-router-dom";
 import { LogOut, X } from "lucide-react";
-import { useSelector } from "react-redux";
+
 import LogoutModal from "../LogoutModal"; 
 import { navConfig } from "../../utils/navConfig"; 
-import type{ RootState } from "../../types/store.types"; 
+import { useAppSelector } from "../../hooks/app.hooks";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -15,7 +15,7 @@ interface SidebarProps {
 
 const CommonSidebar: React.FC<SidebarProps> = ({ isOpen, onClose ,bgColor }) => {
   const location = useLocation();
-  const role = useSelector((state: RootState) => state.auth.role);
+  const role = useAppSelector((state) => state.auth.role);
   const tokenKey = 
   role === "STUDENT" ? "STUDENTtoken" :
   role === "TEACHER" ? "TEACHERtoken" :

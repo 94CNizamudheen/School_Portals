@@ -11,15 +11,15 @@ import { RejectionDialog } from "../components/Admission/rejection.dialog"
 import type { AdmissionFormData, DocumentPreview, } from "../../types/admission.types"
 import { handleStatusChange } from "../../store/admissionThunks"
 import { CustomPagination } from "../../components/shared/CustomPagination"
-import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "../../types/store.types"; 
+
 import { useNotification } from "../../context/notification/useNotification"
+import { useAppDispatch, useAppSelector } from "../../hooks/app.hooks"
 
 
 export default function AdmissionInfoPage() {
 
 
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useAppDispatch()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [selectedAdmission, setSelectedAdmission] = useState<AdmissionFormData | null>(null)
@@ -32,7 +32,7 @@ export default function AdmissionInfoPage() {
   const [verificationNotes, setVerificationNotes] = useState("")
   const [rejectionReason, setRejectionReason] = useState("")
   const [applicationToReject, setApplicationToReject] = useState<string | null>(null)
-  const admissions = useSelector((state: RootState) => state.admissions.data);
+  const admissions = useAppSelector((state) => state.admissions.data);
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 7;
   const { showNotification } = useNotification()

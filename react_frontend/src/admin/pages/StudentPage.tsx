@@ -1,14 +1,13 @@
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import StudentStatsCards from '../../admin/components/StudentsStateCards'
 import StudentTable from '../../admin/components/StudentTable'
-import type { RootState, AppDispatch }from "../../types/store.types"; 
 import { fetchAllStudents } from '../../store/studentSlice' 
 import { useNotification } from '../../context/notification/useNotification'
+import { useAppDispatch, useAppSelector } from '../../hooks/app.hooks'
 
 const StudentsPage = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const { students, error } = useSelector((state: RootState) => state.student)
+  const dispatch = useAppDispatch()
+  const { students, error } = useAppSelector((state) => state.student)
   const { showNotification } = useNotification()
 
   useEffect(() => {

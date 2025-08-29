@@ -2,13 +2,13 @@
 
 import React, { useEffect } from 'react';
 import { Menu, Bell } from 'lucide-react';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from "../../types/store.types"; 
+
 import { fetchTeachers } from '../../store/teacherSlice';
 import { fetchAllStudents } from '../../store/studentSlice';
 import { fetchParents } from '../../store/parentSlice';
 import { fetchSubjects } from '../../store/subjectThunks';
 import { fetchAdmissions } from '../../store/admissionThunks';
+import { useAppDispatch } from '../../hooks/app.hooks';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -17,7 +17,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick, notificationCount, header }) => {
-  const dispatch=useDispatch<AppDispatch>()
+  const dispatch=useAppDispatch()
   useEffect(()=>{
     dispatch(fetchAdmissions())
     dispatch(fetchTeachers())

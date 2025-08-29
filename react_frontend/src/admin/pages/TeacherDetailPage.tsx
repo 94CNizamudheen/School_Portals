@@ -1,12 +1,13 @@
 
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../types/store.types"; 
+
+
 import TeacherDetailsCard from "../components/TeacherDetailsCard";
+import { useAppSelector } from "../../hooks/app.hooks";
 
 const TeacherDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-  const teacher = useSelector((state: RootState) =>
+  const teacher = useAppSelector((state) =>
     state.teacher.approved.find((t) => t._id === id)
   );
 

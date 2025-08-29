@@ -1,25 +1,25 @@
 import axios, { AxiosError } from "axios"
 import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
+
 import { useLocation, useNavigate } from "react-router-dom"
 import { login, userInfo } from "../store/authSlice"
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google"
 import { toast } from "react-toastify"
 import { jwtDecode } from "jwt-decode"
 import { googleLogin } from "../store/authThunks"
-import type { RootState } from "../types/store.types"; 
 import { AnimatedBorderWrapper } from "../animations/effects/AnimatedBorderWrapper"
 const API = import.meta.env.VITE_BACKEND_URL
 import { getLoginValidationSchema } from "..//utils/validationSchemas"
 import { useForm } from 'react-hook-form';
 import { yupResolver } from "@hookform/resolvers/yup"
 import StudentForgotPassword from "../student/modals/ForgotPasswordModal"
+import { useAppDispatch, useAppSelector } from "../hooks/app.hooks"
 
 
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
-  const [isShowStudentForgot,setIsShowStudentForgot]= useState(false)
+  const [isShowStudentForgot, setIsShowStudentForgot] = useState(false)
   const [error, setError] = useState("")
 
   const location = useLocation()
@@ -27,8 +27,8 @@ const Login = () => {
   const pathName = location.pathname
   const role = pathName.split("/")[1].toUpperCase()
   const guestPathName = '/guest/login'
-  const dispatch = useDispatch()
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated)
+  const dispatch = useAppDispatch()
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated)
   const schema = getLoginValidationSchema(role);
   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) })
 
@@ -56,7 +56,7 @@ const Login = () => {
     console.log(data.password)
     try {
       const response = await axios.post(`${API}/auth/login`, {
-        
+
         [role === "STUDENT" ? "studentIdentity" : "email"]: data.identifier,
         password: data.password,
         role,
@@ -64,8 +64,8 @@ const Login = () => {
 
       const { access_token, userId, refresh_token, user } = response.data
       console.log(response.data)
-       dispatch(login({ access_token, role, userId, refresh_token }))
-       dispatch(userInfo({ name: user.name, email: user.email }))
+      dispatch(login({ access_token, role, userId, refresh_token }))
+      dispatch(userInfo({ name: user.name, email: user.email }))
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message || "Login failed. Please try again")
@@ -108,12 +108,12 @@ const Login = () => {
     }
   }, [isAuthenticated, role, navigate])
 
-  const googleAllowedRoles = ["PARENT",  "TEACHER", "GUEST"];
+  const googleAllowedRoles = ["PARENT", "TEACHER", "GUEST"];
   const isGoogleAllowed = googleAllowedRoles.includes(role);
-  const handleForgotPassword=()=>{
-    if(role=="STUDENT"){
+  const handleForgotPassword = () => {
+    if (role == "STUDENT") {
       setIsShowStudentForgot(true)
-    }else{
+    } else {
       navigate("/forgot-password");
     }
   }
@@ -157,7 +157,7 @@ const Login = () => {
                 autoComplete="current-password"
                 className="w-full px-6 py-4 rounded-full bg-white/90 placeholder-gray-500 text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all"
               />
-              
+
 
               <button
                 type="button"
@@ -171,7 +171,7 @@ const Login = () => {
               type="submit"
               className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-             Sign In
+              Sign In
             </button>
           </form>
 
@@ -204,7 +204,7 @@ const Login = () => {
 
           <div className="text-center mt-6 space-y-3">
             <button
-              onClick={ handleForgotPassword}
+              onClick={handleForgotPassword}
               className="text-blue-400 hover:text-blue-300 font-medium transition-colors block"
             >
               Forgot Password?
@@ -224,7 +224,7 @@ const Login = () => {
         </div>
 
       </AnimatedBorderWrapper>
-      {isShowStudentForgot&&(<StudentForgotPassword isOpen={isShowStudentForgot} onClose={()=>setIsShowStudentForgot(false)}/> )}
+      {isShowStudentForgot && (<StudentForgotPassword isOpen={isShowStudentForgot} onClose={() => setIsShowStudentForgot(false)} />)}
     </div >
   )
 

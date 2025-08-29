@@ -1,12 +1,12 @@
-import { useSelector } from 'react-redux';
-import type { RootState }from "../../types/store.types"; 
+
 import { FileUser, Hospital } from 'lucide-react';
 import { useState } from 'react';
 import ChangePasswordModal from '../../components/ChangePasswordModal';
+import { useAppSelector } from '@/hooks/app.hooks';
 
  
 const StudentProfilePage = () => {
-    const student = useSelector((state: RootState) => state.student.student);
+    const student = useAppSelector((state) => state.student.student);
 
     const [showModal, setShowModal] = useState(false);
 

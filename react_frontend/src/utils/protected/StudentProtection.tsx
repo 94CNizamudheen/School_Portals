@@ -1,6 +1,6 @@
-import type { RootState } from "../../types/store.types"; 
+
+import { useAppSelector } from "../../hooks/app.hooks"
 import type React from "react"
-import { useSelector } from "react-redux"
 import { Navigate } from "react-router-dom"
 
 
@@ -10,7 +10,7 @@ interface Props {
 };
 
 const StudentProtectRoute=({allowedRoles,children}:Props)=>{
-    const {isAuthenticated,role}= useSelector((state:RootState)=>state.auth);
+    const {isAuthenticated,role}= useAppSelector((state)=>state.auth);
     if(!isAuthenticated || !allowedRoles.includes(role||'')){
         return <Navigate to='/student/login' replace />
     }
