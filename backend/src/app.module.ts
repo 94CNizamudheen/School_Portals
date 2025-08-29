@@ -15,6 +15,8 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ClassDivisionModule } from './class_division/classDivision.module';
 import { SubjectModule } from './subject/subject.module';
+import { AcademicCalendarModule } from './academic_calender/academic.calender.module';
+import { SchoolEventModule } from './school_events/event.module';
 
 @Module({
     imports: [
@@ -37,7 +39,9 @@ import { SubjectModule } from './subject/subject.module';
         UserModule,
         MailerModule,
         ClassDivisionModule,
-        SubjectModule
+        SubjectModule,
+        AcademicCalendarModule,
+        SchoolEventModule
     ],
     providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard, },],
 })

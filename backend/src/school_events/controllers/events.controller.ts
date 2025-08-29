@@ -17,7 +17,7 @@ export class SchoolEventController {
     ) { };
     @Post()
     @UseInterceptors(FileInterceptor('posterUrl'))
-    async createEvent(@Body() data: CreateSchoolEventDto,@UploadedFile() file: Express.Multer.File): Promise<SchoolEventType> {
+    async createEvent(@Body() data: CreateSchoolEventDto, @UploadedFile() file: Express.Multer.File): Promise<SchoolEventType> {
         return await this.schoolEventService.create(data, file);
     }
     @Patch(':id')
