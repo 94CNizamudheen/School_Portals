@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../store/store";
-import { updateStudent } from "../../store/studentThunks";
+import type { AppDispatch } from "../../types/store.types"; 
+import { updateStudent } from "../../store/studentSlice";
 import { useNotification } from "../../context/notification/useNotification";
 import type { AxiosError } from "axios";
 import { X } from "lucide-react";

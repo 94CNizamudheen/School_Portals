@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import type { RootState } from '@/store/store';
+import type { RootState }from "../../types/store.types"; 
 import { toast } from 'react-toastify';
 ;
 

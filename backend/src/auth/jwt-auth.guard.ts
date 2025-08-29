@@ -1,35 +1,28 @@
 
 
-import { CanActivate, ExecutionContext, Injectable, Logger, UnauthorizedException,} from '@nestjs/common';
+import { ExecutionContext, Inject, Injectable, UnauthorizedException, } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { BlacklistedToken } from './entities/blacklist.schema';
-import { Request } from 'express';
-import { JwtService } from '@nestjs/jwt';
+import { AuthService } from './services/auth.service';
 
 @Injectable()
-export class JwtAuthGuard implements CanActivate {
+export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
-    private jwtService: JwtService,
-    @InjectModel(BlacklistedToken.name) private blacklistModel: Model<BlacklistedToken>,
-  ) {}
+  private readonly authService:AuthService
+  ) { super(); }
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>();
-    const authHeader = request.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) throw new UnauthorizedException('No token provided');
+  async canActivate(context: ExecutionContext) {
+    const req = context.switchToHttp().getRequest();
+    const authHeader = req.headers['authorization'];
 
-    const blacklisted = await this.blacklistModel.exists({ token });
-    if (blacklisted) throw new UnauthorizedException('Token is blacklisted');
+    if (!authHeader) throw new UnauthorizedException('No authorization header');
+    const token = authHeader.replace('Bearer ', '');
+    const valid = (await super.canActivate(context)) as boolean;
+    if (!valid) return false;
 
-    try {
-      const payload = await this.jwtService.verifyAsync(token);
-      request['user'] = payload;
-      return true;
-    } catch (err) {
-      throw new UnauthorizedException('Invalid token');
+    if (await this.authService.isBlackListedToken(token)) {
+      throw new UnauthorizedException('Token is blacklisted');
     }
+
+    return true;
   }
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "../store/store"
+import type { AppDispatch, RootState }from "../types/store.types"; 
 import type { AdmissionFormData } from "../types/admission.types"
 import { FileText, AlertCircle } from "lucide-react"
 import { completeAdmissionPayment, fetchApplicationsByEmail } from "../store/admissionThunks"

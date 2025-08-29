@@ -2,12 +2,12 @@
 
 import { useDispatch, useSelector } from "react-redux";
 import { Pencil, Lock, User } from "lucide-react";
-import type { AppDispatch, RootState } from "../../store/store";
+import type { AppDispatch, RootState} from "../../types/store.types"; 
 import { useState } from "react";
 
 import ChangePasswordModal from "../../components/ChangePasswordModal";
 import EditTeacherModal from "../components/EditTeacherModal";
-import { updateTeacher } from "../../store/teacherThunks";
+import { updateTeacher } from "../../store/teacherSlice";
 import { useNotification } from "../../context/notification/useNotification";
 import type { AxiosError } from "axios";
 

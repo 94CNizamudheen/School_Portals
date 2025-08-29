@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { ChevronDown, Edit, FileUser, Hospital } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../../store/store';
+import type { AppDispatch, RootState } from "../../types/store.types"; 
 import { fetchChildrenOfParent, updateParent } from '../../store/parentSlice';
 import EditMedicalInfoModal from '../modals/EditMedicalnfoModal';
 import ParentEditModal from '../modals/EditParentModal';

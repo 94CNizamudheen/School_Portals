@@ -5,7 +5,7 @@ import { LogOut, X } from "lucide-react";
 import { useSelector } from "react-redux";
 import LogoutModal from "../LogoutModal"; 
 import { navConfig } from "../../utils/navConfig"; 
-import type{ RootState } from "../../store/store"; 
+import type{ RootState } from "../../types/store.types"; 
 
 interface SidebarProps {
   isOpen: boolean;

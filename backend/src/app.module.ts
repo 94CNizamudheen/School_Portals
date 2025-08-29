@@ -53,5 +53,7 @@ export class AppModule {
             api_secret: process.env.CLOUDINARY_API_SECRET
         });
     }
-}
+};
+
+
 

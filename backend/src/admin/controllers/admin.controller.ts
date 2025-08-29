@@ -10,7 +10,8 @@ import { Role } from 'src/auth/dtos/register.dtos';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('admins')
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 

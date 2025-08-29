@@ -6,7 +6,7 @@ import { Label } from "../components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 import { Alert, AlertDescription } from "../components/ui/alert"
 import { Eye, EyeOff, Mail, Shield, Lock, ArrowLeft } from "lucide-react"
-import { generateOtp, resetPassword, verifyOtp } from "../store/api"
+import { generateOtp, resetPassword, verifyOtp } from "../store/authThunks"
 import type { AxiosError } from "axios"
 import { useNotification } from "../context/notification/useNotification"
 

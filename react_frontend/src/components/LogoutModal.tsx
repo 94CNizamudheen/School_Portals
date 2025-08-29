@@ -2,8 +2,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { logoutThunk } from '../store/api'
-import type { AppDispatch } from '../store/store'
+import { logoutThunk } from '../store/authThunks'
+import type { AppDispatch }from ".././types/store.types"; 
 
 type LogoutModalProps = {
   trigger: React.ReactNode

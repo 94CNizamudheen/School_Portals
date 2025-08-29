@@ -10,7 +10,7 @@ import {  Dialog, DialogContent, DialogDescription,  DialogFooter,  DialogHeader
 import { Badge } from "../../../components/ui/badge"
 import { AlertTriangle } from "lucide-react"
 import { useSelector } from "react-redux"
-import type { RootState } from "../../../store/store"
+import type { RootState }  from "../../../types/store.types"; 
 import type { Subject } from "../../../types/subject.types"
 
 interface RemoveTeacherModalProps {

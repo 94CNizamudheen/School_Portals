@@ -3,11 +3,13 @@ import { AuthGuard } from "@nestjs/passport";
 import { SubjectSerivice } from "../service/subject.service";
 import { CreateSubjectDto } from "../dtos/create.subject.dto";
 import { UpdateSubjectDto } from "../dtos/update.subject.dto";
+import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
 
 
 @Controller('subjects')
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 export class SubjectController{
     private readonly logger= new Logger(Controller.name)
     constructor(

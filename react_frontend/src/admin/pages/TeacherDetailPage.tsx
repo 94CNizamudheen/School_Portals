@@ -1,7 +1,7 @@
 
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
+import type { RootState } from "../../types/store.types"; 
 import TeacherDetailsCard from "../components/TeacherDetailsCard";
 
 const TeacherDetailsPage = () => {

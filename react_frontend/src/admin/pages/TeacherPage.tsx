@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../../store/store";
-import { deleteTeacher, fetchTeachers } from "../../store/teacherThunks";
+import type { RootState, AppDispatch } from "../../types/store.types"; 
+import { deleteTeacher, fetchTeachers } from "../../store/teacherSlice";
 import { Card, CardContent, CardHeader, CardTitle, } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Link, useNavigate } from "react-router-dom";

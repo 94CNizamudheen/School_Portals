@@ -93,27 +93,37 @@ export class AuthService {
     return { access_token, refresh_token, userId: user._id.toString(), user };
   };
 
-  async refreshToken(refresh_token: string): Promise<{ access_token: string, refresh_token: string }> {
+  async refreshToken(refresh_token: string): Promise<{ access_token: string, refresh_token: string, role: string, userId: string }> {
     try {
+
+      if (await this.repo.isBlacklisted(refresh_token)) throw new UnauthorizedException('Refresh token is blacklisted');
       const payload = this.jwtService.verify(refresh_token, { secret: this.config.get('JWT_SECRET') });
+
       const newAccessToken = this.jwtService.sign(
         { sub: payload.sub, email: payload.email, role: payload.role },
         { expiresIn: this.config.get('JWT_EXPIRES_IN') }
       );
+
       const newRefreshToken = this.jwtService.sign(
         { sub: payload.sub, email: payload.email, role: payload.role },
         { expiresIn: this.config.get('JWT_REFRESH_EXPIRES_IN') }
       );
-      const decoded: any = this.jwtService.decode(refresh_token) as JwtPayload | null;
+      const decoded = this.jwtService.decode(refresh_token) as JwtPayload | null;
       if (decoded && decoded.exp) {
         const expiredAt = new Date(decoded.exp * 1000);
         await this.repo.createBlacklist(refresh_token, expiredAt);
       }
-      return { access_token: newAccessToken, refresh_token: newRefreshToken };
+
+      return {
+      access_token: newAccessToken,
+      refresh_token: newRefreshToken,
+      role: payload.role,
+      userId: payload.sub,
+    };
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
-  };
+  }
 
   async logout(token: string): Promise<void> {
     try {
@@ -225,5 +235,9 @@ export class AuthService {
     await this.mailService.sendMail({ to: dto.email, subject, text, html })
 
     return { message: "Temporary password sent to parent's email." };
+  }
+  async isBlackListedToken(token:string):Promise<boolean>{
+    if(!token) throw new BadRequestException('no token provided') ;
+    return await this.repo.isBlacklisted(token);
   }
 }

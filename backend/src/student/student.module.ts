@@ -1,6 +1,6 @@
 
 
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Student, StudentSchema } from './entities/student.schema';
 import { Parent, ParentSchema } from 'src/parent/entities/parent.schema';
@@ -10,6 +10,7 @@ import { StudentController } from './controllers/student.controller';
 import { StudentService } from './services/student.service';
 import { StudentRepository } from './repositories/student.repository';
 import { AdmissionModule } from 'src/admission/admission.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 
 @Module({
@@ -21,7 +22,7 @@ import { AdmissionModule } from 'src/admission/admission.module';
       { name: User.name, schema: UserSchema },
     ]),
     AdmissionModule,
-    
+    forwardRef(()=>AuthModule)
   ],
   controllers: [StudentController],
   providers: [StudentService, {provide:"IStudentRepository",useClass:StudentRepository}],

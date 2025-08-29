@@ -2,17 +2,17 @@ import { useState } from 'react';
 import { X } from 'lucide-react';
 import { useNotification } from '../context/notification/useNotification';
 
-import { requestStudentOtp, verifyStudentOtp, changeStudentPassword, } from '../store/studentThunks';
+import { requestStudentOtp, verifyStudentOtp, changeStudentPassword, } from '../store/studentSlice';
 
 import { step1Schema, passwordSchema } from '../utils/validationSchemas';
 import type { AxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../store/store';
+import type { AppDispatch, RootState } from "../types/store.types"; 
 import LoadingIndicator from './shared/LoadingIndicator';
 import { generateOtpThunk } from '../store/authThunks';
-import { resetPassword } from '../store/api';
+import { resetPassword } from '../store/authThunks';
 
 const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
 

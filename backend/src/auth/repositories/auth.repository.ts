@@ -47,5 +47,9 @@ export class AuthRepository implements IAuthRepository {
 
   async createBlacklist(token: string, expiresAt: Date): Promise<void> {
     await this.blacklistedModel.create({ token, expiresAt })
+  };
+  async isBlacklisted(token:string):Promise<boolean>{
+    const found= await this.blacklistedModel.findOne({token}).exec();
+    return !!found
   }
 }

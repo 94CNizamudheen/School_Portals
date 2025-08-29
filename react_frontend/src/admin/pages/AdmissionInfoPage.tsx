@@ -12,7 +12,7 @@ import type { AdmissionFormData, DocumentPreview, } from "../../types/admission.
 import { handleStatusChange } from "../../store/admissionThunks"
 import { CustomPagination } from "../../components/shared/CustomPagination"
 import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "@/store/store"
+import type { AppDispatch, RootState } from "../../types/store.types"; 
 import { useNotification } from "../../context/notification/useNotification"
 
 

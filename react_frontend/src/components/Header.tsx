@@ -2,8 +2,8 @@ import { useEffect, useState, useRef } from "react"
 import { X, Menu, LogOut, ChevronDown, Settings, FileText, Bell, GraduationCap, } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
-import type { AppDispatch, RootState } from "../store/store"
-import { logoutThunk } from "../store/api"
+import type { AppDispatch, RootState }from "../types/store.types"; 
+import { logoutThunk } from "../store/authThunks" 
 import LogoutConfirmModal from "./modals/LogoutConfirmModal"
 
 

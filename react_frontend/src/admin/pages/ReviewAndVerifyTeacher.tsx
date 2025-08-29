@@ -6,11 +6,11 @@ import { Badge } from "../../components/ui/badge";
 import StatusFilterWithSearch from "../../components/shared/filters";
 import { CustomPagination } from "../../components/shared/CustomPagination";
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store/store";
+import type { AppDispatch, RootState }from "../../types/store.types"; 
 import { User, Mail, Phone, Calendar, BookOpen, Award, FileText, Eye } from "lucide-react";
 import TeacherDetailsModal from "../components/modals/ViewTeacherDetails";
 import type { Teacher } from "../../types/teacher.types";
-import { rejectApplication, verifyTeacher } from "../../store/teacherThunks";
+import { rejectApplication, verifyTeacher } from "../../store/teacherSlice";
 import ProcessingSpinner from "../../components/shared/ProcessingSpinner";
 import { useNotification } from "../../context/notification/useNotification";
 

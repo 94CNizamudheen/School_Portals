@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../../../store/store';
+import type { AppDispatch } from "../../../types/store.types"; 
 import type { Division } from '../../../types/division.type';
 import { XMarkIcon, PlusIcon, TrashIcon, AcademicCapIcon } from '@heroicons/react/24/outline';
 import { updateDivision } from '../../../store/divisionThunks';

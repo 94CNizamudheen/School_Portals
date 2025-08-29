@@ -6,7 +6,7 @@ import ContactSection from "../components/ContactSection"
 import Footer from "../components/Footer"
 import Header from "../components/Header"
 import { useSelector } from "react-redux"
-import type { RootState } from "@/store/store"
+import type { RootState } from "../types/store.types"; 
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 

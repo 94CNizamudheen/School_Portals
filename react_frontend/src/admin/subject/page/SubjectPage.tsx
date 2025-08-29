@@ -10,7 +10,7 @@ import { EditSubjectModal } from "../components/EditSubjectModal"
 import { AssignTeacherModal } from "../components/AssignTeacherModal"
 import type { Subject } from "../../../types/subject.types"
 import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "@/store/store"
+import type { AppDispatch, RootState } from "../../../types/store.types"; 
 import { assignTeacher, createSubject, deleteSubject, removeTeacher, updateSubject } from "../../../store/subjectThunks"
 import { useNotification } from "../../../context/notification/useNotification"
 import ConfirmModal from "../../../admin/components/modals/ConfirmDeleteModal"

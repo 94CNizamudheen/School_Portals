@@ -1,5 +1,5 @@
 
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Admission, AdmissionSchema } from './entities/admission.schema';
 import { AdmissionService } from './services/admission.service';
@@ -7,11 +7,13 @@ import { AdmissionRepository } from './repositories/admission.repository';
 import { AdmissionController } from './controllers/admission.controller';
 import { TeacherModule } from 'src/teacher/teacher.module'; 
 import { MailerModule } from 'src/mailer/mailer.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Admission.name, schema: AdmissionSchema }]),
-    MailerModule
+    MailerModule,
+    forwardRef(()=>AuthModule)
   ],
   controllers: [AdmissionController,],
   providers: [

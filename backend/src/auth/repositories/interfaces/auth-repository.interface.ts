@@ -8,5 +8,6 @@ export interface IAuthRepository {
   findOtp(email: string, code: string): Promise<Otp | null>;
   deleteOtp(email: string): Promise<void>;
   updatePassword(email: string, newPassword: string): Promise<void>;
-  createBlacklist(token: string, expiredAt: Date): Promise<void>
+  createBlacklist(token: string, expiredAt: Date): Promise<void>;
+  isBlacklisted(token:string):Promise<boolean>;
 }

@@ -41,8 +41,9 @@ import { MailerModule } from 'src/mailer/mailer.module';
       provide: 'IAuthRepository',
       useClass: AuthRepository,
     },
-    JwtStrategy,JwtAuthGuard,
+    JwtStrategy,
+    JwtAuthGuard
   ],
-  exports: [AuthService,JwtModule,JwtStrategy,JwtAuthGuard,'IAuthRepository',],
+  exports: [AuthService,JwtModule,JwtStrategy,'IAuthRepository',JwtAuthGuard],
 })
 export class AuthModule { }

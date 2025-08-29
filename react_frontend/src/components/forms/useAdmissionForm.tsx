@@ -5,7 +5,7 @@ import { ValidationError } from "yup";
 import { admissionValidationSchema } from "../../utils/validationSchemas";
 import { createAdmission } from "../../store/admissionThunks";
 import { useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
+import type { RootState } from "../../types/store.types"; 
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../context/notification/useNotification";
 

@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { X, Mail, User, ArrowRight } from 'lucide-react';
 import LoadingIndicator from '../../components/shared/LoadingIndicator';
 import { useDispatch } from 'react-redux';
-import { sendStudentPassword } from '../../store/studentThunks';
-import type { AppDispatch } from '../../store/store';
+import { sendStudentPassword } from '../../store/studentSlice';
+import type { AppDispatch } from "../../types/store.types"; 
 import { useNotification } from '../../context/notification/useNotification';
 import type { AxiosError } from 'axios';
 

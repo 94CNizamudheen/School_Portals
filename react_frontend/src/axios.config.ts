@@ -1,4 +1,7 @@
+// api.ts
 import axios from 'axios';
+import { store } from './store/store'; 
+import { login ,logout} from './store/authSlice'; 
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -24,14 +27,17 @@ API.interceptors.response.use(
 
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, { refresh_token });
-        const { access_token } = res.data;
-
+        const { access_token, refresh_token: newRefreshToken, role, userId } = res.data;
         localStorage.setItem('token', access_token);
+        localStorage.setItem('refresh_token', newRefreshToken);
+
+        store.dispatch(login({ access_token, refresh_token: newRefreshToken, role, userId }));
 
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return axios(originalRequest);
       } catch (refreshError) {
         localStorage.clear();
+        store.dispatch(logout()); 
         return Promise.reject(refreshError);
       }
     }

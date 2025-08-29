@@ -3,8 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../..
 import { Button } from "../../components/ui/button"
 import { Calendar, Clock, BookOpen, Users, Award, TrendingUp } from "lucide-react"
 import { useDispatch, useSelector } from "react-redux"
-import type { AppDispatch, RootState } from "../../store/store"
-import { fetchStudentById } from "../../store/studentThunks"
+import type { AppDispatch, RootState } from "../../types/store.types"; 
+import { fetchStudentById } from "../../store/studentSlice"
 import { useEffect } from "react"
 
 export default function StudentDashboard() {

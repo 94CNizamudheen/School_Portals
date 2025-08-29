@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Bell, HelpCircle, Lock, Menu, Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ChangePasswordModal from "../ChangePasswordModal";
-import type { AppDispatch, RootState } from "../../store/store";
-import { fetchStudentById } from "../../store/studentThunks";
+import type { AppDispatch, RootState } from "../../types/store.types"; 
+import { fetchStudentById } from "../../store/studentSlice";
 import { useNotification } from "../../context/notification/useNotification";
 import { fetchParentByEmail } from "../../store/parentSlice";
 import type { AxiosError } from "axios";
-import { findTeacherByEmail } from "../../store/teacherThunks";
+import { findTeacherByEmail } from "../../store/teacherSlice";
 
 
 interface Props {

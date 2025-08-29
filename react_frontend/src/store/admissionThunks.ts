@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { AdmissionFiles, AdmissionFormBody, AdmissionFormData } from "../types/admission.types";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import type { RootState } from "./store";
+import type { RootState } from "../types/store.types";
 import API from "../axios.config";
 
 export interface StatusChangeData {
@@ -66,7 +66,7 @@ export const completeAdmissionPayment = createAsyncThunk<AdmissionFormData, Paym
   "admissions/completePayment",
   async ({ admissionId, amount, transactionId }, { rejectWithValue }) => {
     try {
-      const response = await API.post(`/payments/admission-payment`, { admissionId,amount,transactionId, });
+      const response = await API.post(`/payments/admission-payment`, { admissionId, amount, transactionId, });
       return response.data as AdmissionFormData;
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;

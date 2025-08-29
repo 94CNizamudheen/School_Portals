@@ -4,12 +4,14 @@ import { ClassDivisionService } from "../services/division.service";
 import { CreateClassDivisionDto } from "../dtos/create.division.dto";
 import { UpdateClassDivisionDto } from "../dtos/update.division.dto";
 import { AddOrRemoveStudentDto } from "../dtos/addOrRemove.student.dto";
+import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
 
 
 
 @Controller('divisions')
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 export class ClassDivisionController{
     private readonly logger= new Logger(Controller.name)
     constructor(@Inject() private readonly classDivisionService:ClassDivisionService ){}

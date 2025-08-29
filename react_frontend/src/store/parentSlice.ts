@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 import API from '../axios.config';
 import type { Student } from '../types/student';
-import { updateStudent } from './studentThunks';
+import { updateStudent } from './studentSlice'; 
 import type { Parent } from '../types/parent'; 
 
 

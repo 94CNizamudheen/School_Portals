@@ -1,7 +1,7 @@
 
 
 import { useNotification } from "../context/notification/useNotification"
-import type { RootState } from "../store/store"
+import type { RootState }  from "../types/store.types"; 
 import { ArrowLeft } from "lucide-react"
 import { useSelector } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"

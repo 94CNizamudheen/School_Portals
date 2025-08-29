@@ -23,8 +23,8 @@ import { AdmissionModule } from "src/admission/admission.module";
     ]),
     MailerModule,
     StudentModule,
-    AdmissionModule
-
+    AdmissionModule,
+    forwardRef(()=>AuthModule)
   ],
   controllers: [ParentController],
   providers: [ParentService, ParentRepository,MailService,{provide:"IParentRepository",useClass:ParentRepository}],

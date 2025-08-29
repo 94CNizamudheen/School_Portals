@@ -5,7 +5,7 @@ import { useState } from "react";
 import CommonSidebar from "../components/shared/CommonSidebar";
 import CommonHeader from "../components/shared/CommonHeader";
 import { useSelector } from "react-redux";
-import type { RootState } from "../store/store";
+import type { RootState }from "../types/store.types"; 
 
 const CommonLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);

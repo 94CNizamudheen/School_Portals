@@ -5,12 +5,13 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { SchoolEventType } from "../types/event.types.interface";
 import { CreateSchoolEventDto } from "../dtos/create.event.dto";
 import { UpdateSchoolEventDto } from "../dtos/update.event.dto";
+import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
 
 
 
 @Controller('events')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 export class SchoolEventController {
     constructor(
         private readonly schoolEventService: SchoolEventService,

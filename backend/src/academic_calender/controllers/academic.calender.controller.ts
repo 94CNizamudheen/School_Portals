@@ -4,10 +4,12 @@ import { AcademicCalendarService } from "../services/academic.calender.service";
 import { AcademicCalendarType } from "../types/academic.calender.type.interface";
 import { CreateAcademicCalendarDto } from "../dtos/create.academic.calender.dto";
 import { UpdateAcademicCalendarDto } from "../dtos/update.academic.calender.dto";
+import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
 
 @Controller('academic-calender')
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 export class AcademicCalendarController{
     constructor(
        private readonly academicCalendarService:AcademicCalendarService,

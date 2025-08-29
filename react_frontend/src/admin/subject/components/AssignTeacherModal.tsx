@@ -9,7 +9,7 @@ import { Badge } from "../../../components/ui/badge"
 
 import type { Subject } from "../../../types/subject.types"
 import { useSelector } from "react-redux"
-import type { RootState } from "@/store/store"
+import type { RootState }  from "../../../types/store.types"; 
 
 interface AssignTeacherModalProps {
   isOpen: boolean

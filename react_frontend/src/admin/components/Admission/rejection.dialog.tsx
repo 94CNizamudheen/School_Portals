@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Label } from "../../../components/ui/label"
 import { Textarea } from "../../../components/ui/textarea"
 import { X } from "lucide-react"
-import type { RootState } from "../../../store/store"
+import type { RootState } from "../../../types/store.types"; 
 
 interface RejectionDialogProps {
   isOpen: boolean

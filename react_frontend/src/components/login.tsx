@@ -6,8 +6,8 @@ import { login, userInfo } from "../store/authSlice"
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google"
 import { toast } from "react-toastify"
 import { jwtDecode } from "jwt-decode"
-import { googleLogin } from "../store/api"
-import type { RootState } from "../store/store"
+import { googleLogin } from "../store/authThunks"
+import type { RootState } from "../types/store.types"; 
 import { AnimatedBorderWrapper } from "../animations/effects/AnimatedBorderWrapper"
 const API = import.meta.env.VITE_BACKEND_URL
 import { getLoginValidationSchema } from "..//utils/validationSchemas"
