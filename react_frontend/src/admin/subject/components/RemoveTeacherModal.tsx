@@ -7,7 +7,7 @@ import {  Dialog, DialogContent, DialogDescription,  DialogFooter,  DialogHeader
 import { Badge } from "../../../components/ui/badge"
 import { AlertTriangle } from "lucide-react"
 import type { Subject } from "../../../types/subject.types"
-import { useAppSelector } from "@/hooks/app.hooks"
+import { useAppSelector } from "../../../hooks/app.hooks"
 
 interface RemoveTeacherModalProps {
   isOpen: boolean

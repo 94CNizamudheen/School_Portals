@@ -33,12 +33,6 @@ const authSlice = createSlice({
       state.role = action.payload.role;
       state.userId = action.payload.userId;
       state.isAuthenticated = true;
-      localStorage.setItem('token', action.payload.access_token);
-      if (action.payload.refresh_token) {
-        localStorage.setItem('refresh_token', action.payload.refresh_token);
-      }
-      localStorage.setItem('role', action.payload.role);
-      localStorage.setItem('userId', action.payload.userId);
 
     },
     logout(state) {
@@ -49,10 +43,6 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.userEmail = null;
       state.userName = null
-      localStorage.removeItem('token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('role');
-      localStorage.removeItem('userId');
 
     },
     userInfo(state, action: PayloadAction<{ name: string; email: string }>) {

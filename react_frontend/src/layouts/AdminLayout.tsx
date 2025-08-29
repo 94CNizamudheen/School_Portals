@@ -5,8 +5,6 @@ import { Outlet } from 'react-router-dom';
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  console.log("refresh token in admin layot",localStorage.getItem('refresh_token'))
-  console.log(" token in admin layot",localStorage.getItem('token'))
   return (
     <div className="min-h-screen bg-gray-900 text-white flex">
       {sidebarOpen && (

@@ -6,7 +6,7 @@ import { Label } from "../components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 import { Alert, AlertDescription } from "../components/ui/alert"
 import { Eye, EyeOff, Mail, Shield, Lock, ArrowLeft } from "lucide-react"
-import { generateOtp, resetPassword, verifyOtp } from "../store/authThunks"
+import { generateOtpThunk, resetPassword, verifyOtp } from "../store/authThunks"
 import type { AxiosError } from "axios"
 import { useNotification } from "../context/notification/useNotification"
 
@@ -37,7 +37,7 @@ const ForgotPasswordPage = () => {
     setError("")
 
     try {
-      await generateOtp(email)
+      await generateOtpThunk(email)
       setStep("otp")
       showNotification('success', { title: 'OTP', message: "OTP sent to your email successfully" })
     } catch (err) {

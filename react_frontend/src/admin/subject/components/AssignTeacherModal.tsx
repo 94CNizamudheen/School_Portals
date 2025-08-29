@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import {  Dialog, DialogContent,  DialogDescription,  DialogFooter,  DialogHeader,  DialogTitle,} from "../../../components/ui/dialog"
 import { Badge } from "../../../components/ui/badge"
 import type { Subject } from "../../../types/subject.types"
-import { useAppSelector } from "@/hooks/app.hooks"
+import { useAppSelector } from "../../../hooks/app.hooks"
 
 interface AssignTeacherModalProps {
   isOpen: boolean

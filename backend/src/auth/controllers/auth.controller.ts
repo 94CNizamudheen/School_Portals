@@ -22,7 +22,7 @@ export class AuthController {
   };
   @Post('refresh')
   async refresh(@Body('refresh_token') refresh_token: string) {
-    this.logger.debug("refresh invoked with token", refresh_token);
+    this.logger.debug(`refresh invoked with token ${refresh_token}`);
      return this.authService.refreshToken(refresh_token)
   }
 

@@ -113,7 +113,8 @@ export class AuthService {
         const expiredAt = new Date(decoded.exp * 1000);
         await this.repo.createBlacklist(refresh_token, expiredAt);
       }
-
+      this.logger.debug(`new token is : ${newAccessToken}`)
+      this.logger.debug(`new refresh_token is : ${newRefreshToken}`)
       return {
       access_token: newAccessToken,
       refresh_token: newRefreshToken,
