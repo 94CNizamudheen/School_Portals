@@ -1,6 +1,7 @@
 
 export type CalendarTypeEnums = "exam" | "holiday" | "event" | "off_day";
-export interface Holiday{
+
+export interface CalenderEntries{
     _id?:string;
     title:string;
     description?:string;

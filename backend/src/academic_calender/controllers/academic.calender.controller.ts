@@ -7,7 +7,7 @@ import { UpdateAcademicCalendarDto } from "../dtos/update.academic.calender.dto"
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
 
-@Controller('academic-calender')
+@Controller('calendar-entries')
 // @UseGuards(AuthGuard('jwt'))
 @UseGuards(JwtAuthGuard)
 export class AcademicCalendarController{

@@ -77,7 +77,7 @@ const AdminSchedulePage: React.FC = () => {
     // Check if item already exists
     const existingItem = scheduleItems.find((item) => item.date === date && item.type === type)
     if (existingItem) {
-      // Show confirmation before removing
+      
       setItemToRemove(existingItem)
       setConfirmRemoveOpen(true)
     } else {

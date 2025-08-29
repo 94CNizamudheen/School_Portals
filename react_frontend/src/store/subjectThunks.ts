@@ -3,7 +3,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 import API from "../axios.config"; 
-import type { Subject } from "@/types/subject.types";
+import type { Subject } from "../types/subject.types";
 
 
 export const fetchSubjects = createAsyncThunk(
