@@ -1,4 +1,4 @@
-import { IsDateString, IsString } from "class-validator";
+import { IsDateString, IsOptional, IsString } from "class-validator";
 
 
 export class CreateSchoolEventDto{
@@ -7,4 +7,5 @@ export class CreateSchoolEventDto{
     @IsDateString() date:string;
     @IsDateString() endDate:string;
     @IsString() venue:string;
+    @IsOptional() @IsString() posterUrl?:string
 }

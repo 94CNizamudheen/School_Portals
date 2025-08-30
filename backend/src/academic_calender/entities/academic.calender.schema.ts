@@ -7,7 +7,7 @@ export class AcademicCalendar extends Document{
    @Prop({required:true})title:string;
    @Prop()description?:string;
    @Prop({required:true,unique:true})date:Date;
-   @Prop()endDate?:Date;
+   @Prop()endDate:Date;
    @Prop({enum:CalendarType,default:CalendarType.HOLIDAY})type: CalendarType; 
    @Prop() academicYear?:string;
    @Prop({type:[Types.ObjectId],ref: "ClassDivision", default: []}) applicableClassDivisions:Types.ObjectId[];

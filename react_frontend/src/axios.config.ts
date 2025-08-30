@@ -5,7 +5,7 @@ import { login ,logout} from './store/authSlice';
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
-  headers: { "Content-Type": "application/json" },
+  headers: { "Content-Type": "application/json" }
 });
 
 API.interceptors.request.use((config) => {

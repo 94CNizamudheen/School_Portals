@@ -1,7 +1,7 @@
 
 
 import type React from "react"
-import { GraduationCap, BookOpen, Umbrella, Coffee, MoreVertical } from "lucide-react"
+import { GraduationCap, BookOpen, Coffee, MoreVertical } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../../components/ui/dropdown-menu"
 
@@ -124,7 +124,6 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
 
                                 <div className="absolute top-2 right-2 flex gap-1">
                                     {hasEvent && <BookOpen className="w-4 h-4 text-blue-600" />}
-                                    {hasHoliday && <Umbrella className="w-4 h-4 text-green-600" />}
                                     {hasOffDay && <Coffee className="w-4 h-4 text-red-600" />}
                                 </div>
 
@@ -144,10 +143,6 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
                                             <DropdownMenuItem onClick={() => handleEventClick(day)}>
                                                 <BookOpen className="mr-2 h-4 w-4 text-blue-600" />
                                                 <span>Add Event</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleDayClick(day, "holiday")}>
-                                                <Umbrella className="mr-2 h-4 w-4 text-green-600" />
-                                                <span>Mark Holiday</span>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => handleDayClick(day, "off_day")}>
                                                 <Coffee className="mr-2 h-4 w-4 text-orange-600" />

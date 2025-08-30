@@ -3,14 +3,9 @@ import { IsString, IsEmail, IsDateString, IsArray, IsNumber, ArrayNotEmpty, IsNo
 
 export class CreateTeacherDto {
     @IsString() @IsNotEmpty() firstName: string;
-
     @IsString() @IsNotEmpty() lastName: string;
-
     @IsEmail() email: string;
-
     @IsString() mobileNumber: string;
-
-
     @IsOptional() @IsString() profileImage?: string;
 
     @IsDateString() dob: Date;

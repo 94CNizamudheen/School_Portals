@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Logger, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { SchoolEventService } from "../services/events.service";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -11,13 +11,14 @@ import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
 
 @Controller('events')
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard('jwt'))
 export class SchoolEventController {
     constructor(
         private readonly schoolEventService: SchoolEventService,
     ) { };
     @Post()
-    @UseInterceptors(FileInterceptor('posterUrl'))
+    @UseInterceptors(FileInterceptor('posterFile'))
     async createEvent(@Body() data: CreateSchoolEventDto, @UploadedFile() file: Express.Multer.File): Promise<SchoolEventType> {
         return await this.schoolEventService.create(data, file);
     }

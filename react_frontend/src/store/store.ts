@@ -8,7 +8,7 @@ import teacherReducer from './teacherSlice.ts'
 import admissionReducer from './admissionSlice.ts';
 import divisionReducer from './divisionSlice.ts'
 import subjectReducer from './subjectSlice.ts'
-
+import academicCalenderReducer from './calenderAndEventsSlice.ts'
 
 const persistConfig = {
   key: 'root',
@@ -20,10 +20,11 @@ const rootReducer = combineReducers({
   auth: authReducer,
   student: studentReducer,
   parent:parentReducer,
-  teacher:teacherReducer,
   admissions:admissionReducer,
   divisions:divisionReducer,
-  subjects:subjectReducer
+  subjects:subjectReducer,
+  teacher:teacherReducer,
+  academicCalender:academicCalenderReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

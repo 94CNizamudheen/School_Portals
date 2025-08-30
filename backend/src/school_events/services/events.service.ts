@@ -13,13 +13,13 @@ export class SchoolEventService {
     ) { }
     async create(data: CreateSchoolEventDto, file: Express.Multer.File): Promise<SchoolEventType> {
         if (!file) throw new BadRequestException("Poster file is required");
-        let poster: string;
+        let posterUrl : string;
         try {
-            poster = await uploadImage(file);
+            posterUrl  = await uploadImage(file);
         } catch (err) {
             throw new InternalServerErrorException("Failed to upload poster file");
         }
-        const fulldata = { ...data, poster };
+        const fulldata = { ...data, posterUrl  };
         const createdEvent = await this.repo.create(fulldata);
         if (!createdEvent) throw new ConflictException('Failed to create school event');
         return createdEvent;
@@ -41,18 +41,18 @@ export class SchoolEventService {
         return uploaded
     };
     async findAll(): Promise<SchoolEventType[]> {
-        const events= await this.repo.findAll();
-        if(events.length===0) throw new NotFoundException('Events not found');
+        const events = await this.repo.findAll();
+        if (events.length === 0) throw new NotFoundException('Events not found');
         return events;
     };
-    async findById(id:string):Promise<SchoolEventType|null>{
-        const event= await this.repo.findById(id);
-        if(!event) throw new NotFoundException(`Event not found with _id${id}`);
+    async findById(id: string): Promise<SchoolEventType | null> {
+        const event = await this.repo.findById(id);
+        if (!event) throw new NotFoundException(`Event not found with _id${id}`);
         return event;
     }
-    async delete(id:string):Promise<SchoolEventType|null>{
-        const event= await this.repo.delete(id);
-        if(!event) throw new NotFoundException(`Event not found with _id${id}`);
+    async delete(id: string): Promise<SchoolEventType | null> {
+        const event = await this.repo.delete(id);
+        if (!event) throw new NotFoundException(`Event not found with _id${id}`);
         return event;
     }
 

@@ -8,8 +8,8 @@ import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
 
 @Controller('calendar-entries')
-// @UseGuards(AuthGuard('jwt'))
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard('jwt'))
+// @UseGuards(JwtAuthGuard)
 export class AcademicCalendarController{
     constructor(
        private readonly academicCalendarService:AcademicCalendarService,
@@ -35,3 +35,5 @@ export class AcademicCalendarController{
         return await this.academicCalendarService.delete(id)
     }
 }
+
+

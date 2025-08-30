@@ -1,15 +1,15 @@
-
-
 import type React from "react"
-import { useState } from "react"
-import { Calendar, Umbrella, BookOpen, Coffee } from "lucide-react"
+import { useEffect, useState } from "react"
+import { Calendar, BookOpen, Coffee } from "lucide-react"
 import AcademicCalendar from "../components/AcademicCalendar"
 import EventsList from "../components/EventList"
-import HolidayModal from "../components/HolidayModal" 
-import OffDayModal from "../components/OffdayModal" 
-import EventModal from "../components/EventModal" 
-import ConfirmationModal from "../components/ConfirmationModal" 
+import OffDayModal from "../components/OffdayModal"
+import EventModal from "../components/EventModal"
+import ConfirmationModal from "../components/ConfirmationModal"
 import { Button } from "../../../components/ui/button"
+import { useNotification } from "../../../context/notification/useNotification"
+import { useAppDispatch, useAppSelector } from "../../../hooks/app.hooks"
+import { createCalenderEntry, fetchAllCaledarEntries, fetchAllEvents, createEvent } from "../../../store/calenderAndEventsSlice"
 
 interface ScheduleItem {
   id: number
@@ -17,49 +17,78 @@ interface ScheduleItem {
   type: "event" | "holiday" | "off_day"
   title: string
   description?: string
-  poster?: File | null
+  posterFile?: File | null
+}
+export interface SchoolEventForm {
+  title: string;
+  description: string;
+  date: string | null;
+  endDate: string | null;
+  venue: string;
+  posterFile: File |null ;
+}
+
+
+export interface OffDayForm {
+  title: string
+  description: string
+  date: string | null 
+  endDate: string | null
+  type: string
+  academicYear?: string
+  applicableClassDivisions?: string[]
+}
+
+export interface SchoolEventForm {
+  title: string
+  description: string
+  date: string | null
+  endDate: string | null
+  venue: string
+  posterFile: File | null
 }
 
 const AdminSchedulePage: React.FC = () => {
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([])
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const [isHolidayModalOpen, setHolidayModalOpen] = useState(false)
   const [isOffDayModalOpen, setOffDayModalOpen] = useState(false)
   const [isEventModalOpen, setEventModalOpen] = useState(false)
   const [isConfirmRemoveOpen, setConfirmRemoveOpen] = useState(false)
   const [itemToRemove, setItemToRemove] = useState<ScheduleItem | null>(null)
+  const { showNotification } = useNotification()
+  const dispatch = useAppDispatch()
+  const events = useAppSelector((state) => state.academicCalender.events)
+  const calenderEntries = useAppSelector((state) => state.academicCalender.calenderEntries)
 
-  // Holiday form
-  const [holidayTitle, setHolidayTitle] = useState("")
-  const [holidayDesc, setHolidayDesc] = useState("")
+  // Updated form state to match backend
+  const [offDayForm, setOffDayForm] = useState<OffDayForm>({
+    title: "",
+    description: "",
+    date: null, 
+    endDate: null,
+    type: "",
+    academicYear: "",
+    applicableClassDivisions: []
+  })
 
-  // Off day form
-  const [offDayTitle, setOffDayTitle] = useState("")
-  const [offDayDesc, setOffDayDesc] = useState("")
 
-  // Event form
-  const [eventTitle, setEventTitle] = useState("")
-  const [eventDesc, setEventDesc] = useState("")
-  const [eventPoster, setEventPoster] = useState<File | null>(null)
+  const [eventForm, setEventForm] = useState<SchoolEventForm>({
+    title: "",
+    description: "",
+    date: null,
+    endDate: null,
+    venue: "",
+    posterFile: null
+  })
 
   // Month selection
-  const [selectedMonth, setSelectedMonth] = useState(0) 
+  const [selectedMonth, setSelectedMonth] = useState(0)
   const [selectedYear, setSelectedYear] = useState(2025)
   const [selectedView, setSelectedView] = useState<"calendar" | "events">("calendar")
 
   const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    "January", "February", "March", "April", "May", "June", "July",
+    "August", "September", "October", "November", "December",
   ]
 
   const getDaysInMonth = (month: number, year: number) => {
@@ -71,82 +100,94 @@ const AdminSchedulePage: React.FC = () => {
   const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
   const handleDayClick = (day: number, type: "holiday" | "off_day") => {
-    const date = `${day} ${month}`
+    const date = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     setSelectedDate(date)
 
-    // Check if item already exists
+    setOffDayForm({
+      title: "",
+      description: "",
+      date: date,
+      endDate: null,
+      type: type === "holiday" ? "HOLIDAY" : "OFF_DAY",
+      academicYear: `${selectedYear}-${selectedYear + 1}`,
+      applicableClassDivisions: []
+    })
+
     const existingItem = scheduleItems.find((item) => item.date === date && item.type === type)
     if (existingItem) {
-      
       setItemToRemove(existingItem)
       setConfirmRemoveOpen(true)
     } else {
-      if (type === "holiday") {
-        setHolidayModalOpen(true)
-      } else {
-        setOffDayModalOpen(true)
-      }
+      setOffDayModalOpen(true)
     }
   }
 
   const handleEventClick = (day: number) => {
-    const date = `${day} ${month}`
+    const date = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     setSelectedDate(date)
+    
+    // Reset event form and set the selected date
+    setEventForm({
+      title: "",
+      description: "",
+      date: date,
+      endDate: date, 
+      venue: "",
+      posterFile: null
+    })
+    
     setEventModalOpen(true)
   }
 
-  const handleAddHoliday = () => {
-    if (!selectedDate || !holidayTitle.trim()) return
-    setScheduleItems([
-      ...scheduleItems,
-      {
-        id: Date.now(),
-        date: selectedDate,
-        type: "holiday",
-        title: holidayTitle,
-        description: holidayDesc,
-      },
-    ])
-    setHolidayTitle("")
-    setHolidayDesc("")
-    setHolidayModalOpen(false)
+  const handleCalendarEntry = async () => {
+    try {
+      await dispatch(createCalenderEntry({ data: offDayForm })).unwrap()
+      showNotification('success', { message: 'Calendar entry created successfully!' })
+      // Reset form
+      setOffDayForm({
+        title: "",
+        description: "",
+        date: null,
+        endDate: null,
+        type: "",
+        academicYear: "",
+        applicableClassDivisions: []
+      })
+    } catch (error) {
+      showNotification('error', { message: error as string })
+    }
   }
 
-  const handleAddOffDay = () => {
-    if (!selectedDate || !offDayTitle.trim()) return
-    setScheduleItems([
-      ...scheduleItems,
-      {
-        id: Date.now(),
-        date: selectedDate,
-        type: "off_day",
-        title: offDayTitle,
-        description: offDayDesc,
-      },
-    ])
-    setOffDayTitle("")
-    setOffDayDesc("")
-    setOffDayModalOpen(false)
-  }
+  const handleAddEvent = async () => {
+  try {
+    const formData = new FormData()
+    formData.append("title", eventForm.title)
+    formData.append("description", eventForm.description)
+    formData.append("date", eventForm.date || "")
+    formData.append("endDate", eventForm.endDate || "")
+    formData.append("venue", eventForm.venue)
 
-  const handleAddEvent = () => {
-    if (!selectedDate || !eventTitle.trim()) return
-    setScheduleItems([
-      ...scheduleItems,
-      {
-        id: Date.now(),
-        date: selectedDate,
-        type: "event",
-        title: eventTitle,
-        description: eventDesc,
-        poster: eventPoster,
-      },
-    ])
-    setEventTitle("")
-    setEventDesc("")
-    setEventPoster(null)
+    if (eventForm.posterFile) {
+      formData.append("posterFile", eventForm.posterFile)
+    }
+
+    await dispatch(createEvent(formData)).unwrap()
+    showNotification("success", { message: "Event created successfully!" })
+
+    setEventForm({
+      title: "",
+      description: "",
+      date: null,
+      endDate: null,
+      venue: "",
+      posterFile: null,
+    })
     setEventModalOpen(false)
+  } catch (error) {
+    showNotification("error", { message: error as string })
   }
+}
+
 
   const handleConfirmRemove = () => {
     if (itemToRemove) {
@@ -157,27 +198,38 @@ const AdminSchedulePage: React.FC = () => {
   }
 
   const getScheduleStats = () => {
-    const totalEvents = scheduleItems.filter((item) => item.type === "event").length
-    const totalHolidays = scheduleItems.filter((item) => item.type === "holiday").length
-    const totalOffDays = scheduleItems.filter((item) => item.type === "off_day").length
-    return { totalEvents, totalHolidays, totalOffDays }
+    const totalEvents = events.length
+    const totalOffDays = calenderEntries.length
+    return { totalEvents, totalOffDays }
   }
 
-  const { totalEvents, totalHolidays, totalOffDays } = getScheduleStats()
+  const { totalEvents, totalOffDays } = getScheduleStats()
+
 
   const getItemTypeInfo = (type: string) => {
     switch (type) {
+      case "HOLIDAY":
       case "holiday":
         return { label: "School Holiday", color: "text-green-800", bg: "bg-green-200" }
+      case "OFF_DAY":
       case "off_day":
         return { label: "Off Day", color: "text-orange-800", bg: "bg-orange-200" }
+      case "EVENT":
       case "event":
         return { label: "School Event", color: "text-blue-800", bg: "bg-blue-200" }
+      case "EXAM":
+      case "exam":
+        return { label: "Exam", color: "text-purple-800", bg: "bg-purple-200" }
       default:
         return { label: "", color: "", bg: "" }
     }
   }
 
+  useEffect(() => {
+    dispatch(fetchAllCaledarEntries())
+    dispatch(fetchAllEvents())
+  }, [dispatch])
+  
   return (
     <div className="min-h-screen p-3 sm:p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
@@ -211,7 +263,7 @@ const AdminSchedulePage: React.FC = () => {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-6 shadow-lg border border-white/20">
                 <div className="flex items-center gap-2 sm:gap-4">
                   <div className="bg-blue-100 p-2 sm:p-3 rounded-xl sm:rounded-2xl">
@@ -220,18 +272,6 @@ const AdminSchedulePage: React.FC = () => {
                   <div>
                     <p className="text-gray-600 text-xs sm:text-sm">Events</p>
                     <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{totalEvents}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-6 shadow-lg border border-white/20">
-                <div className="flex items-center gap-2 sm:gap-4">
-                  <div className="bg-green-100 p-2 sm:p-3 rounded-xl sm:rounded-2xl">
-                    <Umbrella className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-gray-600 text-xs sm:text-sm">Holidays</p>
-                    <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{totalHolidays}</p>
                   </div>
                 </div>
               </div>
@@ -268,7 +308,6 @@ const AdminSchedulePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Calendar View */}
         {selectedView === "calendar" && (
           <AcademicCalendar
             selectedMonth={selectedMonth}
@@ -281,7 +320,6 @@ const AdminSchedulePage: React.FC = () => {
             scheduleItems={scheduleItems}
             handleEventClick={handleEventClick}
             handleDayClick={handleDayClick}
-            // getItemTypeInfo={getItemTypeInfo}
           />
         )}
 
@@ -298,38 +336,20 @@ const AdminSchedulePage: React.FC = () => {
         )}
       </div>
 
-      <HolidayModal
-        isOpen={isHolidayModalOpen}
-        onClose={() => setHolidayModalOpen(false)}
-        selectedDate={selectedDate}
-        holidayTitle={holidayTitle}
-        setHolidayTitle={setHolidayTitle}
-        holidayDesc={holidayDesc}
-        setHolidayDesc={setHolidayDesc}
-        onAddHoliday={handleAddHoliday}
-      />
-
       <OffDayModal
         isOpen={isOffDayModalOpen}
         onClose={() => setOffDayModalOpen(false)}
-        selectedDate={selectedDate}
-        offDayTitle={offDayTitle}
-        setOffDayTitle={setOffDayTitle}
-        offDayDesc={offDayDesc}
-        setOffDayDesc={setOffDayDesc}
-        onAddOffDay={handleAddOffDay}
+        offDayForm={offDayForm}
+        setOffDayForm={setOffDayForm}
+        onsave={handleCalendarEntry}
       />
 
       <EventModal
         isOpen={isEventModalOpen}
         onClose={() => setEventModalOpen(false)}
         selectedDate={selectedDate}
-        eventTitle={eventTitle}
-        setEventTitle={setEventTitle}
-        eventDesc={eventDesc}
-        setEventDesc={setEventDesc}
-        eventPoster={eventPoster}
-        setEventPoster={setEventPoster}
+        eventForm={eventForm}
+        setEventForm={setEventForm}
         onAddEvent={handleAddEvent}
       />
 

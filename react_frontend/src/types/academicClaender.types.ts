@@ -6,7 +6,7 @@ export interface CalenderEntries{
     title:string;
     description?:string;
     date:string;
-    endDate?:string;
+    endDate:string;
     type: CalendarTypeEnums;
     academicYear?:string;
     applicableClassDivisions:string[];
