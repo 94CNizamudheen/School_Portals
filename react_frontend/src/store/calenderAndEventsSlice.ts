@@ -1,9 +1,9 @@
-import type { CalenderEntries } from "@/types/academicClaender.types";
-import type { SchoolEventTypes } from "../types/school.events.types";
+import type { CalenderEntries } from "../types/academicClaender.types";
+import type { SchoolEventTypes } from "../types/academicClaender.types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import API from "../axios.config";
 import type { AxiosError } from "axios";
-import type { OffDayForm } from "../admin/calender_and_events/pages/SchoolCalender";
+import type { OffDayForm } from "../types/academicClaender.types";
 
 
 export const fetchAllCaledarEntries = createAsyncThunk(
@@ -68,7 +68,7 @@ export const updateCalendarEntry = createAsyncThunk(
 );
 export const updateEvent = createAsyncThunk(
     'events/update',
-    async ({ id, data }: { id: string, data: SchoolEventTypes }, { rejectWithValue }) => {
+    async ({ id, data }: { id: string, data: FormData }, { rejectWithValue }) => {
         try {
             const res = await API.patch(`/events/${id}`, { data })
             return res.data;
@@ -95,6 +95,7 @@ export const removeCalendarEntry = createAsyncThunk(
 export const removeEvent = createAsyncThunk(
     'events/remove',
     async (id: string, { rejectWithValue }) => {
+        console.log('remove invoked')
         try {
             const res = await API.delete(`/events/${id}`);
             return res.data

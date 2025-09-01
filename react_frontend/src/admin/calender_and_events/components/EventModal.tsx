@@ -1,50 +1,76 @@
 import type React from "react"
 import { useRef } from "react"
+import { useForm } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../components/ui/dialog"
 import { Button } from "../../../components/ui/button"
 import { Input } from "../../../components/ui/input"
 import { Textarea } from "../../../components/ui/textarea"
 import { BookOpen } from "lucide-react"
-import type { SchoolEventForm } from "../pages/SchoolCalender"
-
+import type { SchoolEventForm, SchoolEventTypes } from "../../../types/academicClaender.types"
+import { eventValidationSchema } from "../../../utils/validationSchemas"
+import { useAppDispatch, useAppSelector } from "../../../hooks/app.hooks"
+import LoadingIndicator from "../../../components/shared/LoadingIndicator"
+import { createEvent, updateEvent } from "../../../store/calenderAndEventsSlice"
+import { useNotification } from "../../../context/notification/useNotification"
 
 interface EventModalProps {
   isOpen: boolean
   onClose: () => void
   selectedDate: string | null
-  eventForm: SchoolEventForm
-  setEventForm: React.Dispatch<React.SetStateAction<SchoolEventForm>>
-  onAddEvent: (formData: FormData) => void   
+  initialData?: SchoolEventTypes & { _id?: string };
+  mode?: 'add' | 'edit';
 }
 
-const EventModal: React.FC<EventModalProps> = ({
-  isOpen,
-  onClose,
-  eventForm,
-  setEventForm,
-  onAddEvent,
-}) => {
+const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, selectedDate, initialData, mode }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
-  const updateForm = (field: keyof SchoolEventForm, value: unknown) => {
-    setEventForm((prev) => ({ ...prev, [field]: value }))
-  }
+  const dispatch = useAppDispatch()
+  const loading = useAppSelector((state) => state.academicCalender.loading)
+  const { showNotification } = useNotification()
 
-  const handleSave = () => {
+  console.log("initial data", initialData)
+
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<SchoolEventForm>({
+    resolver: yupResolver(eventValidationSchema),
+    mode: "onChange",
+    defaultValues: initialData || {
+      title: "",
+      description: "",
+      date: selectedDate || "",
+      endDate: "",
+      venue: "",
+      posterFile: null,
+    },
+  })
+  const onSubmit = async (values: SchoolEventForm) => {
     const formData = new FormData()
-    formData.append("title", eventForm.title)
-    formData.append("description", eventForm.description)
-    formData.append("date", eventForm.date || "")
-    formData.append("endDate", eventForm.endDate || "")
-    formData.append("venue", eventForm.venue)
 
-    if (eventForm.posterFile) {
-      formData.append("posterFile", eventForm.posterFile) 
+    formData.append("title", values.title)
+    formData.append("description", values.description)
+    formData.append("date", values.date)
+    formData.append("endDate", values.endDate)
+    formData.append("venue", values.venue)
+
+    if (values.posterFile) {
+      formData.append("posterFile", values.posterFile)
+    }
+    try {
+      if (mode === "add" && initialData?._id) {
+        await dispatch(updateEvent({ id: initialData._id, data: formData }))
+        showNotification("success", { message: "Event updated successfully!" })
+      } else {
+        await dispatch(createEvent(formData))
+        showNotification("success", { message: "Event created successfully!" })
+      }
+
+      onClose()
+    } catch (error) {
+      showNotification("error", { message: error as string })
     }
 
-    onAddEvent(formData)
-    onClose()
   }
+  const posterFile = watch("posterFile")
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -52,107 +78,93 @@ const EventModal: React.FC<EventModalProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <BookOpen className="w-5 h-5 text-blue-600" />
-            Add School Event
+            {mode === "edit" ? "Edit School Event" : "Add School Event"}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
-         
-
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Title */}
-          <div className="flex flex-col gap-2">
+          <div>
             <label className="text-sm font-medium">Event Title *</label>
-            <Input
-              placeholder="Event Name (e.g., Sports Day, Science Fair)"
-              value={eventForm.title}
-              onChange={(e) => updateForm("title", e.target.value)}
-              required
-            />
+            <Input placeholder="Event Name" {...register("title")} />
+            {errors.title && <p className="text-red-500 text-xs">{errors.title.message}</p>}
           </div>
 
           {/* Description */}
-          <div className="flex flex-col gap-2">
+          <div>
             <label className="text-sm font-medium">Description *</label>
-            <Textarea
-              placeholder="Event description, timing, and details..."
-              value={eventForm.description}
-              onChange={(e) => updateForm("description", e.target.value)}
-              className="min-h-[100px] resize-none"
-              required
-            />
+            <Textarea placeholder="Event description..." {...register("description")} className="min-h-[100px]" />
+            {errors.description && <p className="text-red-500 text-xs">{errors.description.message}</p>}
           </div>
 
           {/* Date */}
-          <div className="flex flex-col gap-2">
+          <div>
             <label className="text-sm font-medium">Event Date *</label>
-            <Input
-              type="date"
-              value={eventForm.date || ""}
-              onChange={(e) => updateForm("date", e.target.value)}
-              required
-            />
+            <Input type="date" {...register("date")} />
+            {errors.date && <p className="text-red-500 text-xs">{errors.date.message}</p>}
           </div>
 
           {/* End Date */}
-          <div className="flex flex-col gap-2">
+          <div>
             <label className="text-sm font-medium">End Date *</label>
-            <Input
-              type="date"
-              value={eventForm.endDate || ""}
-              min={eventForm.date || ""}
-              onChange={(e) => updateForm("endDate", e.target.value)}
-              required
-            />
+            <Input type="date" {...register("endDate")} />
+            {errors.endDate && <p className="text-red-500 text-xs">{errors.endDate.message}</p>}
           </div>
 
           {/* Venue */}
-          <div className="flex flex-col gap-2">
+          <div>
             <label className="text-sm font-medium">Venue *</label>
-            <Input
-              placeholder="Event venue (e.g., School Auditorium, Sports Ground)"
-              value={eventForm.venue}
-              onChange={(e) => updateForm("venue", e.target.value)}
-              required
-            />
+            <Input placeholder="Event venue" {...register("venue")} />
+            {errors.venue && <p className="text-red-500 text-xs">{errors.venue.message}</p>}
           </div>
-
-          {/* Poster File Upload */}
-          <div className="flex flex-col gap-2">
+          {/* Poster File */}
+          <div>
             <label className="text-sm font-medium">Poster File *</label>
             <Input
               type="file"
               accept="image/*"
               ref={fileInputRef}
-              onChange={(e) => updateForm("posterFile", e.target.files?.[0] || null)}
-              required
+              onChange={(e) => setValue("posterFile", e.target.files?.[0] ?? null, { shouldValidate: true })}
             />
-            {eventForm.posterFile && (
-              <p className="text-xs text-gray-600">
-                Selected file: {eventForm.posterFile.name}
-              </p>
-            )}
-          </div>
-        </div>
 
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSave}
-            disabled={
-              !eventForm.title.trim() ||
-              !eventForm.description.trim() ||
-              !eventForm.date ||
-              !eventForm.endDate ||
-              !eventForm.venue.trim() ||
-              !eventForm.posterFile
-            }
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            Add Event
-          </Button>
-        </DialogFooter>
+            {/* If new file selected, show that */}
+            {posterFile && (
+              <div className="mt-2">
+                <p className="text-xs text-gray-600">Selected: {posterFile.name}</p>
+                <img
+                  src={URL.createObjectURL(posterFile)}
+                  alt="Preview"
+                  className="w-32 h-32 rounded-lg object-cover border mt-1"
+                />
+              </div>
+            )}
+
+            {/* If editing and no new file, show existing poster */}
+            {!posterFile && mode === "edit" && initialData?.posterUrl && (
+              <div className="mt-2">
+                <p className="text-xs text-gray-600">Current poster:</p>
+                <img
+                  src={initialData.posterUrl}
+                  alt="Current Poster"
+                  className="w-32 h-32 rounded-lg object-cover border mt-1"
+                />
+              </div>
+            )}
+
+            {errors.posterFile && <p className="text-red-500 text-xs">{errors.posterFile.message}</p>}
+          </div>
+
+
+          {/* Actions */}
+          <DialogFooter className="gap-2">
+            <Button variant="outline" type="button" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit"  className="bg-blue-600 hover:bg-blue-700">
+              {loading ? <LoadingIndicator /> : <>{mode === "edit" ? "Save Changes" : "Add Event"}</>}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )

@@ -4,20 +4,11 @@ import type React from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../components/ui/dialog"
 import { Button } from "../../../components/ui/button"
 import { AlertTriangle, XCircle, CheckCircle } from "lucide-react"
-
-interface ScheduleItem {
-  id: number
-  date: string
-  type: "event" | "holiday" | "off_day"
-  title: string
-  description?: string
-  poster?: File | null
-}
-
+import type { SchoolEventTypes } from "../../../types/academicClaender.types"
 interface ConfirmationModalProps {
   isOpen: boolean
   onClose: () => void
-  itemToRemove: ScheduleItem | null
+  itemToRemove: SchoolEventTypes | null
   getItemTypeInfo: (type: string) => { label: string; color: string; bg: string }
   onConfirmRemove: () => void
 }

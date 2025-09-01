@@ -182,3 +182,25 @@ export const divisionSchema = Yup.object().shape({
     .min(1, "Capacity must be at least 1")
     .max(60, "Capacity cannot exceed 60"),
 });
+
+export const eventValidationSchema = Yup.object({
+  title: Yup.string().required("Title is required"),
+  description: Yup.string().required("Description is required"),
+  date: Yup.string()
+    .required("Date is required")
+    .test("valid-date", "Invalid date", (value) => !isNaN(Date.parse(value || ""))),
+  endDate: Yup.string()
+    .required("End Date is required")
+    .test("endDate", "End date cannot be before start date", function (value) {
+      const { date } = this.parent
+      if (!date || !value) return true
+      return new Date(value) >= new Date(date)
+    }),
+  venue: Yup.string().required("Venue is required"),
+  posterFile: Yup.mixed<File>()
+  .required("Poster file is required")
+  .test("fileType", "Only image files are allowed", (file) =>
+    file ? ["image/jpeg", "image/png", "image/jpg"].includes(file.type) : false
+  )
+  .nullable(),
+})

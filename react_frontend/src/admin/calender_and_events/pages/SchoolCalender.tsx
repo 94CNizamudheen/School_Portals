@@ -9,83 +9,55 @@ import ConfirmationModal from "../components/ConfirmationModal"
 import { Button } from "../../../components/ui/button"
 import { useNotification } from "../../../context/notification/useNotification"
 import { useAppDispatch, useAppSelector } from "../../../hooks/app.hooks"
-import { createCalenderEntry, fetchAllCaledarEntries, fetchAllEvents, createEvent } from "../../../store/calenderAndEventsSlice"
-
-interface ScheduleItem {
-  id: number
-  date: string
-  type: "event" | "holiday" | "off_day"
-  title: string
-  description?: string
-  posterFile?: File | null
-}
-export interface SchoolEventForm {
-  title: string;
-  description: string;
-  date: string | null;
-  endDate: string | null;
-  venue: string;
-  posterFile: File |null ;
-}
+import { createCalenderEntry, fetchAllCaledarEntries, fetchAllEvents } from "../../../store/calenderAndEventsSlice"
+import type { OffDayForm, SchoolEventForm, SchoolEventTypes } from "../../../types/academicClaender.types"
+import { formatDate } from "../../../utils/helpers/dateFormatter"
 
 
-export interface OffDayForm {
-  title: string
-  description: string
-  date: string | null 
-  endDate: string | null
-  type: string
-  academicYear?: string
-  applicableClassDivisions?: string[]
-}
+const initialEventForm: SchoolEventForm = {
+  title: "",
+  description: "",
+  date: "",
+  endDate: "",
+  venue: "",
+  posterFile: null,
+};
 
-export interface SchoolEventForm {
-  title: string
-  description: string
-  date: string | null
-  endDate: string | null
-  venue: string
-  posterFile: File | null
-}
 
 const AdminSchedulePage: React.FC = () => {
-  const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([])
-  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const today = new Date()
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth()) // 0–11
+  const [selectedYear, setSelectedYear] = useState(today.getFullYear())
+  const [selectedDate, setSelectedDate] = useState<string | null>(
+    `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`
+  )
+
+  const [scheduledEventItems, setScheduledEventItems] = useState<SchoolEventTypes[]>([])
   const [isOffDayModalOpen, setOffDayModalOpen] = useState(false)
   const [isEventModalOpen, setEventModalOpen] = useState(false)
   const [isConfirmRemoveOpen, setConfirmRemoveOpen] = useState(false)
-  const [itemToRemove, setItemToRemove] = useState<ScheduleItem | null>(null)
+  const [itemToRemove, setItemToRemove] = useState<SchoolEventTypes | null>(null)
   const { showNotification } = useNotification()
   const dispatch = useAppDispatch()
   const events = useAppSelector((state) => state.academicCalender.events)
   const calenderEntries = useAppSelector((state) => state.academicCalender.calenderEntries)
 
-  // Updated form state to match backend
   const [offDayForm, setOffDayForm] = useState<OffDayForm>({
     title: "",
     description: "",
-    date: null, 
+    date: null,
     endDate: null,
     type: "",
     academicYear: "",
     applicableClassDivisions: []
   })
 
-
-  const [eventForm, setEventForm] = useState<SchoolEventForm>({
-    title: "",
-    description: "",
-    date: null,
-    endDate: null,
-    venue: "",
-    posterFile: null
-  })
-
-  // Month selection
-  const [selectedMonth, setSelectedMonth] = useState(0)
-  const [selectedYear, setSelectedYear] = useState(2025)
+  const [eventForm, setEventForm] = useState<SchoolEventForm>(initialEventForm)
   const [selectedView, setSelectedView] = useState<"calendar" | "events">("calendar")
-
+  const handleCloseEventModal = () => {
+    setEventForm(initialEventForm)
+    setEventModalOpen(false)
+  }
   const months = [
     "January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December",
@@ -112,30 +84,21 @@ const AdminSchedulePage: React.FC = () => {
       academicYear: `${selectedYear}-${selectedYear + 1}`,
       applicableClassDivisions: []
     })
-
-    const existingItem = scheduleItems.find((item) => item.date === date && item.type === type)
-    if (existingItem) {
-      setItemToRemove(existingItem)
-      setConfirmRemoveOpen(true)
-    } else {
-      setOffDayModalOpen(true)
-    }
   }
 
   const handleEventClick = (day: number) => {
     const date = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     setSelectedDate(date)
-    
-    // Reset event form and set the selected date
+
     setEventForm({
       title: "",
       description: "",
       date: date,
-      endDate: date, 
+      endDate: date,
       venue: "",
       posterFile: null
     })
-    
+
     setEventModalOpen(true)
   }
 
@@ -158,40 +121,40 @@ const AdminSchedulePage: React.FC = () => {
     }
   }
 
-  const handleAddEvent = async () => {
-  try {
-    const formData = new FormData()
-    formData.append("title", eventForm.title)
-    formData.append("description", eventForm.description)
-    formData.append("date", eventForm.date || "")
-    formData.append("endDate", eventForm.endDate || "")
-    formData.append("venue", eventForm.venue)
+  // const handleAddEvent = async () => {
+  //   try {
+  //     const formData = new FormData()
+  //     formData.append("title", eventForm.title)
+  //     formData.append("description", eventForm.description)
+  //     formData.append("date", eventForm.date || "")
+  //     formData.append("endDate", eventForm.endDate || "")
+  //     formData.append("venue", eventForm.venue)
 
-    if (eventForm.posterFile) {
-      formData.append("posterFile", eventForm.posterFile)
-    }
+  //     if (eventForm.posterFile) {
+  //       formData.append("posterFile", eventForm.posterFile)
+  //     }
 
-    await dispatch(createEvent(formData)).unwrap()
-    showNotification("success", { message: "Event created successfully!" })
+  //     await dispatch(createEvent(formData)).unwrap()
+  //     showNotification("success", { message: "Event created successfully!" })
 
-    setEventForm({
-      title: "",
-      description: "",
-      date: null,
-      endDate: null,
-      venue: "",
-      posterFile: null,
-    })
-    setEventModalOpen(false)
-  } catch (error) {
-    showNotification("error", { message: error as string })
-  }
-}
+  //     setEventForm({
+  //       title: "",
+  //       description: "",
+  //       date: '',
+  //       endDate: '',
+  //       venue: "",
+  //       posterFile: null,
+  //     })
+  //     setEventModalOpen(false)
+  //   } catch (error) {
+  //     showNotification("error", { message: error as string })
+  //   }
+  // }
 
 
   const handleConfirmRemove = () => {
     if (itemToRemove) {
-      setScheduleItems(scheduleItems.filter((item) => item.id !== itemToRemove.id))
+      setScheduledEventItems(scheduledEventItems.filter((item) => item._id !== itemToRemove._id))
     }
     setConfirmRemoveOpen(false)
     setItemToRemove(null)
@@ -228,8 +191,54 @@ const AdminSchedulePage: React.FC = () => {
   useEffect(() => {
     dispatch(fetchAllCaledarEntries())
     dispatch(fetchAllEvents())
-  }, [dispatch])
-  
+  }, [dispatch]);
+
+  useEffect(() => {
+    const eventItems: SchoolEventTypes[] = []
+    events.forEach((ev) => {
+      if (!ev.date) return
+      const formatedDate = formatDate(ev.date);
+      const formatedEndDate= formatDate(ev.endDate)
+
+      eventItems.push({
+        _id: ev._id,
+        date: formatedDate,
+        type: "event",
+        title: ev.title,
+        endDate:formatedEndDate,
+        venue:ev.venue,
+        description:ev.description,
+        posterUrl:ev.posterUrl,
+      })
+    })
+    // calenderEntries.forEach((entry) => {
+    //   const formattedDate = formatDate(eventForm.date)
+    //   const formatedEndDate= formatDate(eventForm.endDate)
+    //   let normalizedType: "event" | "holiday" | "off_day"
+    //   switch (entry.type.toUpperCase()) {
+    //     case "HOLIDAY":
+    //       normalizedType = "holiday"
+    //       break
+    //     case "OFF_DAY":
+    //       normalizedType = "off_day"
+    //       break
+    //     default:
+    //       normalizedType = "off_day"
+    //   }
+    //   items.push({
+    //     id: entry._id,
+    //     date: formattedDate,
+    //     type: normalizedType,
+    //     title: entry.title,
+    //     endDate:formatedEndDate,
+    //     venue:entry.venue
+    //   })
+    // })
+
+    setScheduledEventItems(eventItems)
+  }, [events, calenderEntries, eventForm])
+
+
   return (
     <div className="min-h-screen p-3 sm:p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
@@ -259,6 +268,37 @@ const AdminSchedulePage: React.FC = () => {
                   <span className="hidden sm:inline">Events View</span>
                   <span className="sm:hidden">Events</span>
                 </Button>
+              </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium opacity-90">Month:</label>
+                  <select
+                    value={selectedMonth}
+                    onChange={(e) => setSelectedMonth(Number.parseInt(e.target.value))}
+                    className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 text-sm"
+                  >
+                    {months.map((monthName, index) => (
+                      <option key={index} value={index} className="text-gray-900">
+                        {monthName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium opacity-90">Year:</label>
+                  <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(Number.parseInt(e.target.value))}
+                    className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg px-2 sm:px-3 py-1 sm:py-2 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 text-sm"
+                  >
+                    {Array.from({ length: 10 }, (_, i) => 2020 + i).map((year) => (
+                      <option key={year} value={year} className="text-gray-900">
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -312,12 +352,10 @@ const AdminSchedulePage: React.FC = () => {
           <AcademicCalendar
             selectedMonth={selectedMonth}
             selectedYear={selectedYear}
-            setSelectedMonth={setSelectedMonth}
-            setSelectedYear={setSelectedYear}
             months={months}
             weekDays={weekDays}
             daysInMonth={daysInMonth}
-            scheduleItems={scheduleItems}
+            scheduledEventItems={scheduledEventItems}
             handleEventClick={handleEventClick}
             handleDayClick={handleDayClick}
           />
@@ -327,10 +365,8 @@ const AdminSchedulePage: React.FC = () => {
         {selectedView === "events" && (
           <EventsList
             month={month}
-            scheduleItems={scheduleItems}
+            scheduledEventItems={scheduledEventItems}
             getItemTypeInfo={getItemTypeInfo}
-            setItemToRemove={setItemToRemove}
-            setConfirmRemoveOpen={setConfirmRemoveOpen}
             setSelectedView={setSelectedView}
           />
         )}
@@ -346,11 +382,8 @@ const AdminSchedulePage: React.FC = () => {
 
       <EventModal
         isOpen={isEventModalOpen}
-        onClose={() => setEventModalOpen(false)}
+        onClose={handleCloseEventModal}
         selectedDate={selectedDate}
-        eventForm={eventForm}
-        setEventForm={setEventForm}
-        onAddEvent={handleAddEvent}
       />
 
       <ConfirmationModal
