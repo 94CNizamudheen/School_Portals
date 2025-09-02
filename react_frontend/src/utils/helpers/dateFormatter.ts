@@ -9,3 +9,9 @@ export const formatDate = (dateString: string | null): string => {
   const year = date.getFullYear();
   return `${day}-${month}-${year}`;
 };
+
+export const formatToDDMMYYYY=(dateStr: string)=> {
+  if (!dateStr) return ""
+  const [year, month, day] = dateStr.split("-")
+  return `${day}-${month}-${year}`
+}

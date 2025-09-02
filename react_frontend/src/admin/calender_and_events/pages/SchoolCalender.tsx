@@ -211,30 +211,6 @@ const AdminSchedulePage: React.FC = () => {
         posterUrl:ev.posterUrl,
       })
     })
-    // calenderEntries.forEach((entry) => {
-    //   const formattedDate = formatDate(eventForm.date)
-    //   const formatedEndDate= formatDate(eventForm.endDate)
-    //   let normalizedType: "event" | "holiday" | "off_day"
-    //   switch (entry.type.toUpperCase()) {
-    //     case "HOLIDAY":
-    //       normalizedType = "holiday"
-    //       break
-    //     case "OFF_DAY":
-    //       normalizedType = "off_day"
-    //       break
-    //     default:
-    //       normalizedType = "off_day"
-    //   }
-    //   items.push({
-    //     id: entry._id,
-    //     date: formattedDate,
-    //     type: normalizedType,
-    //     title: entry.title,
-    //     endDate:formatedEndDate,
-    //     venue:entry.venue
-    //   })
-    // })
-
     setScheduledEventItems(eventItems)
   }, [events, calenderEntries, eventForm])
 

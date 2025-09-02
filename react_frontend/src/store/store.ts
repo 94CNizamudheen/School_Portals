@@ -1,14 +1,14 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; 
-import authReducer from './authSlice.ts';
-import studentReducer from './studentSlice.ts'
-import parentReducer from './parentSlice.ts'
-import teacherReducer from './teacherSlice.ts'
-import admissionReducer from './admissionSlice.ts';
-import divisionReducer from './divisionSlice.ts'
-import subjectReducer from './subjectSlice.ts'
-import academicCalenderReducer from './calenderAndEventsSlice.ts'
+import authReducer from './authSlice';
+import studentReducer from './studentSlice';
+import parentReducer from './parentSlice';
+import admissionReducer from './admissionSlice';
+import divisionReducer from './divisionSlice';
+import subjectReducer from './subjectSlice';
+import teacherReducer from './teacherSlice';
+import academicCalenderReducer from './calenderAndEventsSlice';
 
 const persistConfig = {
   key: 'root',

@@ -10,7 +10,8 @@ export class SchoolEvent extends Document {
     @Prop({ required: true }) date: Date;
     @Prop({ required: true }) endDate: Date;
     @Prop({ required: true }) venue: string;
-    @Prop({ required: true }) posterUrl: string; 
+    @Prop() posterUrl: string;
+
 };
 
-export const SchoolEventSchema= SchemaFactory.createForClass(SchoolEvent);
+export const SchoolEventSchema = SchemaFactory.createForClass(SchoolEvent);

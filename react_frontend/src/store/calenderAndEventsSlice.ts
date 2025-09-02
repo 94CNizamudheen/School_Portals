@@ -70,7 +70,10 @@ export const updateEvent = createAsyncThunk(
     'events/update',
     async ({ id, data }: { id: string, data: FormData }, { rejectWithValue }) => {
         try {
-            const res = await API.patch(`/events/${id}`, { data })
+            console.log("datas to update",data)
+            const res = await API.patch(`/events/${id}`, data,{
+                  headers: { "Content-Type": "multipart/form-data" },
+            })
             return res.data;
         } catch (error) {
             const err = error as AxiosError<{ message: string }>;
@@ -110,7 +113,6 @@ export const createEvent = createAsyncThunk(
     'events/create',
     async (data: FormData, { rejectWithValue }) => {
         try {
-            console.log("Hitted create event")
             const res = await API.post(`/events`,  data , {
                 headers: { "Content-Type": "multipart/form-data" },
             })
@@ -125,7 +127,9 @@ export const createCalenderEntry = createAsyncThunk(
     'academicCalendar/create',
     async ({ data }: { data: OffDayForm }, { rejectWithValue }) => {
         try {
-            const res = await API.post(`/calendar-entries/`, { data })
+            const res = await API.post(`/calendar-entries/`, { data },{
+                 headers: { "Content-Type": "multipart/form-data" },
+            })
             return res.data;
         } catch (error) {
             const err = error as AxiosError<{ message: string }>;

@@ -23,7 +23,7 @@ API.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      const refresh_token = store.getState().auth.refresh_token;
+      const refresh_token =  store.getState().auth.refresh_token;
 
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, { refresh_token });

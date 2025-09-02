@@ -7,20 +7,14 @@ export class CreateTeacherDto {
     @IsEmail() email: string;
     @IsString() mobileNumber: string;
     @IsOptional() @IsString() profileImage?: string;
-
     @IsDateString() dob: Date;
-
     @IsString() @IsNotEmpty() addressLine: string;
     @IsString() @IsNotEmpty() city: string;
     @IsString() @IsNotEmpty() state: string;
     @IsString() @IsNotEmpty() pincode: string;
-
     @IsString() @IsNotEmpty() qualification: string;
-
     @IsString() @IsNotEmpty() university: string;
-
     @IsString() experience: string;
-
     @IsString() @IsNotEmpty() KTET_CTET_certificateNo: string;
 
     @IsString() subject: string;

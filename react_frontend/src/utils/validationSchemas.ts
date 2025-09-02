@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import { ageRules, calculateAge } from './helpers/calculateAge';
+import type { EventEditFormData } from '../admin/calender_and_events/components/EventEditModal';
 
 
 
@@ -203,4 +204,55 @@ export const eventValidationSchema = Yup.object({
     file ? ["image/jpeg", "image/png", "image/jpg"].includes(file.type) : false
   )
   .nullable(),
+})
+
+
+export const eventEditSchema: Yup.ObjectSchema<EventEditFormData> = Yup.object({
+    title: Yup
+        .string()
+        .required("Event title is required")
+        .min(3, "Title must be at least 3 characters")
+        .max(100, "Title must not exceed 100 characters"),
+    description: Yup
+        .string()
+        .default("")
+        .max(500, "Description must not exceed 500 characters"),
+    date: Yup
+        .string()
+        .required("Start date is required")
+        .matches(/^\d{2}-\d{2}-\d{4}$/, "Date must be in DD-MM-YYYY format"),
+    endDate: Yup
+        .string()
+        .required("End date is required")
+        .matches(/^\d{2}-\d{2}-\d{4}$/, "End date must be in DD-MM-YYYY format")
+        .test("end-date-validation", "End date must be same or after start date", function (value) {
+            const { date } = this.parent
+            if (!date || !value) return true
+
+            const [startDay, startMonth, startYear] = date.split("-").map(Number)
+            const [endDay, endMonth, endYear] = value.split("-").map(Number)
+
+            const startDate = new Date(startYear, startMonth - 1, startDay)
+            const endDate = new Date(endYear, endMonth - 1, endDay)
+
+            return endDate >= startDate
+        }),
+    venue: Yup
+        .string()
+        .required("Venue is required")
+        .min(2, "Venue must be at least 2 characters")
+        .max(100, "Venue must not exceed 100 characters"),
+    posterFile: Yup
+        .mixed<File>()
+        .nullable()
+        .default(null)
+        .test("fileSize", "File size must be less than 5MB", (value) => {
+            if (!value) return true
+            return value.size <= 5 * 1024 * 1024
+        })
+        .test("fileType", "Only image files are allowed", (value) => {
+            if (!value) return true
+            return ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(value.type)
+        }),
+    posterUrl: Yup.string().optional()
 })

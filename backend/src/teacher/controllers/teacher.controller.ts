@@ -20,7 +20,7 @@ export class TeacherController {
 
     @Post('apply')
     @UseInterceptors(AnyFilesInterceptor())
-    aplly(@UploadedFiles() files: Array<Express.Multer.File>, @Body() body: CreateTeacherDto) {
+    apply(@UploadedFiles() files: Array<Express.Multer.File>, @Body() body: CreateTeacherDto) {
         this.logger.log("files ", files);
         this.logger.log("body ", body);
         return this.teacherService.apply(body, files)

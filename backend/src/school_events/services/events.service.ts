@@ -13,13 +13,13 @@ export class SchoolEventService {
     ) { }
     async create(data: CreateSchoolEventDto, file: Express.Multer.File): Promise<SchoolEventType> {
         if (!file) throw new BadRequestException("Poster file is required");
-        let posterUrl : string;
+        let posterUrl: string;
         try {
-            posterUrl  = await uploadImage(file);
+            posterUrl = await uploadImage(file);
         } catch (err) {
             throw new InternalServerErrorException("Failed to upload poster file");
         }
-        const fulldata = { ...data, posterUrl  };
+        const fulldata = { ...data, posterUrl };
         const createdEvent = await this.repo.create(fulldata);
         if (!createdEvent) throw new ConflictException('Failed to create school event');
         return createdEvent;
@@ -27,18 +27,19 @@ export class SchoolEventService {
     async update(id: string, data: UpdateSchoolEventDto, file?: Express.Multer.File): Promise<SchoolEventType | null> {
         const exists = await this.repo.findById(id);
         if (!exists) throw new BadRequestException(`Event not found with _id:${id}`)
-        let poster: string | undefined;
+        let posterUrl: string | undefined;
         if (file) {
             try {
-                poster = await uploadImage(file);
+                posterUrl = await uploadImage(file);
             } catch (err) {
                 throw new InternalServerErrorException("Failed to upload poster file");
             }
         }
-        const fulldata = { ...data, ...(poster ? { poster } : {}) };
-        const uploaded = await this.repo.update(id, fulldata)
-        if (!uploaded) throw new ConflictException("Failed to update school event");
-        return uploaded
+        const updateData = { ...data, ...(posterUrl ? { posterUrl } : {}) };
+
+        const updated = await this.repo.update(id, updateData);
+        if (!updated) throw new ConflictException("Failed to update school event");
+        return updated
     };
     async findAll(): Promise<SchoolEventType[]> {
         const events = await this.repo.findAll();

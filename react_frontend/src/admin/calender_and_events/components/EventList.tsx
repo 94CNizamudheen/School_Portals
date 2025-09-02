@@ -1,5 +1,4 @@
 
-//const day = item.date.split(" ")[0]
 import type React from "react"
 import { BookOpen, GraduationCap, Filter } from "lucide-react"
 import { Button } from "../../../components/ui/button"
@@ -9,7 +8,7 @@ import { useState } from "react"
 import { useAppDispatch } from "../../../hooks/app.hooks"
 import { removeEvent } from "../../../store/calenderAndEventsSlice"
 import { useNotification } from "../../../context/notification/useNotification"
-import EventModal from "./EventModal"
+import EventEditModal from "./EventEditModal"
 
 interface EventsListProps {
   month: string
@@ -168,14 +167,13 @@ const EventsList: React.FC<EventsListProps> = ({ month, scheduledEventItems, set
         />
       )}
       {editOpen && eventToEdit && (
-        <EventModal
+        <EventEditModal
           isOpen={editOpen}
           onClose={() => {
             setEditOpen(false)
             setEventToEdit(null)
           }}
           selectedDate={null}
-          mode="edit"
           initialData={{
             _id: eventToEdit._id,
             title: eventToEdit.title,
