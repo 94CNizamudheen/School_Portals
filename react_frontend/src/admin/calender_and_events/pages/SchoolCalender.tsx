@@ -71,7 +71,7 @@ const AdminSchedulePage: React.FC = () => {
   const month = `${months[selectedMonth]} ${selectedYear}`
   const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
-  const handleDayClick = (day: number, type: "holiday" | "off_day") => {
+  const handleDayClick = (day: number, type: "holiday" | "off_day"|'exam') => {
     const date = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     setSelectedDate(date)
 
@@ -80,10 +80,11 @@ const AdminSchedulePage: React.FC = () => {
       description: "",
       date: date,
       endDate: null,
-      type: type === "holiday" ? "HOLIDAY" : "OFF_DAY",
+      type: type === "holiday" ? "HOLIDAY" :type=='off_day'? "OFF_DAY":'EXAM',
       academicYear: `${selectedYear}-${selectedYear + 1}`,
       applicableClassDivisions: []
     })
+    setOffDayModalOpen(true)
   }
 
   const handleEventClick = (day: number) => {

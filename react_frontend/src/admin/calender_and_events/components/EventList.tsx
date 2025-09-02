@@ -36,11 +36,15 @@ const EventsList: React.FC<EventsListProps> = ({ month, scheduledEventItems, set
     const eventYear = eventDate.getFullYear()
 
     return `${eventMonth} ${eventYear}` === month && item.type === "event"
+  }).sort((a,b)=>{
+    const[dayA,monthA,yearA]=a.date.split('-');
+    const[dayB,monthB,yearB]=b.date.split('-');
+    const dateA= new Date(Number(yearA),Number(monthA)-1,Number(dayA));
+    const dateB= new Date(Number(yearB),Number(monthB)-1,Number(dayB));
+    return dateA.getTime()-dateB.getTime()
   })
-  console.log("filtered", filteredEvents)
-
+console.log('filtered events',filteredEvents)
   const handleRemove = async () => {
-    console.log('selected', itemToRemove)
     if (!itemToRemove) return;
     try {
       await dispatch(removeEvent(itemToRemove))
@@ -56,7 +60,7 @@ const EventsList: React.FC<EventsListProps> = ({ month, scheduledEventItems, set
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Events List Header */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl border border-white/20 p-4 sm:p-6 lg:p-8">
+      <div className="bg-gradient-to-br from-gray-600 via-gray-500 to-white backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl border border-white/20 p-4 sm:p-6 lg:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3">
             <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
@@ -83,7 +87,7 @@ const EventsList: React.FC<EventsListProps> = ({ month, scheduledEventItems, set
             return (
               <div
                 key={item._id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 rounded-xl sm:rounded-2xl border-l-4 bg-white shadow-sm hover:shadow-md transition-all duration-300 border-l-blue-500"
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 rounded-xl sm:rounded-2xl border-l-4 bg-gradient-to-br from-white via-gray-500 to-white shadow-sm hover:shadow-md transition-all duration-300 border-l-blue-500"
               >
                 <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-3 sm:mb-0">
                   {/* Date Circle */}
@@ -101,7 +105,9 @@ const EventsList: React.FC<EventsListProps> = ({ month, scheduledEventItems, set
                     </div>
                     <h3 className="font-semibold text-gray-900 text-base sm:text-lg mb-1 break-words">{item.title}</h3>
                     {item.description && <p className="text-gray-600 text-sm mb-2 break-words">{item.description}</p>}
-                    <p className="text-gray-500 text-xs sm:text-sm">{item.date} to {item.endDate}</p>
+                    <p className="text-green-300 text-xs sm:text-sm ">Date: {item.date}</p>
+                    <p className=" text-red-300 text-xs sm:text-sm">End Date: {item.endDate}</p>
+                    
 
                   </div>
 
