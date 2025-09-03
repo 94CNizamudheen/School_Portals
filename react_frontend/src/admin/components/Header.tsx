@@ -1,14 +1,7 @@
 
 
-import React, { useEffect } from 'react';
 import { Menu, Bell } from 'lucide-react';
 
-import { fetchTeachers } from '../../store/teacherSlice';
-import { fetchAllStudents } from '../../store/studentSlice';
-import { fetchParents } from '../../store/parentSlice';
-import { fetchSubjects } from '../../store/subjectThunks';
-import { fetchAdmissions } from '../../store/admissionThunks';
-import { useAppDispatch } from '../../hooks/app.hooks';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -17,22 +10,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick, notificationCount, header }) => {
-  const dispatch = useAppDispatch()
 
-  useEffect(() => {
-    const fetchDatas = async () => {
-      try {
-        dispatch(fetchAdmissions()).unwrap()
-        dispatch(fetchTeachers()).unwrap()
-        dispatch(fetchAllStudents()).unwrap()
-        dispatch(fetchParents()).unwrap();
-        dispatch(fetchSubjects()).unwrap()
-      } catch (error) {
-        console.error("failed to load initial Data:",error)
-      }
-    }
-    fetchDatas()
-  }, [dispatch])
+ 
   return (
     <header className="bg-gradient-to-r from-gray-850 to-gray-500 border-gray-700 px-4 py-3 lg:px-6 lg:py-4 ">
       <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0 max-w-7xl mx-auto">

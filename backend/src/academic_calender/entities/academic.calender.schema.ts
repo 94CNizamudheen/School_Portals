@@ -9,8 +9,7 @@ export class AcademicCalendar extends Document{
    @Prop({required:true,unique:true})date:Date;
    @Prop()endDate:Date;
    @Prop({enum:CalendarType,default:CalendarType.HOLIDAY})type: CalendarType; 
-   @Prop() academicYear?:string;
+   @Prop() academicYear:string;
    @Prop({type:[Types.ObjectId],ref: "ClassDivision", default: []}) applicableClassDivisions:Types.ObjectId[];
-   @Prop({ type: Types.ObjectId, ref: "SchoolEvent" }) eventRef?: Types.ObjectId;
 };
 export const AcademicCalendarSchema= SchemaFactory.createForClass(AcademicCalendar);

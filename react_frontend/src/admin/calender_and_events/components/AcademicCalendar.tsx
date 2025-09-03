@@ -28,7 +28,6 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
     const month = months[selectedMonth]
     const { events, calenderEntries } = useAppSelector((state) => state.academicCalender)
 
-    // Helper function to check if a date matches a given day
     const isDateOnDay = (dateString: string, day: number): boolean => {
         const eventDate = new Date(dateString)
         return eventDate.getDate() === day && 

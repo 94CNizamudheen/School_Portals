@@ -37,13 +37,11 @@ export interface SchoolEventForm {
   posterFile: File | null;
 }
 
-
-export interface OffDayForm {
+export interface CalendarEntryForm {
   title: string
-  description: string
-  date: string | null
-  endDate: string | null
+  description?: string
+  date: string 
+  endDate: string
   type: string
-  academicYear?: string
-  applicableClassDivisions?: string[]
+  applicableClassDivisions: string[] 
 }

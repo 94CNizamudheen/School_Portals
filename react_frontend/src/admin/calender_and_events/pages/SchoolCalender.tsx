@@ -3,15 +3,16 @@ import { useEffect, useState } from "react"
 import { Calendar, BookOpen, Coffee } from "lucide-react"
 import AcademicCalendar from "../components/AcademicCalendar"
 import EventsList from "../components/EventList"
-import OffDayModal from "../components/OffdayModal"
 import EventModal from "../components/EventModal"
 import ConfirmationModal from "../components/ConfirmationModal"
 import { Button } from "../../../components/ui/button"
 import { useNotification } from "../../../context/notification/useNotification"
 import { useAppDispatch, useAppSelector } from "../../../hooks/app.hooks"
 import { createCalenderEntry, fetchAllCaledarEntries, fetchAllEvents } from "../../../store/calenderAndEventsSlice"
-import type { OffDayForm, SchoolEventForm, SchoolEventTypes } from "../../../types/academicClaender.types"
+import type { CalendarEntryForm, SchoolEventForm, SchoolEventTypes } from "../../../types/academicClaender.types"
 import { formatDate } from "../../../utils/helpers/dateFormatter"
+import CalendarEntryModal from "../components/CalenderEntryModal.tsx"
+import { fetchAllDivisions } from "../../../store/divisionThunks.ts"
 
 
 const initialEventForm: SchoolEventForm = {
@@ -41,16 +42,7 @@ const AdminSchedulePage: React.FC = () => {
   const dispatch = useAppDispatch()
   const events = useAppSelector((state) => state.academicCalender.events)
   const calenderEntries = useAppSelector((state) => state.academicCalender.calenderEntries)
-
-  const [offDayForm, setOffDayForm] = useState<OffDayForm>({
-    title: "",
-    description: "",
-    date: null,
-    endDate: null,
-    type: "",
-    academicYear: "",
-    applicableClassDivisions: []
-  })
+  const classDivisions= useAppSelector((state)=>state.divisions.divisions)
 
   const [eventForm, setEventForm] = useState<SchoolEventForm>(initialEventForm)
   const [selectedView, setSelectedView] = useState<"calendar" | "events">("calendar")
@@ -71,21 +63,12 @@ const AdminSchedulePage: React.FC = () => {
   const month = `${months[selectedMonth]} ${selectedYear}`
   const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
-  const handleDayClick = (day: number, type: "holiday" | "off_day"|'exam') => {
-    const date = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-    setSelectedDate(date)
+  const handleDayClick = (day: number) => {
+  const date = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+  setSelectedDate(date)
+  setOffDayModalOpen(true)
+}
 
-    setOffDayForm({
-      title: "",
-      description: "",
-      date: date,
-      endDate: null,
-      type: type === "holiday" ? "HOLIDAY" :type=='off_day'? "OFF_DAY":'EXAM',
-      academicYear: `${selectedYear}-${selectedYear + 1}`,
-      applicableClassDivisions: []
-    })
-    setOffDayModalOpen(true)
-  }
 
   const handleEventClick = (day: number) => {
     const date = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
@@ -103,20 +86,10 @@ const AdminSchedulePage: React.FC = () => {
     setEventModalOpen(true)
   }
 
-  const handleCalendarEntry = async () => {
+  const handleCalendarEntry = async (data:CalendarEntryForm) => {
     try {
-      await dispatch(createCalenderEntry({ data: offDayForm })).unwrap()
+      await dispatch(createCalenderEntry({ data: data })).unwrap()
       showNotification('success', { message: 'Calendar entry created successfully!' })
-      // Reset form
-      setOffDayForm({
-        title: "",
-        description: "",
-        date: null,
-        endDate: null,
-        type: "",
-        academicYear: "",
-        applicableClassDivisions: []
-      })
     } catch (error) {
       showNotification('error', { message: error as string })
     }
@@ -137,7 +110,9 @@ const AdminSchedulePage: React.FC = () => {
   }
 
   const { totalEvents, totalOffDays } = getScheduleStats()
-
+  useEffect(()=>{
+    dispatch(fetchAllDivisions()).unwrap()
+  },[dispatch])
 
   const getItemTypeInfo = (type: string) => {
     switch (type) {
@@ -318,12 +293,11 @@ const AdminSchedulePage: React.FC = () => {
         )}
       </div>
 
-      <OffDayModal
+      <CalendarEntryModal
         isOpen={isOffDayModalOpen}
         onClose={() => setOffDayModalOpen(false)}
-        offDayForm={offDayForm}
-        setOffDayForm={setOffDayForm}
-        onsave={handleCalendarEntry}
+        onSave={handleCalendarEntry}
+        classDivisions={classDivisions}
       />
 
       <EventModal

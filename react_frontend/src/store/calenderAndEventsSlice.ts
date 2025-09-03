@@ -3,7 +3,7 @@ import type { SchoolEventTypes } from "../types/academicClaender.types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import API from "../axios.config";
 import type { AxiosError } from "axios";
-import type { OffDayForm } from "../types/academicClaender.types";
+import type { CalendarEntryForm } from "../types/academicClaender.types";
 
 
 export const fetchAllCaledarEntries = createAsyncThunk(
@@ -125,11 +125,10 @@ export const createEvent = createAsyncThunk(
 );
 export const createCalenderEntry = createAsyncThunk(
     'academicCalendar/create',
-    async ({ data }: { data: OffDayForm }, { rejectWithValue }) => {
+    async ({ data }: { data: CalendarEntryForm }, { rejectWithValue }) => {
         try {
-            const res = await API.post(`/calendar-entries/`, { data },{
-                 headers: { "Content-Type": "multipart/form-data" },
-            })
+
+            const res = await API.post(`/calendar-entries/`,  data )
             return res.data;
         } catch (error) {
             const err = error as AxiosError<{ message: string }>;

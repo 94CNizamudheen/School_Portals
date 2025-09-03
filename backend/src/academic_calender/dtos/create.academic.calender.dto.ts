@@ -8,7 +8,7 @@ export class CreateAcademicCalendarDto {
     @IsOptional() @IsString() description?: string;
     @IsDateString() date: string;
     @IsDateString() endDate: string;
-    @IsOptional() @IsEnum(CalendarType) type?: CalendarType;
+    @IsOptional() @IsEnum(CalendarType) type: CalendarType;
     @IsOptional() @IsString() academicYear?: string;
     @IsArray() @IsMongoId({ each: true }) applicableClassDivisions: string[]
 }

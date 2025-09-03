@@ -1,7 +1,7 @@
-import * as Yup from 'yup';
+import * as Yup from 'Yup';
 import { ageRules, calculateAge } from './helpers/calculateAge';
 import type { EventEditFormData } from '../admin/calender_and_events/components/EventEditModal';
-
+import { z } from "zod";
 
 
 export const parentModalSchema = Yup.object({
@@ -199,60 +199,99 @@ export const eventValidationSchema = Yup.object({
     }),
   venue: Yup.string().required("Venue is required"),
   posterFile: Yup.mixed<File>()
-  .required("Poster file is required")
-  .test("fileType", "Only image files are allowed", (file) =>
-    file ? ["image/jpeg", "image/png", "image/jpg"].includes(file.type) : false
-  )
-  .nullable(),
+    .required("Poster file is required")
+    .test("fileType", "Only image files are allowed", (file) =>
+      file ? ["image/jpeg", "image/png", "image/jpg"].includes(file.type) : false
+    )
+    .nullable(),
 })
 
 
 export const eventEditSchema: Yup.ObjectSchema<EventEditFormData> = Yup.object({
-    title: Yup
-        .string()
-        .required("Event title is required")
-        .min(3, "Title must be at least 3 characters")
-        .max(100, "Title must not exceed 100 characters"),
-    description: Yup
-        .string()
-        .default("")
-        .max(500, "Description must not exceed 500 characters"),
-    date: Yup
-        .string()
-        .required("Start date is required")
-        .matches(/^\d{2}-\d{2}-\d{4}$/, "Date must be in DD-MM-YYYY format"),
-    endDate: Yup
-        .string()
-        .required("End date is required")
-        .matches(/^\d{2}-\d{2}-\d{4}$/, "End date must be in DD-MM-YYYY format")
-        .test("end-date-validation", "End date must be same or after start date", function (value) {
-            const { date } = this.parent
-            if (!date || !value) return true
+  title: Yup
+    .string()
+    .required("Event title is required")
+    .min(3, "Title must be at least 3 characters")
+    .max(100, "Title must not exceed 100 characters"),
+  description: Yup
+    .string()
+    .default("")
+    .max(500, "Description must not exceed 500 characters"),
+  date: Yup
+    .string()
+    .required("Start date is required")
+    .matches(/^\d{2}-\d{2}-\d{4}$/, "Date must be in DD-MM-YYYY format"),
+  endDate: Yup
+    .string()
+    .required("End date is required")
+    .matches(/^\d{2}-\d{2}-\d{4}$/, "End date must be in DD-MM-YYYY format")
+    .test("end-date-validation", "End date must be same or after start date", function (value) {
+      const { date } = this.parent
+      if (!date || !value) return true
 
-            const [startDay, startMonth, startYear] = date.split("-").map(Number)
-            const [endDay, endMonth, endYear] = value.split("-").map(Number)
+      const [startDay, startMonth, startYear] = date.split("-").map(Number)
+      const [endDay, endMonth, endYear] = value.split("-").map(Number)
 
-            const startDate = new Date(startYear, startMonth - 1, startDay)
-            const endDate = new Date(endYear, endMonth - 1, endDay)
+      const startDate = new Date(startYear, startMonth - 1, startDay)
+      const endDate = new Date(endYear, endMonth - 1, endDay)
 
-            return endDate >= startDate
-        }),
-    venue: Yup
-        .string()
-        .required("Venue is required")
-        .min(2, "Venue must be at least 2 characters")
-        .max(100, "Venue must not exceed 100 characters"),
-    posterFile: Yup
-        .mixed<File>()
-        .nullable()
-        .default(null)
-        .test("fileSize", "File size must be less than 5MB", (value) => {
-            if (!value) return true
-            return value.size <= 5 * 1024 * 1024
-        })
-        .test("fileType", "Only image files are allowed", (value) => {
-            if (!value) return true
-            return ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(value.type)
-        }),
-    posterUrl: Yup.string().optional()
+      return endDate >= startDate
+    }),
+  venue: Yup
+    .string()
+    .required("Venue is required")
+    .min(2, "Venue must be at least 2 characters")
+    .max(100, "Venue must not exceed 100 characters"),
+  posterFile: Yup
+    .mixed<File>()
+    .nullable()
+    .default(null)
+    .test("fileSize", "File size must be less than 5MB", (value) => {
+      if (!value) return true
+      return value.size <= 5 * 1024 * 1024
+    })
+    .test("fileType", "Only image files are allowed", (value) => {
+      if (!value) return true
+      return ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(value.type)
+    }),
+  posterUrl: Yup.string().optional()
+});
+
+export const calendarEntrySchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
+  type: z.string().min(1, "Type is required"), // you can restrict to enum too
+  date: z
+    .string()
+    .min(1, "Start Date is required")
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "Invalid start date",
+    }),
+  endDate: z
+    .string()
+    .min(1, "End Date is required")
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "Invalid end date",
+    }),
+  applicableClassDivisions: z
+    .array(z.string())
+    .min(1, "At least one class/division must be selected"),
 })
+  .superRefine((data, ctx) => {
+    if (data.endDate && data.date) {
+      const start = new Date(data.date)
+      const end = new Date(data.endDate)
+      if (end < start) {
+        ctx.addIssue({
+          path: ["endDate"],
+          code: z.ZodIssueCode.custom,
+          message: "End date cannot be before start date",
+        })
+      }
+    }
+  })
+
+export type CalendarEntryForm = z.infer<typeof calendarEntrySchema>
+
+
+
