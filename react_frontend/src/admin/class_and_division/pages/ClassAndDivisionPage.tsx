@@ -14,6 +14,8 @@ import { CustomPagination } from "../../../components/shared/CustomPagination";
 import ConfirmModal from "../../../admin/components/modals/ConfirmDeleteModal";
 import Loading from "../../../components/Loading";
 import { useAppDispatch, useAppSelector } from "../../../hooks/app.hooks";
+import { fetchAllStudents } from "../../../store/studentSlice";
+import { fetchTeachers } from "../../../store/teacherSlice";
 
 export interface CreateDivisionForm {
   divisionName: string;
@@ -50,6 +52,8 @@ export default function ClassDivisionManagementPage() {
 
   useEffect(() => {
     dispatch(fetchAllDivisions());
+    dispatch(fetchAllStudents());
+    dispatch(fetchTeachers());
   }, [dispatch]);
 
   /** ============= Utilities ============= */

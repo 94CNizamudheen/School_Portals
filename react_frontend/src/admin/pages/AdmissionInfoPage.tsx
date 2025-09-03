@@ -9,7 +9,7 @@ import { DocumentViewer } from "../components/Admission/document.viewer"
 import { RejectionDialog } from "../components/Admission/rejection.dialog"
 
 import type { AdmissionFormData, DocumentPreview, } from "../../types/admission.types"
-import { handleStatusChange } from "../../store/admissionThunks"
+import { fetchAdmissions, handleStatusChange } from "../../store/admissionThunks"
 import { CustomPagination } from "../../components/shared/CustomPagination"
 
 import { useNotification } from "../../context/notification/useNotification"
@@ -37,10 +37,10 @@ export default function AdmissionInfoPage() {
   const itemsPerPage = 7;
   const { showNotification } = useNotification()
 
-  // useEffect(()=>{
-  //   dispatch(fetchAdmissions())
-  //   console.log("this render from the admission info page")
-  // },[dispatch])
+  useEffect(()=>{
+    dispatch(fetchAdmissions())
+    console.log("this render from the admission info page")
+  },[dispatch])
 
   const handleViewDetails = (admission: AdmissionFormData) => {
     setSelectedAdmission(admission)

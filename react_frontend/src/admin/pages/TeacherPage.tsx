@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { deleteTeacher, fetchTeachers } from "../../store/teacherSlice";
 import { Card, CardContent, CardHeader, CardTitle, } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -63,6 +63,10 @@ const TeachersPage = () => {
       setShowConfirm(false);
     }
   };
+  
+  useEffect(()=>{
+    dispatch(fetchTeachers())
+  },[dispatch])
 
   return (
     <div className="min-h-screen bg-gradient-to-br p-6">

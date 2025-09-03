@@ -9,7 +9,7 @@ import { CreateSubjectModal } from "../components/CreateSubjectModal"
 import { EditSubjectModal } from "../components/EditSubjectModal"
 import { AssignTeacherModal } from "../components/AssignTeacherModal"
 import type { Subject } from "../../../types/subject.types"
-import { assignTeacher, createSubject, deleteSubject, removeTeacher, updateSubject } from "../../../store/subjectThunks"
+import { assignTeacher, createSubject, deleteSubject, fetchSubjects, removeTeacher, updateSubject } from "../../../store/subjectThunks"
 import { useNotification } from "../../../context/notification/useNotification"
 import ConfirmModal from "../../../admin/components/modals/ConfirmDeleteModal"
 import StatusFilterWithSearch from "../../../components/shared/filters"
@@ -28,14 +28,14 @@ export const SubjectPage = () => {
   const [currentpage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const subjects = useAppSelector((state ) => state.subjects.subjects);
-  const teachers = useAppSelector((state ) => state.teacher.approved);
+  const subjects = useAppSelector((state) => state.subjects.subjects);
+  const teachers = useAppSelector((state) => state.teacher.approved);
 
   const filterdSubjects = subjects.filter((subject) => {
     const matchesCount = filter === 'all' || subject.subjectType.toLocaleLowerCase() === filter.toLowerCase();
     const matchesSearch = subject.name.toLowerCase().includes(searchTerm.toLowerCase()) || subject.subjectType.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCount && matchesSearch
-  }).sort((a,b)=>new Date(b.createdAt??'').getTime()-new Date(a.createdAt??"").getTime())
+  }).sort((a, b) => new Date(b.createdAt ?? '').getTime() - new Date(a.createdAt ?? "").getTime())
 
 
   const subjectsPerPage = 6;
@@ -45,8 +45,9 @@ export const SubjectPage = () => {
   const totalPages = Math.ceil(filterdSubjects.length / subjectsPerPage);
 
   useEffect(() => {
+    dispatch(fetchSubjects())
     setCurrentPage(1)
-  }, [filter, searchTerm])
+  }, [filter, searchTerm, dispatch])
 
   const { showNotification } = useNotification()
 
@@ -279,7 +280,7 @@ export const SubjectPage = () => {
                       </div>
                     </TooltipTrigger>
                     <TooltipContent className="bg-white text-gray-800 shadow-lg rounded-xl p-3 max-w-xs">
-                      {subject.assignedTeachers?.length  ? (
+                      {subject.assignedTeachers?.length ? (
                         <ul className="space-y-2">
                           {subject.assignedTeachers.map((teacherId: string, i: number) => {
                             const teacher = teachers.find((t) => t._id === teacherId);
