@@ -10,10 +10,11 @@ import Loading from './components/Loading';
 import { store, persistor } from './store/store';
 import { ErrorBoundary } from './components/error';
 import { NotificationProvider } from './context/notification/NotificationProvider';
+import { injectStore } from './axios.config';
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-
+injectStore(store);
 const App = () => {
   return (
     <GoogleOAuthProvider clientId={clientId}>

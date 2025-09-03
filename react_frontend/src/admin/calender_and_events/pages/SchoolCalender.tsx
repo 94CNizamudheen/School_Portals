@@ -120,39 +120,8 @@ const AdminSchedulePage: React.FC = () => {
     } catch (error) {
       showNotification('error', { message: error as string })
     }
-  }
-
-  // const handleAddEvent = async () => {
-  //   try {
-  //     const formData = new FormData()
-  //     formData.append("title", eventForm.title)
-  //     formData.append("description", eventForm.description)
-  //     formData.append("date", eventForm.date || "")
-  //     formData.append("endDate", eventForm.endDate || "")
-  //     formData.append("venue", eventForm.venue)
-
-  //     if (eventForm.posterFile) {
-  //       formData.append("posterFile", eventForm.posterFile)
-  //     }
-
-  //     await dispatch(createEvent(formData)).unwrap()
-  //     showNotification("success", { message: "Event created successfully!" })
-
-  //     setEventForm({
-  //       title: "",
-  //       description: "",
-  //       date: '',
-  //       endDate: '',
-  //       venue: "",
-  //       posterFile: null,
-  //     })
-  //     setEventModalOpen(false)
-  //   } catch (error) {
-  //     showNotification("error", { message: error as string })
-  //   }
-  // }
-
-
+  };
+  
   const handleConfirmRemove = () => {
     if (itemToRemove) {
       setScheduledEventItems(scheduledEventItems.filter((item) => item._id !== itemToRemove._id))
