@@ -12,6 +12,12 @@ export class SchoolEventService {
         @Inject('ISchoolEventRepository') private readonly repo: ISchoolEventRepository,
     ) { }
     async create(data: CreateSchoolEventDto, file: Express.Multer.File): Promise<SchoolEventType> {
+        const today= new Date();
+        const entryDate= new Date(data.date);
+        const endDate=new Date(data.endDate)
+        if(entryDate<today) throw new BadRequestException('Entry restricted past days');
+        const overlaping= await this.repo.overLapEvent(entryDate,endDate);
+        if(overlaping)  throw new BadRequestException('Other Events already scheduled in selected days');
         if (!file) throw new BadRequestException("Poster file is required");
         let posterUrl: string;
         try {

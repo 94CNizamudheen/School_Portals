@@ -27,4 +27,7 @@ export class SchoolEventRepository implements ISchoolEventRepository{
     async delete(id: string): Promise<SchoolEventType | null> {
         return await this.model.findByIdAndDelete(id).lean<SchoolEventType|null>()
     };
+    async overLapEvent(date: Date, endDate: Date): Promise<SchoolEventType | null> {
+        return await this.model.findOne({date:{$lte:endDate},endDate:{$gte:date}}).lean<SchoolEventType|null>()
+    }
 }

@@ -15,22 +15,23 @@ type CalendarEntryModalProps = {
   onClose: () => void
   onSave: (data: CalendarEntryForm) => void
   classDivisions: Division[]
+  selectedDate:string
 }
 
-const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({ isOpen, onClose, onSave, classDivisions, }) => {
+const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({ isOpen, onClose, onSave, classDivisions,selectedDate }) => {
   const { control, handleSubmit, formState: { errors }, setValue, watch, reset, } = useForm<CalendarEntryForm>({
     resolver: zodResolver(calendarEntrySchema),
     defaultValues: {
       title: "",
       description: "",
       type: "",
-      date: "",
+      date: selectedDate,
       endDate: "",
       applicableClassDivisions: [],
     },
     mode: "onChange",
   })
-
+  console.log('selectedDate',selectedDate)
   const selectedDivisions = watch("applicableClassDivisions") || []
   const allIds = classDivisions.map((d) => d._id)
   const allSelected = selectedDivisions.length === allIds.length

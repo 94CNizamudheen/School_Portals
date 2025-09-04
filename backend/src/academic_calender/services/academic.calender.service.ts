@@ -14,7 +14,10 @@ export class AcademicCalendarService {
 
     async create(data: CreateAcademicCalendarDto): Promise<AcademicCalendarType> {
         try {
+            const today= new Date();
+            today.setHours(0,0,0,0);
             const entryDate = new Date(data.date);
+            if(entryDate<today) throw new BadRequestException('Cannot create calendar entry for past dates')
             if (isNaN(entryDate.getTime())) throw new BadRequestException('Invalid date Format');
             let academicYear: string;
             const month = entryDate.getMonth() + 1;

@@ -5,7 +5,6 @@ import { login, logout } from './store/authSlice';
 
 let reduxStore: Store<RootState>;
 
-// function to inject store (called from main.tsx)
 export const injectStore = (store: Store<RootState>) => {
   reduxStore = store;
 };
@@ -15,7 +14,6 @@ const API = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Attach token on every request
 API.interceptors.request.use((config) => {
   const token = reduxStore.getState().auth.token;
   if (token) {
@@ -24,25 +22,48 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 and refresh token
+let isRefreshing = false;
+const refreshSubscibers: ((token: string) => void)[] = [];
+
+const onRefreshed = (token: string) => {
+  refreshSubscibers.forEach(cb => cb(token));
+  refreshSubscibers.length = 0;
+};
+const addSubscribers = (cb: (token: string) => void) => {
+  refreshSubscibers.push(cb)
+}
+
+
 API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/auth/refresh')) {
+      if (isRefreshing) {
+        return new Promise(resolve => {
+          addSubscribers((token: string) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            resolve(API(originalRequest))
+          })
+        })
+      }
       originalRequest._retry = true;
+      isRefreshing=true;
       const refresh_token = reduxStore.getState().auth.refresh_token;
 
       try {
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, { refresh_token });
-
         const { access_token, refresh_token: newRefreshToken, role, userId } = res.data;
 
-        reduxStore.dispatch(login({ access_token, refresh_token: newRefreshToken, role, userId }))
+        reduxStore.dispatch(login({ access_token, refresh_token: newRefreshToken, role, userId }));
+
+        isRefreshing = false;
+        onRefreshed(access_token);
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
-        return axios(originalRequest);
+        return API(originalRequest);
       } catch (refreshError) {
+        isRefreshing = false
         reduxStore.dispatch(logout());
         return Promise.reject(refreshError);
       }

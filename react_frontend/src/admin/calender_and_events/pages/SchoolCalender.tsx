@@ -29,7 +29,7 @@ const AdminSchedulePage: React.FC = () => {
   const today = new Date()
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth()) // 0–11
   const [selectedYear, setSelectedYear] = useState(today.getFullYear())
-  const [selectedDate, setSelectedDate] = useState<string | null>(
+  const [selectedDate, setSelectedDate] = useState<string >(
     `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`
   )
 
@@ -298,6 +298,7 @@ const AdminSchedulePage: React.FC = () => {
         onClose={() => setOffDayModalOpen(false)}
         onSave={handleCalendarEntry}
         classDivisions={classDivisions}
+        selectedDate={selectedDate}
       />
 
       <EventModal

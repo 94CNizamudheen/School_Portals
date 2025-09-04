@@ -8,6 +8,16 @@ import AttendanceChart from '../../components/charts/AttendanceChart'
 import RecentStudents from '../../components/sections/RecentStudents'
 import UnpaidStudents from '../../components/sections/UnpaidStudents'
 import NotificationsPanel from '../../components/sections/NotificationPanel'
+import { useEffect } from 'react'
+import { useAppDispatch } from '../../hooks/app.hooks'
+import { fetchAllCaledarEntries, fetchAllEvents } from '../../store/calenderAndEventsSlice'
+import { useNotification } from '../../context/notification/useNotification'
+import { fetchTeachers } from '../../store/teacherSlice'
+import { fetchAdmissions } from '../../store/admissionThunks'
+import { fetchAllDivisions } from '../../store/divisionThunks'
+import { fetchAllStudents } from '../../store/studentSlice'
+
+
 
 const Dashboard = () => {
   const notifications = [
@@ -64,6 +74,24 @@ const Dashboard = () => {
     { title: 'Pending Fees', value: '$12,450', change: -8, icon: DollarSign, color: 'yellow' },
     { title: 'Avg Performance', value: '92%', change: 3, icon: TrendingUp, color: 'purple' }
   ]
+  const {showNotification}= useNotification()
+  const dispatch= useAppDispatch()
+  useEffect(()=>{
+
+    const fetchDatas=async()=>{
+      try {
+        dispatch(fetchAllCaledarEntries()).unwrap()
+        dispatch(fetchTeachers()).unwrap()
+        dispatch(fetchAdmissions()).unwrap()
+        dispatch(fetchAllDivisions()).unwrap()
+        dispatch(fetchAllEvents()).unwrap()
+        dispatch(fetchAllStudents()).unwrap()
+      } catch (error) {
+        showNotification('error',{message:error as string})
+      }
+    }
+    fetchDatas()
+  })
 
   return (
     <>

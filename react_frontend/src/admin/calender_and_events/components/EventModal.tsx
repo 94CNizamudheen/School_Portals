@@ -40,7 +40,6 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, selectedDate, 
 
   const onSubmit = async (values: SchoolEventForm) => {
     const formData = new FormData()
-
     formData.append("title", values.title)
     formData.append("description", values.description)
     formData.append("date", values.date)
@@ -51,7 +50,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, selectedDate, 
       formData.append("posterFile", values.posterFile)
     }
     try {
-      await dispatch(createEvent(formData))
+      await dispatch(createEvent(formData)).unwrap()
       showNotification("success", { message: "Event created successfully!" })
       onClose()
     } catch (error) {

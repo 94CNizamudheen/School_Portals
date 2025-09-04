@@ -7,6 +7,7 @@ export interface ISchoolEventRepository{
     findAll():Promise<SchoolEventType[]>;
     create(data:CreateSchoolEventDto):Promise<SchoolEventType>;
     update(id:string,data:UpdateSchoolEventDto):Promise<SchoolEventType|null>;
+    overLapEvent(date:Date,endDate:Date):Promise<SchoolEventType|null>
     findById(id:string,):Promise<SchoolEventType|null>;
     delete(id:string,):Promise<SchoolEventType|null>;
 }
