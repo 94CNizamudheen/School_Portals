@@ -1,5 +1,5 @@
 import type React from "react"
-import { GraduationCap, BookOpen, MoreVertical, Umbrella, AlarmClockOff, FileText } from "lucide-react"
+import { GraduationCap, BookOpen, MoreVertical, FileText } from "lucide-react"
 import { Button } from "../../../components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../../components/ui/dropdown-menu"
 import type { SchoolEventTypes } from "../../../types/academicClaender.types";
@@ -141,17 +141,10 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
                                                 <span>Add Event</span>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => handleDayClick(day, "off_day")}>
-                                                <AlarmClockOff className="mr-2 h-4 w-4 text-orange-600" />
-                                                <span>Mark Off Day</span>
+                                                <FileText className="mr-2 h-4 w-4 text-orange-600" />
+                                                <span>Mark Calender Entries</span>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleDayClick(day, "holiday")}>
-                                                <Umbrella className="mr-2 h-4 w-4 text-green-600" />
-                                                <span>Mark Holiday</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleDayClick(day, "exam")}>
-                                                <FileText className="mr-2 h-4 w-4 text-cyan-500" />
-                                                <span>Mark Exam</span>
-                                            </DropdownMenuItem>
+                                            
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>

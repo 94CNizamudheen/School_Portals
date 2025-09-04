@@ -9,11 +9,11 @@ import { useAppDispatch } from "../../../hooks/app.hooks"
 import { removeEvent } from "../../../store/calenderAndEventsSlice"
 import { useNotification } from "../../../context/notification/useNotification"
 import EventEditModal from "./EventEditModal"
+import { CustomPagination } from "../../../components/shared/CustomPagination"
 
 interface EventsListProps {
   month: string
   scheduledEventItems: SchoolEventTypes[]
-  getItemTypeInfo: (type: "holiday" | "off_day" | "event") => { bg: string; color: string; label: string }
   setSelectedView: (view: "calendar" | "events") => void
 }
 
@@ -21,7 +21,10 @@ const EventsList: React.FC<EventsListProps> = ({ month, scheduledEventItems, set
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [itemToRemove, setItemToRemove] = useState<string | null>(null)
   const [editOpen, setEditOpen] = useState(false)
-  const [eventToEdit, setEventToEdit] = useState<SchoolEventTypes | null>(null)
+  const [eventToEdit, setEventToEdit] = useState<SchoolEventTypes | null>(null);
+  const [currentPage,setCurrentPage] = useState(1);
+  const pageSize = 5;
+
 
   const dispatch = useAppDispatch()
   const { showNotification } = useNotification()
@@ -36,14 +39,17 @@ const EventsList: React.FC<EventsListProps> = ({ month, scheduledEventItems, set
     const eventYear = eventDate.getFullYear()
 
     return `${eventMonth} ${eventYear}` === month && item.type === "event"
-  }).sort((a,b)=>{
-    const[dayA,monthA,yearA]=a.date.split('-');
-    const[dayB,monthB,yearB]=b.date.split('-');
-    const dateA= new Date(Number(yearA),Number(monthA)-1,Number(dayA));
-    const dateB= new Date(Number(yearB),Number(monthB)-1,Number(dayB));
-    return dateA.getTime()-dateB.getTime()
+  }).sort((a, b) => {
+    const [dayA, monthA, yearA] = a.date.split('-');
+    const [dayB, monthB, yearB] = b.date.split('-');
+    const dateA = new Date(Number(yearA), Number(monthA) - 1, Number(dayA));
+    const dateB = new Date(Number(yearB), Number(monthB) - 1, Number(dayB));
+    return dateA.getTime() - dateB.getTime()
   })
-console.log('filtered events',filteredEvents)
+  const totalPages = Math.ceil(filteredEvents.length / pageSize);
+  const start = (currentPage - 1) * pageSize;
+  const paginatedEvents = filteredEvents.slice(start, start + pageSize)
+  console.log('filtered events', filteredEvents)
   const handleRemove = async () => {
     if (!itemToRemove) return;
     try {
@@ -82,7 +88,7 @@ console.log('filtered events',filteredEvents)
 
         {/* Events Grid */}
         <div className="grid gap-3 sm:gap-4">
-          {filteredEvents.map((item) => {
+          {paginatedEvents.map((item) => {
             const day = item.date.split(" ")[0]
             return (
               <div
@@ -107,7 +113,7 @@ console.log('filtered events',filteredEvents)
                     {item.description && <p className="text-gray-600 text-sm mb-2 break-words">{item.description}</p>}
                     <p className="text-green-300 text-xs sm:text-sm ">Date: {item.date}</p>
                     <p className=" text-red-300 text-xs sm:text-sm">End Date: {item.endDate}</p>
-                    
+
 
                   </div>
 
@@ -188,9 +194,18 @@ console.log('filtered events',filteredEvents)
             endDate: eventToEdit.endDate,
             venue: eventToEdit.venue || "",
             posterUrl: eventToEdit.posterUrl,
-            type:'event'
+            type: 'event'
           }}
         />
+      )}
+      {filteredEvents.length > 0 && (
+        <div className="mt-8">
+          <CustomPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
       )}
 
     </div>

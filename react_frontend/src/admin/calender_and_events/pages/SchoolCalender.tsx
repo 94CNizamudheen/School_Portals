@@ -1,6 +1,6 @@
 import type React from "react"
 import { useEffect, useState } from "react"
-import { Calendar, BookOpen, Coffee } from "lucide-react"
+import { Calendar, BookOpen, Coffee, Clock2Icon } from "lucide-react"
 import AcademicCalendar from "../components/AcademicCalendar"
 import EventsList from "../components/EventList"
 import EventModal from "../components/EventModal"
@@ -13,6 +13,7 @@ import type { CalendarEntryForm, SchoolEventForm, SchoolEventTypes } from "../..
 import { formatDate } from "../../../utils/helpers/dateFormatter"
 import CalendarEntryModal from "../components/CalenderEntryModal.tsx"
 import { fetchAllDivisions } from "../../../store/divisionThunks.ts"
+import CalenderEntryList from "../components/CalenderEntryList.tsx"
 
 
 const initialEventForm: SchoolEventForm = {
@@ -45,7 +46,7 @@ const AdminSchedulePage: React.FC = () => {
   const classDivisions= useAppSelector((state)=>state.divisions.divisions)
 
   const [eventForm, setEventForm] = useState<SchoolEventForm>(initialEventForm)
-  const [selectedView, setSelectedView] = useState<"calendar" | "events">("calendar")
+  const [selectedView, setSelectedView] = useState<"calendar" | "events"|'entries'>("calendar")
   const handleCloseEventModal = () => {
     setEventForm(initialEventForm)
     setEventModalOpen(false)
@@ -110,9 +111,7 @@ const AdminSchedulePage: React.FC = () => {
   }
 
   const { totalEvents, totalOffDays } = getScheduleStats()
-  useEffect(()=>{
-    dispatch(fetchAllDivisions()).unwrap()
-  },[dispatch])
+
 
   const getItemTypeInfo = (type: string) => {
     switch (type) {
@@ -134,12 +133,14 @@ const AdminSchedulePage: React.FC = () => {
   }
 
   useEffect(() => {
-    dispatch(fetchAllCaledarEntries())
-    dispatch(fetchAllEvents())
+    dispatch(fetchAllCaledarEntries()).unwrap()
+    dispatch(fetchAllEvents()).unwrap()
+     dispatch(fetchAllDivisions()).unwrap()
   }, [dispatch]);
 
   useEffect(() => {
-    const eventItems: SchoolEventTypes[] = []
+    const eventItems: SchoolEventTypes[] = [];
+    // const calenderEntries:CalenderEntries[]=[]
     events.forEach((ev) => {
       if (!ev.date) return
       const formatedDate = formatDate(ev.date);
@@ -170,7 +171,7 @@ const AdminSchedulePage: React.FC = () => {
               {/* View Toggle */}
               <div className="flex gap-1 sm:gap-2 bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-1 sm:p-2 shadow-lg border border-white/20 w-full sm:w-auto">
                 <Button
-                  variant={selectedView === "calendar" ? "default" : "ghost"}
+                  variant={selectedView === "calendar" ? "default" : "secondary"}
                   size="sm"
                   onClick={() => setSelectedView("calendar")}
                   className="flex items-center gap-1 sm:gap-2 rounded-lg sm:rounded-xl text-xs sm:text-sm flex-1 sm:flex-none"
@@ -180,7 +181,7 @@ const AdminSchedulePage: React.FC = () => {
                   <span className="sm:hidden">Calendar</span>
                 </Button>
                 <Button
-                  variant={selectedView === "events" ? "default" : "ghost"}
+                  variant={selectedView === "events" ? "default" : "secondary"}
                   size="sm"
                   onClick={() => setSelectedView("events")}
                   className="flex items-center gap-1 sm:gap-2 rounded-lg sm:rounded-xl text-xs sm:text-sm flex-1 sm:flex-none"
@@ -188,6 +189,16 @@ const AdminSchedulePage: React.FC = () => {
                   <BookOpen className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">Events View</span>
                   <span className="sm:hidden">Events</span>
+                </Button>
+                <Button
+                  variant={selectedView === "entries" ? "default" : "secondary"}
+                  size="sm"
+                  onClick={() => setSelectedView("entries")}
+                  className="flex items-center gap-1 sm:gap-2 rounded-lg sm:rounded-xl text-xs sm:text-sm flex-1 sm:flex-none"
+                >
+                  <Clock2Icon className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Entries View</span>
+                  <span className="sm:hidden">Entries</span>
                 </Button>
               </div>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
@@ -282,13 +293,17 @@ const AdminSchedulePage: React.FC = () => {
           />
         )}
 
-        {/* Events View */}
         {selectedView === "events" && (
           <EventsList
             month={month}
             scheduledEventItems={scheduledEventItems}
-            getItemTypeInfo={getItemTypeInfo}
             setSelectedView={setSelectedView}
+          />
+        )}
+        {selectedView === "entries" && (
+          <CalenderEntryList
+            month={month}
+            calenderEntries={calenderEntries}
           />
         )}
       </div>
