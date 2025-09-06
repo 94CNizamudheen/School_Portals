@@ -298,12 +298,14 @@ const AdminSchedulePage: React.FC = () => {
             month={month}
             scheduledEventItems={scheduledEventItems}
             setSelectedView={setSelectedView}
+            
           />
         )}
         {selectedView === "entries" && (
           <CalenderEntryList
             month={month}
             calenderEntries={calenderEntries}
+            classDivisions={classDivisions}
           />
         )}
       </div>
