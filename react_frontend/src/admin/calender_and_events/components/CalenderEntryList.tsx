@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, Clock, Users, Filter, Edit2, Trash2, Eye, ChevronDown } from 'lucide-react';
 import type { CalendarTypeEnums, CalenderEntries } from '../../../types/academicClaender.types';
 import type { Division } from '../../../types/division.type';
+import { CustomPagination } from '../../../components/shared/CustomPagination';
 
 interface CalenderEntryProps {
   month: string;
@@ -9,12 +10,29 @@ interface CalenderEntryProps {
   classDivisions: Division[]
 }
 
-const CalenderEntryList: React.FC<CalenderEntryProps> = ({ calenderEntries, classDivisions }) => {
+const CalenderEntryList: React.FC<CalenderEntryProps> = ({ calenderEntries, classDivisions ,month}) => {
   const [entries] = useState<CalenderEntries[]>(calenderEntries);
+  console.log("entries",entries)
+  console.log("month",month)
   const [typeFilter, setTypeFilter] = useState<CalendarTypeEnums | 'all'>('all');
-  const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set());
+  const [currentPage,setCurrentPage]=useState(1);
+  const pageSize=1;
 
-  // Type color mapping with enhanced colors
+
+const filteredEntries= entries.filter((item)=>{
+  if(!item.date) return false;
+  const entryDate= new Date(item.date);
+  const entryMonth=entryDate.toLocaleString('default',{month:'long'})
+  const entryYear=entryDate.getFullYear();
+  const [monthName,yeaStr]= month.split(' ');
+  const filterYear=parseInt(yeaStr,10);
+  return entryMonth===monthName && entryYear===filterYear
+}).sort((a,b)=> new Date(a.date).getTime()- new Date(b.date).getTime())
+
+const totalPages= Math.ceil(filteredEntries.length/pageSize);
+const start=(currentPage-1)* pageSize;
+const paginatedEntries= filteredEntries.slice(start,start+pageSize);
+
   const getTypeColor = (type: CalendarTypeEnums) => {
     const colors = {
       exam: 'bg-gradient-to-r from-red-50 to-red-100 text-red-800 border border-red-200 shadow-red-100',
@@ -25,12 +43,10 @@ const CalenderEntryList: React.FC<CalenderEntryProps> = ({ calenderEntries, clas
     return colors[type];
   };
 
-  // Type icons
   const getTypeIcon = (type: CalendarTypeEnums) => {
     const icons = {
       exam: '📝',
       holiday: '🏖️',
-      event: '🎉',
       off_day: '🚫'
     };
     return icons[type];
@@ -51,19 +67,8 @@ const CalenderEntryList: React.FC<CalenderEntryProps> = ({ calenderEntries, clas
   const getClassDivisionName = (id: string) => {
     return classDivisions.find((item) => item._id === id)?.divisionName
   }
-
-  const toggleExpanded = (entryId: string) => {
-    const newExpanded = new Set(expandedEntries);
-    if (newExpanded.has(entryId)) {
-      newExpanded.delete(entryId);
-    } else {
-      newExpanded.add(entryId);
-    }
-    setExpandedEntries(newExpanded);
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-b from-gray-700 via-white to-gray-700 rounded-2xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Enhanced Header with glassmorphism effect */}
         <div className="mb-8 relative">
@@ -77,14 +82,14 @@ const CalenderEntryList: React.FC<CalenderEntryProps> = ({ calenderEntries, clas
                   </div>
                   Calendar Entries
                 </h1>
-                <p className="text-slate-600 mt-3 text-lg">Manage and view all calendar events, exams, holidays, and off days</p>
+                <p className="text-slate-600 mt-3 text-lg">Manage and view all  exams days, holidays, and off days</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Enhanced Filters */}
-        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 mb-6">
+        <div className="bg-gradient-to-b from-gray-700 via-white to-gray-700 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="relative">
               <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5 z-10" />
@@ -97,7 +102,6 @@ const CalenderEntryList: React.FC<CalenderEntryProps> = ({ calenderEntries, clas
                 <option value="all">All Types</option>
                 <option value="exam">📝 Exams</option>
                 <option value="holiday">🏖️ Holidays</option>
-                <option value="event">🎉 Events</option>
                 <option value="off_day">🚫 Off Days</option>
               </select>
             </div>
@@ -125,12 +129,11 @@ const CalenderEntryList: React.FC<CalenderEntryProps> = ({ calenderEntries, clas
               <p className="text-slate-600 text-lg">Try adjusting your search criteria or add a new entry.</p>
             </div>
           ) : (
-            entries.map((entry) => (
+            paginatedEntries.map((entry) => (
               <div 
                 key={entry._id} 
-                className="group bg-white/80 backdrop-blur-lg shadow-lg hover:shadow-2xl transition-all duration-500 rounded-3xl border border-white/30 overflow-hidden transform hover:scale-[1.02]"
+                className="group bg-gradient-to-br from-gray-700 via-white to-gray-700  backdrop-blur-lg shadow-lg hover:shadow-2xl transition-all duration-500 rounded-3xl border border-white/30 overflow-hidden transform hover:scale-[1.02]"
               >
-                {/* Card Header with gradient accent */}
                 <div className={`h-2 ${getTypeColor(entry.type).includes('red') ? 'bg-gradient-to-r from-red-400 to-red-500' : 
                   getTypeColor(entry.type).includes('emerald') ? 'bg-gradient-to-r from-emerald-400 to-emerald-500' :
                   getTypeColor(entry.type).includes('blue') ? 'bg-gradient-to-r from-blue-400 to-blue-500' :
@@ -144,7 +147,7 @@ const CalenderEntryList: React.FC<CalenderEntryProps> = ({ calenderEntries, clas
                         <h3 className="text-2xl font-bold text-slate-800 group-hover:text-slate-900 transition-colors">
                           {entry.title}
                         </h3>
-                        <span className={`px-4 py-2 rounded-full text-sm font-semibold shadow-lg ${getTypeColor(entry.type)} flex items-center gap-2`}>
+                        <span className={`px-4 py-2 rounded-full text-sm font-semibold  ${getTypeColor(entry.type)} flex items-center gap-2`}>
                           <span>{getTypeIcon(entry.type)}</span>
                           {entry.type.charAt(0).toUpperCase() + entry.type.slice(1).replace('_', ' ')}
                         </span>
@@ -206,22 +209,21 @@ const CalenderEntryList: React.FC<CalenderEntryProps> = ({ calenderEntries, clas
                       )}
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="flex items-center gap-2 ml-6">
                       <button
-                        className="group/btn p-3 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110"
+                        className=" bg-gray-400 group/btn p-3 text-slate-600 hover:text-blue-600 hover:bg-blue-100 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110"
                         title="View Details"
                       >
                         <Eye className="h-5 w-5 group-hover/btn:scale-110 transition-transform" />
                       </button>
                       <button
-                        className="group/btn p-3 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110"
+                        className="bg-gray-400 group/btn p-3 text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110"
                         title="Edit Entry"
                       >
                         <Edit2 className="h-5 w-5 group-hover/btn:scale-110 transition-transform" />
                       </button>
                       <button
-                        className="group/btn p-3 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110"
+                        className="bg-gray-400 group/btn p-3 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110"
                         title="Delete Entry"
                       >
                         <Trash2 className="h-5 w-5 group-hover/btn:scale-110 transition-transform" />
@@ -233,14 +235,12 @@ const CalenderEntryList: React.FC<CalenderEntryProps> = ({ calenderEntries, clas
             ))
           )}
         </div>
-
-        {/* Floating Action Button */}
-        <div className="fixed bottom-8 right-8">
-          <button className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110">
-            <Calendar className="h-6 w-6 group-hover:rotate-12 transition-transform" />
-          </button>
-        </div>
       </div>
+      <CustomPagination
+      currentPage={currentPage}
+      onPageChange={setCurrentPage}
+      totalPages={totalPages}
+      />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 
-export type CalendarTypeEnums = "exam" | "holiday" | "event" | "off_day";
+export type CalendarTypeEnums = "exam" | "holiday"  | "off_day";
 
 export interface CalenderEntries {
   _id?: string;
