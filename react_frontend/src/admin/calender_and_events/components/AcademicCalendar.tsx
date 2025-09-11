@@ -13,7 +13,7 @@ interface AcademicCalendarProps {
     daysInMonth: number
     scheduledEventItems: SchoolEventTypes[]
     handleEventClick: (day: number) => void
-    handleDayClick: (day: number, type: "holiday" | "off_day"|'exam') => void
+    handleDayClick: (day: number, type: "holiday" | "off_day" | 'exam') => void
 }
 
 const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
@@ -30,9 +30,9 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
 
     const isDateOnDay = (dateString: string, day: number): boolean => {
         const eventDate = new Date(dateString)
-        return eventDate.getDate() === day && 
-               eventDate.getMonth() === selectedMonth && 
-               eventDate.getFullYear() === selectedYear
+        return eventDate.getDate() === day &&
+            eventDate.getMonth() === selectedMonth &&
+            eventDate.getFullYear() === selectedYear
     }
 
 
@@ -40,8 +40,6 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
         const start = new Date(startDate)
         const end = new Date(endDate)
         const currentDay = new Date(selectedYear, selectedMonth, day)
-        
-        // Set all times to start of day for accurate comparison
         start.setHours(0, 0, 0, 0)
         end.setHours(0, 0, 0, 0)
         currentDay.setHours(0, 0, 0, 0)
@@ -49,7 +47,6 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
         return currentDay >= start && currentDay <= end
     }
 
-    // Get events and entries for a specific day
     const getDayData = (day: number) => {
         const dayEvents = events?.filter(event => {
             if (event.endDate) {
@@ -58,9 +55,11 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
             return isDateOnDay(event.date, day)
         }) || []
 
-        const dayEntries = calenderEntries?.filter(entry => 
-            isDateOnDay(entry.date, day)
-        ) || []
+        const dayEntries = calenderEntries?.filter(entry => {
+            if (entry.endDate) {
+                return isDayInRange(entry.date, entry.endDate, day)
+            }
+        }) || []
 
         // Check if this day is a start or end date for any event
         const isStartDate = events?.some(event => isDateOnDay(event.date, day)) || false
@@ -109,18 +108,16 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
                         return (
                             <div
                                 key={day}
-                                className={`relative group min-h-[80px] sm:min-h-[120px] lg:min-h-[140px] rounded-xl border-2 transition-all duration-300 cursor-pointer hover:shadow-2xl hover:scale-110 overflow-hidden ${
-                                    hasEventsOrEntries 
-                                        ? 'bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 border-blue-400' 
-                                        : 'bg-gradient-to-br from-white via-gray-400 to-white border-blue-300'
-                                }`}
+                                className={`relative group min-h-[80px] sm:min-h-[120px] lg:min-h-[140px] rounded-xl border-2 transition-all duration-300 cursor-pointer hover:shadow-2xl hover:scale-110 overflow-hidden ${hasEventsOrEntries
+                                    ? 'bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 border-blue-400'
+                                    : 'bg-gradient-to-br from-white via-gray-400 to-white border-blue-300'
+                                    }`}
                             >
-                        
                                 <div className="absolute top-2 left-2 flex items-center gap-1">
                                     <span className="sm:text-lg font-bold text-blue-600">{day}</span>
-                                </div> 
+                                </div>
 
-                                
+
                                 {/* Dropdown menu */}
                                 <div className="absolute top-2 right-2 group-hover:opacity-100 transition-opacity">
                                     <DropdownMenu>
@@ -136,7 +133,7 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
 
                                         <DropdownMenuContent align="end" className="w-40">
                                             <DropdownMenuItem onClick={() => handleEventClick(day)}>
-                                                
+
                                                 <BookOpen className="mr-2 h-4 w-4 text-blue-600" />
                                                 <span>Add Event</span>
                                             </DropdownMenuItem>
@@ -144,7 +141,7 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
                                                 <FileText className="mr-2 h-4 w-4 text-orange-600" />
                                                 <span>Mark Calender Entries</span>
                                             </DropdownMenuItem>
-                                            
+
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>
@@ -155,7 +152,7 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
                                     {dayEvents.slice(0, 2).map((event, index) => (
                                         <div
                                             key={`event-${event.title}-${index}`}
-                                            className="text-xs bg-blue-600 text-white px-2 py-1 rounded truncate"
+                                            className="text-xs bg-indigo-400 text-white px-2 py-1 rounded truncate"
                                             title={`${event.title} - ${event.description || ''}`}
                                         >
                                             {event.title}
@@ -163,15 +160,24 @@ const AcademicCalendar: React.FC<AcademicCalendarProps> = ({
                                     ))}
 
                                     {/* Display calendar entries */}
-                                    {dayEntries.slice(0, 2 - dayEvents.slice(0, 2).length).map((entry, index) => (
-                                        <div
-                                            key={`entry-${entry.title || entry.date}-${index}`}
-                                            className="text-xs bg-green-600 text-white px-2 py-1 rounded truncate"
-                                            title={entry.description || entry.title || 'Calendar Entry'}
-                                        >
-                                            {entry.title || 'Entry'}
-                                        </div>
-                                    ))}
+                                    {dayEntries
+                                        .slice(0, 2 - dayEvents.slice(0, 2).length)
+                                        .map((entry, index) => {
+                                            const bgColor =
+                                                entry.type === "off_day" ? "bg-red-500" : entry.type === "exam" ? "bg-blue-500"
+                                                    : entry.type === "holiday" ? "bg-green-500" : "bg-gray-500";
+
+                                            return (
+                                                <div
+                                                    key={`entry-${entry.type}-${index}`}
+                                                    className={`text-xs ${bgColor} text-white px-2 py-1 rounded truncate`}
+                                                    title={entry.description || entry.title || "Calendar Entry"}
+                                                >
+                                                    {entry.title || "Entry"}
+                                                </div>
+                                            );
+                                        })}
+
 
                                     {/* Show "+X more" if there are more items */}
                                     {(dayEvents.length + dayEntries.length) > 2 && (

@@ -16,7 +16,7 @@ const CalenderEntryList: React.FC<CalenderEntryProps> = ({ calenderEntries, clas
   console.log("month",month)
   const [typeFilter, setTypeFilter] = useState<CalendarTypeEnums | 'all'>('all');
   const [currentPage,setCurrentPage]=useState(1);
-  const pageSize=1;
+  const pageSize=5;
 
 
 const filteredEntries= entries.filter((item)=>{
