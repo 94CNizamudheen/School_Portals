@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
-import { Calendar, Clock, Users, Filter, Edit2, Trash2, Eye, ChevronDown } from 'lucide-react';
+import React, {  useState } from 'react';
+import { Calendar, Clock, Users, Filter, Edit2, Trash2, ChevronDown } from 'lucide-react';
 import type { CalendarTypeEnums, CalenderEntries } from '../../../types/academicClaender.types';
 import type { Division } from '../../../types/division.type';
 import { CustomPagination } from '../../../components/shared/CustomPagination';
+import CalendarEntryModal from './CalenderEntryModal';
+import type { CalendarEntryForm } from '../../../utils/validationSchemas';
+import { useNotification } from '../../../context/notification/useNotification';
+import { useAppDispatch } from '../../../hooks/app.hooks';
+import { removeCalendarEntry, updateCalendarEntry } from '../../../store/calenderAndEventsSlice';
+import ConfirmModal from '../../../admin/components/modals/ConfirmDeleteModal';
 
 interface CalenderEntryProps {
   month: string;
@@ -11,15 +17,18 @@ interface CalenderEntryProps {
 }
 
 const CalenderEntryList: React.FC<CalenderEntryProps> = ({ calenderEntries, classDivisions ,month}) => {
-  const [entries] = useState<CalenderEntries[]>(calenderEntries);
-  console.log("entries",entries)
-  console.log("month",month)
+
   const [typeFilter, setTypeFilter] = useState<CalendarTypeEnums | 'all'>('all');
   const [currentPage,setCurrentPage]=useState(1);
+  const [iseditModalOpen,setEditModalOPen]= useState(false)
+  const [isconfirmModalOpen,setConfirmModalOpen]= useState(false);
+  const [entryToRemove,setEntryToremove]= useState('')
+  const [entryToEdit,setEntryToEdit]= useState<CalenderEntries|null>(null)
+  const {showNotification}= useNotification()
+  const dispatch= useAppDispatch()
   const pageSize=5;
 
-
-const filteredEntries= entries.filter((item)=>{
+const filteredEntries= calenderEntries.filter((item)=>{
   if(!item.date) return false;
   const entryDate= new Date(item.date);
   const entryMonth=entryDate.toLocaleString('default',{month:'long'})
@@ -66,6 +75,25 @@ const paginatedEntries= filteredEntries.slice(start,start+pageSize);
 
   const getClassDivisionName = (id: string) => {
     return classDivisions.find((item) => item._id === id)?.divisionName
+  };
+  const handleEditCalendarEntry=async(id:string,data:CalendarEntryForm)=>{
+    try {
+      await dispatch(updateCalendarEntry({id,data})).unwrap()
+      showNotification("success", { message: "Calendar entry updated!" })
+      setEditModalOPen(false);
+      setEntryToEdit(null)
+    } catch (error) {
+      showNotification('error',{message: error as string})
+    }
+  };
+  const handleRemoveEntry=async(id:string)=>{
+    try {
+      await dispatch(removeCalendarEntry(id)).unwrap()
+      showNotification("success", { message: "Calendar entry Removed!" })
+      setConfirmModalOpen(false)
+    } catch (error) {
+      showNotification('error',{message: error as string})
+    }
   }
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-700 via-white to-gray-700 rounded-2xl">
@@ -112,15 +140,14 @@ const paginatedEntries= filteredEntries.slice(start,start+pageSize);
         <div className="mb-6">
           <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl p-4 border border-blue-200/50">
             <p className="text-slate-700 font-medium flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              Showing <span className="font-bold text-blue-600">{entries.length}</span> of <span className="font-bold text-purple-600">{entries.length}</span> entries
+              Showing <span className="font-bold text-blue-600">{calenderEntries.length}</span> of <span className="font-bold text-purple-600">{calenderEntries.length}</span> entries
             </p>
           </div>
         </div>
 
         {/* Enhanced Entries List */}
         <div className="space-y-6">
-          {entries.length === 0 ? (
+          {calenderEntries.length === 0 ? (
             <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-16 text-center">
               <div className="w-20 h-20 bg-gradient-to-r from-slate-200 to-slate-300 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Calendar className="h-10 w-10 text-slate-400" />
@@ -210,20 +237,15 @@ const paginatedEntries= filteredEntries.slice(start,start+pageSize);
                     </div>
 
                     <div className="flex items-center gap-2 ml-6">
-                      <button
-                        className=" bg-gray-400 group/btn p-3 text-slate-600 hover:text-blue-600 hover:bg-blue-100 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110"
-                        title="View Details"
-                      >
-                        <Eye className="h-5 w-5 group-hover/btn:scale-110 transition-transform" />
-                      </button>
-                      <button
-                        className="bg-gray-400 group/btn p-3 text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110"
+                  
+                      <button onClick={()=>{setEntryToEdit(entry);setEditModalOPen(true);}}
+                        className="bg-gray-400 group/btn p-3 text-slate-600 hover:text-blue-600 hover:bg-blue-200 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110"
                         title="Edit Entry"
                       >
                         <Edit2 className="h-5 w-5 group-hover/btn:scale-110 transition-transform" />
                       </button>
-                      <button
-                        className="bg-gray-400 group/btn p-3 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110"
+                      <button onClick={()=>{setConfirmModalOpen(true);setEntryToremove(entry._id as string)}}
+                        className="bg-gray-400 group/btn p-3 text-slate-600 hover:text-red-600 hover:bg-red-200 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-110"
                         title="Delete Entry"
                       >
                         <Trash2 className="h-5 w-5 group-hover/btn:scale-110 transition-transform" />
@@ -241,6 +263,34 @@ const paginatedEntries= filteredEntries.slice(start,start+pageSize);
       onPageChange={setCurrentPage}
       totalPages={totalPages}
       />
+      {iseditModalOpen&&(
+        <CalendarEntryModal
+        isOpen={iseditModalOpen}
+        onClose={()=>{setEditModalOPen(false);setEntryToEdit(null)}}
+        onSave={(data)=>handleEditCalendarEntry(entryToEdit?._id as string ,data)}
+        selectedDate={entryToEdit?.date as string}
+        mode='edit'
+        initialData={{
+          title:entryToEdit?.title||'',
+          description:entryToEdit?.description||'',
+          date:entryToEdit?.date||'',
+          endDate:entryToEdit?.endDate||'',
+          applicableClassDivisions:entryToEdit?.applicableClassDivisions||[],
+          type:entryToEdit?.type||''
+         
+        }}
+        classDivisions={classDivisions}
+        />
+      )}
+      {isconfirmModalOpen&&(
+        <ConfirmModal
+        onClose={()=>setConfirmModalOpen(false)}
+        onConfirm={()=>handleRemoveEntry(entryToRemove)}
+        open={isconfirmModalOpen}
+        description='Are you sure to remove to remove calender entry ?'
+        title='Remove Calender Entry'
+        />
+      )}
     </div>
   );
 };

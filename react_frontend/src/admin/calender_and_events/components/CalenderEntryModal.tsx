@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { calendarEntrySchema, type CalendarEntryForm } from "../../../utils/validationSchemas"
@@ -14,24 +14,13 @@ type CalendarEntryModalProps = {
   onClose: () => void
   onSave: (data: CalendarEntryForm) => void
   classDivisions: Division[]
-  selectedDate: string
+  selectedDate: string;
+  initialData?: CalendarEntryForm | null;
+  mode?: string;
 }
 
-const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  onSave, 
-  classDivisions, 
-  selectedDate 
-}) => {
-  const { 
-    control, 
-    handleSubmit, 
-    formState: { errors }, 
-    setValue, 
-    watch, 
-    reset 
-  } = useForm<CalendarEntryForm>({
+const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({ isOpen, onClose, onSave, classDivisions, selectedDate, initialData, mode }) => {
+  const { control, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<CalendarEntryForm>({
     resolver: zodResolver(calendarEntrySchema),
     defaultValues: {
       title: "",
@@ -43,13 +32,27 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
     },
     mode: "onChange",
   })
-  
-  console.log('selectedDate', selectedDate)
-  
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData) {
+        reset(initialData)
+      } else {
+        reset({
+          title: '',
+          description: '',
+          date: selectedDate,
+          endDate: '',
+          applicableClassDivisions: [],
+          type: ''
+        })
+      }
+    }
+  }, [isOpen, initialData, reset, selectedDate])
+
   const selectedDivisions = watch("applicableClassDivisions") || []
   const allIds = classDivisions.map((d) => d._id)
   const allSelected = selectedDivisions.length === allIds.length
-  
+
   const toggleSelectAll = (checked: boolean) => {
     setValue("applicableClassDivisions", checked ? allIds : [])
   }
@@ -66,12 +69,11 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
   }
 
   const handleFormSubmit = (data: CalendarEntryForm) => {
-    console.log("calendar entry data", data)
     onSave(data)
     reset()
     onClose()
   }
-
+  console.log('initialData', initialData)
   if (!isOpen) return null
 
   return (
@@ -85,7 +87,7 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
       {/* Modal Container */}
       <div className="flex min-h-full items-center justify-center p-4">
         <div className="relative max-w-2xl bg-gradient-to-b from-gray-700 via-white to-gray-700 rounded-2xl shadow-2xl border border-gray-300/50 max-h-[95vh] overflow-hidden transform transition-all duration-300">
-          
+
           {/* Animated Header */}
           <div className="relative p-6 border-b border-gray-300/50 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-blue-600/20">
             <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-500 to-gray-800" />
@@ -96,7 +98,7 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-white">Create Calendar Entry</h2>
-                  <p className="text-gray-200">Add entry to academic calendar</p>
+                  <p className="text-gray-200">{mode == "edit" ? 'Edit Calendar Entry' : 'Add entry to academic calendar'}</p>
                 </div>
               </div>
               <Button
@@ -113,7 +115,7 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
           {/* Form */}
           <form onSubmit={handleSubmit(handleFormSubmit)} className="overflow-y-auto max-h-[calc(95vh-120px)]">
             <div className="p-6 space-y-6 bg-gradient-to-br from-white/90 to-gray-100/90">
-              
+
               {/* Title Field */}
               <Controller
                 name="title"
@@ -129,9 +131,8 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
                       {...field}
                       type="text"
                       placeholder="Enter calendar entry title"
-                      className={`w-full px-4 py-3 bg-white/80 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder:text-gray-500 shadow-sm ${
-                        errors.title ? "border-red-400" : "border-gray-300"
-                      }`}
+                      className={`w-full px-4 py-3 bg-white/80 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 placeholder:text-gray-500 shadow-sm ${errors.title ? "border-red-400" : "border-gray-300"
+                        }`}
                     />
                     {errors.title && (
                       <p className="text-sm text-red-500 flex items-center gap-1">
@@ -158,9 +159,8 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
                       value={field.value ?? ''}
                       rows={4}
                       placeholder="Describe the calendar entry..."
-                      className={`w-full px-4 py-3 bg-white/80 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none text-gray-900 placeholder:text-gray-500 shadow-sm ${
-                        errors.description ? "border-red-400" : "border-gray-300"
-                      }`}
+                      className={`w-full px-4 py-3 bg-white/80 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none text-gray-900 placeholder:text-gray-500 shadow-sm ${errors.description ? "border-red-400" : "border-gray-300"
+                        }`}
                     />
                     {errors.description && (
                       <p className="text-sm text-red-500 flex items-center gap-1">
@@ -183,10 +183,9 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
                       Entry Type
                       <span className="text-red-500">*</span>
                     </label>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className={`w-full px-4 py-3 bg-white/80 border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all shadow-sm ${
-                        errors.type ? "border-red-400" : "border-gray-300"
-                      }`}>
+                    <Select value={mode=='edit'? initialData?.type :field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className={`w-full px-4 py-3 text-gray-900 border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all shadow-sm ${errors.type ? "border-red-400" : "border-gray-300"
+                        }`}>
                         <SelectValue placeholder="Choose entry type" />
                       </SelectTrigger>
                       <SelectContent className="bg-white shadow-lg border-gray-200 rounded-xl">
@@ -226,9 +225,8 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
                       <input
                         {...field}
                         type="date"
-                        className={`w-full px-4 py-3 bg-white/80 border rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-gray-900 shadow-sm ${
-                          errors.date ? "border-red-400" : "border-gray-300"
-                        }`}
+                        className={`w-full px-4 py-3 bg-white/80 border rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-gray-900 shadow-sm ${errors.date ? "border-red-400" : "border-gray-300"
+                          }`}
                       />
                       {errors.date && (
                         <p className="text-sm text-red-500 flex items-center gap-1">
@@ -253,9 +251,8 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
                         {...field}
                         value={field.value ?? ''}
                         type="date"
-                        className={`w-full px-4 py-3 bg-white/80 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-gray-900 shadow-sm ${
-                          errors.endDate ? "border-red-400" : "border-gray-300"
-                        }`}
+                        className={`w-full px-4 py-3 bg-white/80 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-gray-900 shadow-sm ${errors.endDate ? "border-red-400" : "border-gray-300"
+                          }`}
                       />
                       {errors.endDate && (
                         <p className="text-sm text-red-500 flex items-center gap-1">
@@ -275,7 +272,7 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
                   Applicable Class Divisions
                 </label>
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 space-y-4 shadow-inner">
-                  
+
                   {/* Select All Option */}
                   <div className="flex items-center space-x-3 pb-3 border-b border-blue-200">
                     <Checkbox
@@ -288,7 +285,7 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
                       Select All Divisions
                     </span>
                   </div>
-                  
+
                   {/* Individual Divisions */}
                   <div className="grid grid-cols-1 gap-3 max-h-48 overflow-y-auto">
                     {classDivisions.map((div) => (
@@ -298,13 +295,13 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
                       >
                         <Checkbox
                           checked={selectedDivisions.includes(div._id)}
-                          onCheckedChange={(checked) => 
+                          onCheckedChange={(checked) =>
                             toggleDivision(div._id, checked as boolean)
                           }
                           className="border-blue-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 rounded-md"
                         />
                         <span className="text-gray-700 font-medium">
-                          {div.divisionName} 
+                          {div.divisionName}
                           <span className="text-blue-600 ml-2 font-semibold">
                             ({div.classLevel})
                           </span>
@@ -332,7 +329,7 @@ const CalendarEntryModal: React.FC<CalendarEntryModalProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  <span>Save Entry</span>
+                  <span>{mode == 'edit' ? 'Update Entry' : 'Save Entry'}</span>
                 </div>
               </Button>
             </div>

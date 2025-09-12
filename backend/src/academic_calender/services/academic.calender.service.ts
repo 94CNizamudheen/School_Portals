@@ -52,6 +52,12 @@ export class AcademicCalendarService {
         return updated;
     };
     async delete(id: string): Promise<AcademicCalendarType | null> {
+        const entry= await this.repo.findById(id);
+        if(!entry) throw new NotFoundException('Entry not Found');
+        const today= new Date()
+        today.setHours(0,0,0,0);
+        const entryDate= new Date(entry.date);
+        if(entryDate< today) throw new BadRequestException('Cannot Remove calendar entry for past dates')
         const deleted = await this.repo.delete(id);
         if (!deleted) throw new NotFoundException(`Cant Find and Delete with _id:${id}`);
         return deleted;

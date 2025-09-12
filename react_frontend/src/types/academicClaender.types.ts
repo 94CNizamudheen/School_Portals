@@ -7,7 +7,6 @@ export interface CalenderEntries {
   description?: string;
   date: string;
   endDate: string;
-  venue: string;
   type: CalendarTypeEnums;
   academicYear?: string;
   applicableClassDivisions: string[];

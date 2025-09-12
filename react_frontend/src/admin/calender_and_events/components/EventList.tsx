@@ -49,7 +49,8 @@ const EventsList: React.FC<EventsListProps> = ({ month, scheduledEventItems, set
   const totalPages = Math.ceil(filteredEvents.length / pageSize);
   const start = (currentPage - 1) * pageSize;
   const paginatedEvents = filteredEvents.slice(start, start + pageSize)
-  console.log('filtered events', filteredEvents)
+
+  
   const handleRemove = async () => {
     if (!itemToRemove) return;
     try {

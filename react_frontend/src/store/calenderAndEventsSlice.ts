@@ -56,9 +56,10 @@ export const fetchEventById = createAsyncThunk(
 );
 export const updateCalendarEntry = createAsyncThunk(
     'academicCalendar/update',
-    async ({ id, data }: { id: string, data: CalenderEntries }, { rejectWithValue }) => {
+    async ({ id, data }: { id: string, data: CalendarEntryForm }, { rejectWithValue }) => {
         try {
-            const res = await API.patch(`/calendar-entries/${id}`, { data })
+            console.log('data in update entries',data)
+            const res = await API.patch(`/calendar-entries/${id}`,  data )
             return res.data;
         } catch (error) {
             const err = error as AxiosError<{ message: string }>;
@@ -116,7 +117,7 @@ export const createEvent = createAsyncThunk(
             const res = await API.post(`/events`, data, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
-            return res.data;
+            return res.data;    
         } catch (error) {
             const err = error as AxiosError<{ message: string }>;
             return rejectWithValue(err.response?.data.message)
