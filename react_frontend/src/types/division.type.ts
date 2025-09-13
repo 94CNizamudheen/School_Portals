@@ -6,7 +6,7 @@ export interface Division {
   divisionName: string;      
   subjects: string[];
   classTeacherId:string
-  createdAt: string; 
+  createdAt?: string; 
   updatedAt?: string; 
   capacity?:number;
   assignedStudents?:string[]
