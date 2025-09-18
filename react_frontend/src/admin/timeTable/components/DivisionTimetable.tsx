@@ -1,5 +1,5 @@
 import React from "react";
-import { Calendar, Clock, User, Trash2, Plus, Check, X } from "lucide-react";
+import { Calendar, Clock, User, Trash2, Plus, Check, X, Save } from "lucide-react";
 import type { Subject } from "../../../types/subject.types";
 import type { Teacher } from "../../../types/teacher.types";
 import type { TimeSlot } from "../Pages/TimeTablePage";
@@ -55,6 +55,10 @@ const DivisionTimetable: React.FC<DivisionTimetableProps> = ({
                         ({division?.capacity} Students)
                     </span>
                 </h2>
+                <button className="px-6 py-3 bg-gradient-to-r from-gray-700 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center space-x-2">
+                    <Save className="w-5 h-5" />
+                    <span>Save </span>
+                </button>
             </div>
 
             {/* Table */}
@@ -173,7 +177,7 @@ const DivisionTimetable: React.FC<DivisionTimetableProps> = ({
                                                     </div>
                                                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <button
-                                                            onClick={(e) => handleDelete(slot.id, e)}
+                                                            onClick={(e) => handleDelete(slot._id!, e)}
                                                             className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
                                                         >
                                                             <Trash2 className="w-3 h-3" />

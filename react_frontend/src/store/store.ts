@@ -9,6 +9,7 @@ import divisionReducer from './divisionSlice';
 import subjectReducer from './subjectSlice';
 import teacherReducer from './teacherSlice';
 import academicCalenderReducer from './calenderAndEventsSlice';
+import timetableReducer from './timetableSlice'
 
 const persistConfig = {
   key: 'root',
@@ -24,7 +25,8 @@ const rootReducer = combineReducers({
   divisions:divisionReducer,
   subjects:subjectReducer,
   teacher:teacherReducer,
-  academicCalender:academicCalenderReducer
+  academicCalender:academicCalenderReducer,
+  timeTable:timetableReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

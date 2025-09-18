@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Calendar, GraduationCap, AlertCircle, CheckCircle, BarChart3, Users, Building } from 'lucide-react';
+import { Calendar, GraduationCap, AlertCircle, CheckCircle, BarChart3, Building } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../../../hooks/app.hooks';
 // import { useNotification } from '../../../context/notification/useNotification';
 import { fetchAllDivisions } from '../../../store/divisionThunks';
@@ -11,7 +11,7 @@ import type { Division } from '../../../types/division.type';
 import DivisionTimetable from '../components/DivisionTimetable';
 
 export interface TimeSlot {
-  id: string;
+  _id?: string;
   subject: string;
   teacher: string;
   teacherId?: string;
@@ -88,7 +88,6 @@ const WeeklyTimetable: React.FC = () => {
     return timeSlots.filter(slot => slot.division === currentDivisionId);
   };
 
-  // Calculate division progress
   const calculateDivisionProgress = (divisionId: string): GradeProgress => {
     const division = classDivisions.find(div => div._id === divisionId);
     const divisionSlots = timeSlots.filter(slot => slot.division === divisionId);
@@ -103,12 +102,12 @@ const WeeklyTimetable: React.FC = () => {
         completionPercentage: 0
       };
     }
-
+    console.log('division applicable subject:',division.subjects)
     const filledSlots = divisionSlots.length;
+
     const assignedSubjects = new Set(divisionSlots.map(slot => slot.subject));
     const missingSubjects = division.subjects.filter(subject => !assignedSubjects.has(subject));
 
-    // Assume minimum 25 periods per week as baseline
     const minPeriodsPerWeek = 25;
     const completionPercentage = Math.round((filledSlots / minPeriodsPerWeek) * 100);
 
@@ -122,16 +121,6 @@ const WeeklyTimetable: React.FC = () => {
     };
   };
 
-  // Get progress for all divisions of same class level
-  const getSameLevelDivisionsProgress = (): GradeProgress[] => {
-    const currentDiv = getCurrentDivision();
-    if (!currentDiv) return [];
-
-    const sameLevelDivisions = getDivisionsByLevel(currentDiv.classLevel);
-    return sameLevelDivisions.map(division => calculateDivisionProgress(division._id));
-  };
-
-  const generateId = () => Math.random().toString(36).substr(2, 9);
 
   const getNextTimeSlot = (currentTime: string): string => {
     const currentIndex = timeSlotsList.indexOf(currentTime);
@@ -206,9 +195,8 @@ const WeeklyTimetable: React.FC = () => {
     const color = getSubjectColor(selectedSubject);
 
     if (editingCell.slot) {
-      // Edit existing slot
       setTimeSlots(prev => prev.map(slot =>
-        slot.id === editingCell.slot!.id
+        slot._id === editingCell.slot!._id
           ? {
             ...slot,
             subject: selectedSubject,
@@ -221,7 +209,6 @@ const WeeklyTimetable: React.FC = () => {
     } else {
       // Create new slot
       const newSlot: TimeSlot = {
-        id: generateId(),
         subject: selectedSubject,
         teacher: teacherName,
         teacherId: selectedTeacher,
@@ -249,8 +236,8 @@ const WeeklyTimetable: React.FC = () => {
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    setTimeSlots(prev => prev.filter(slot => slot.id !== id));
-    if (editingCell?.slot?.id === id) {
+    setTimeSlots(prev => prev.filter(slot => slot._id !== id));
+    if (editingCell?.slot?._id === id) {
       setEditingCell(null);
     }
   };
@@ -260,7 +247,6 @@ const WeeklyTimetable: React.FC = () => {
   };
 
   const currentProgress = calculateDivisionProgress(currentDivisionId);
-  const allSameLevelDivisionsProgress = getSameLevelDivisionsProgress();
 
   useEffect(() => {
     dispatch(fetchAllDivisions()).unwrap();
@@ -290,10 +276,6 @@ const WeeklyTimetable: React.FC = () => {
               >
                 <BarChart3 className="w-4 h-4" />
                 <span>{showGuidance ? 'Hide' : 'Show'} Progress</span>
-              </button>
-              <button className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center space-x-2">
-                <Save className="w-5 h-5" />
-                <span>Save All Timetables</span>
               </button>
             </div>
           </div>
@@ -368,7 +350,7 @@ const WeeklyTimetable: React.FC = () => {
 
         {/* Progress Guidance Panel */}
         {showGuidance && getCurrentDivision() && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-1 gap-6 mb-8">
             {/* Current Division Progress */}
             <div className="bg-gradient-to-tr from-gray-200 to-gray-400 rounded-2xl shadow-xl p-6 border border-gray-100">
               <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
@@ -394,20 +376,6 @@ const WeeklyTimetable: React.FC = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 text-sm">
-                  <div className="text-center p-3 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-gray-900">{currentProgress.filledSlots}</div>
-                    <div className="text-gray-600">Filled</div>
-                  </div>
-                  <div className="text-center p-3 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-gray-900">{currentProgress.totalSlots}</div>
-                    <div className="text-gray-600">Required</div>
-                  </div>
-                  <div className="text-center p-3 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-gray-900">{getCurrentDivision()?.capacity}</div>
-                    <div className="text-gray-600">Capacity</div>
-                  </div>
-                </div>
 
                 {currentProgress.missingSubjects.length > 0 && (
                   <div className="mt-4">
@@ -424,48 +392,6 @@ const WeeklyTimetable: React.FC = () => {
                     </div>
                   </div>
                 )}
-              </div>
-            </div>
-
-            {/* Same Level All Divisions Overview */}
-            <div className="bg-gradient-to-tr from-gray-200  to-gray-400  rounded-2xl shadow-xl p-6 border border-gray-100">
-              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                <Users className="w-6 h-6 mr-2 text-purple-600" />
-                {getCurrentDivision()?.classLevel} All Divisions
-              </h3>
-
-              <div className="space-y-3">
-                {allSameLevelDivisionsProgress.map(progress => {
-                  const division = classDivisions.find(div => div._id === progress.division);
-                  return (
-                    <div key={progress.division}
-                      className={`flex items-center justify-between p-3 rounded-lg transition-colors ${currentDivisionId === progress.division
-                        ? 'bg-purple-50 border border-purple-200'
-                        : 'bg-gray-50 hover:bg-gray-100'
-                        }`}>
-                      <div className="flex items-center space-x-3">
-                        <button
-                          onClick={() => setCurrentDivisionId(progress.division)}
-                          className="font-semibold text-gray-900 hover:text-purple-600 transition-colors"
-                        >
-                          {progress.division}
-                        </button>
-                        <div className={`w-3 h-3 rounded-full ${progress.completionPercentage >= 80 ? 'bg-green-400' :
-                          progress.completionPercentage >= 50 ? 'bg-yellow-400' : 'bg-red-400'
-                          }`} />
-                        <span className="text-xs text-gray-500">({division?.capacity} students)</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-600">
-                          {progress.filledSlots}/{progress.totalSlots}
-                        </span>
-                        <span className="font-bold text-sm">
-                          {progress.completionPercentage}%
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
               </div>
             </div>
           </div>

@@ -17,6 +17,7 @@ import { ClassDivisionModule } from './class_division/classDivision.module';
 import { SubjectModule } from './subject/subject.module';
 import { AcademicCalendarModule } from './academic_calender/academic.calender.module';
 import { SchoolEventModule } from './school_events/event.module';
+import { TimetableModule } from './time_table/timetable.module';
 
 @Module({
     imports: [
@@ -41,7 +42,8 @@ import { SchoolEventModule } from './school_events/event.module';
         ClassDivisionModule,
         SubjectModule,
         AcademicCalendarModule,
-        SchoolEventModule
+        SchoolEventModule,
+        TimetableModule
     ],
     providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard, },],
 })
